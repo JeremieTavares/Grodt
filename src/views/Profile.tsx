@@ -1,7 +1,9 @@
 import {useEffect, useState} from "react";
 import {useParams} from "react-router";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
+import {Input} from "@/components/ui/input";
 import {toast, Toaster} from "sonner";
+import {LuUser, LuMail, LuPhone, LuLock, LuSave, LuX, LuPencil, LuCircleUser} from "react-icons/lu";
 
 interface UserProfile {
   id: number;
@@ -91,7 +93,7 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-100 py-8 px-4 sm:px-6 lg:px-8">
       <Toaster
         position="top-right"
         toastOptions={{
@@ -104,93 +106,115 @@ export default function Profile() {
           },
         }}
       />
-      <button onClick={() => console.log(profile)}>test</button>
       <div className="mx-auto max-w-3xl">
         <Card className="shadow-lg">
-          <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0 pb-7">
-            <CardTitle className="text-2xl font-bold">Détail du profil</CardTitle>
+          <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0 pb-7 border-b">
+            <div className="flex items-center gap-3">
+              <LuCircleUser className="w-8 h-8 text-[#433BFF]" />
+              <CardTitle className="text-2xl font-bold text-slate-800 tracking-tight">Détail du profil</CardTitle>
+            </div>
             <div className="flex gap-2 w-full sm:w-auto">
               {isEditing ? (
                 <>
                   <button
                     onClick={() => setIsEditing(false)}
-                    className="flex-1 sm:flex-none px-4 py-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="flex-1 sm:flex-none px-4 py-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium inline-flex items-center gap-2"
                   >
+                    <LuX className="w-4 h-4" />
                     Annuler
                   </button>
                   <button
                     onClick={handleSave}
-                    className="flex-1 sm:flex-none px-4 py-2 text-white rounded-lg bg-[#433BFF] hover:bg-[#3530CC] transition-colors"
+                    className="flex-1 sm:flex-none px-4 py-2 text-white rounded-lg bg-[#433BFF] hover:bg-[#3530CC] transition-colors font-medium inline-flex items-center gap-2"
                   >
+                    <LuSave className="w-4 h-4" />
                     Sauvegarder
                   </button>
                 </>
               ) : (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="w-full sm:w-auto px-4 py-2 text-white rounded-lg bg-[#433BFF] hover:bg-[#3530CC] transition-colors"
+                  className="w-full sm:w-auto px-4 py-2 text-white rounded-lg bg-[#433BFF] hover:bg-[#3530CC] transition-colors font-medium inline-flex items-center gap-2"
                 >
+                  <LuPencil className="w-4 h-4" />
                   Mettre à jour
                 </button>
               )}
             </div>
           </CardHeader>
-          <CardContent>
-            <Card className="bg-slate-50 border border-slate-200">
-              <CardHeader>
-                <CardTitle className="text-lg">Renseignements personnels</CardTitle>
+          <CardContent className="pt-6">
+            <Card className="bg-white border border-slate-200">
+              <CardHeader className="border-b">
+                <CardTitle className="text-xl font-semibold text-black tracking-tight">
+                  Renseignements personnels
+                </CardTitle>
               </CardHeader>
               <CardContent className="pt-6">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700 block">Nom</label>
-                    <input
-                      type="text"
-                      value={profile?.lastName || ""}
-                      onChange={handleChange("lastName")}
-                      disabled={!isEditing}
-                      className="w-full p-2.5 border rounded-lg bg-white disabled:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#433BFF] focus:border-transparent transition-colors"
-                    />
+                    <label className="text-sm font-medium text-slate-700 block tracking-tight">Nom</label>
+                    <div className="relative">
+                      <LuUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black w-4 h-4" />
+                      <Input
+                        type="text"
+                        value={profile?.lastName || ""}
+                        onChange={handleChange("lastName")}
+                        disabled={!isEditing}
+                        className="w-full bg-slate-50 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10"
+                      />
+                    </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700 block">Prénom</label>
-                    <input
-                      type="text"
-                      value={profile?.firstName || ""}
-                      onChange={handleChange("firstName")}
-                      disabled={!isEditing}
-                      className="w-full p-2.5 border rounded-lg bg-white disabled:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#433BFF] focus:border-transparent transition-colors"
-                    />
+                    <label className="text-sm font-medium text-slate-700 block tracking-tight">Prénom</label>
+                    <div className="relative">
+                      <LuUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black w-4 h-4" />
+                      <Input
+                        type="text"
+                        value={profile?.firstName || ""}
+                        onChange={handleChange("firstName")}
+                        disabled={!isEditing}
+                        className="w-full bg-slate-50 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10"
+                      />
+                    </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700 block">Mot de passe</label>
-                    <input
-                      type="text"
-                      value={profile?.password || ""}
-                      onChange={handleChange("password")}
-                      disabled={!isEditing}
-                      className="w-full p-2.5 border rounded-lg bg-white disabled:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#433BFF] focus:border-transparent transition-colors"
-                    />
+                    <label className="text-sm font-medium text-slate-700 block tracking-tight">Mot de passe</label>
+                    <div className="relative">
+                      <LuLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black w-4 h-4" />
+                      <Input
+                        type="password"
+                        value={profile?.password || ""}
+                        onChange={handleChange("password")}
+                        disabled={!isEditing}
+                        className="w-full bg-slate-50 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10"
+                      />
+                    </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700 block">Courriel</label>
-                    <input
-                      type="email"
-                      value={profile?.email || ""}
-                      onChange={handleChange("email")}
-                      disabled={!isEditing}
-                      className="w-full p-2.5 border rounded-lg bg-white disabled:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#433BFF] focus:border-transparent transition-colors"
-                    />
+                    <label className="text-sm font-medium text-slate-700 block tracking-tight">Courriel</label>
+                    <div className="relative">
+                      <LuMail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black w-4 h-4" />
+                      <Input
+                        type="email"
+                        value={profile?.email || ""}
+                        onChange={handleChange("email")}
+                        disabled={!isEditing}
+                        className="w-full bg-slate-50 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10"
+                      />
+                    </div>
                   </div>
                   <div className="space-y-2 lg:col-span-2">
-                    <label className="text-sm font-medium text-gray-700 block">Téléphone</label>
-                    <input
-                      type="tel"
-                      value={profile?.phone || ""}
-                      onChange={handleChange("phone")}
-                      disabled={!isEditing}
-                      className="w-full p-2.5 border rounded-lg bg-white disabled:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#433BFF] focus:border-transparent transition-colors"
-                    />
+                    <label className="text-sm font-medium text-slate-700 block tracking-tight">Téléphone</label>
+                    <div className="relative">
+                      <LuPhone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black w-4 h-4" />
+                      <Input
+                        type="tel"
+                        value={profile?.phone || ""}
+                        onChange={handleChange("phone")}
+                        disabled={!isEditing}
+                        className="w-full bg-slate-50 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10"
+                      />
+                    </div>
                   </div>
                 </div>
               </CardContent>
