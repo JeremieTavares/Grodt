@@ -142,6 +142,32 @@ export default function Profile() {
               )}
             </div>
           </CardHeader>
+
+          <CardContent className="pt-6">
+            <Card className="border-none shadow-[0_2px_8px_0px_rgba(67,59,255,0.08)] hover:shadow-[0_4px_12px_0px_rgba(67,59,255,0.12)] transition-shadow duration-200">
+              <CardContent className="p-6">
+                <div className="flex items-start gap-4">
+                  <div className="h-18 w-18 rounded-full bg-[#433BFF] flex items-center justify-center shadow-[0_2px_8px_0px_rgba(67,59,255,0.25)]">
+                    <LuUser className="h-10 w-10 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-slate-900 mb-1">
+                      {profile?.firstName} {profile?.lastName}
+                    </h3>
+                    <div className="flex items-center gap-2 text-sm text-slate-600">
+                      <LuMail className="h-4 w-4" />
+                      <span>{profile?.email}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-slate-600 mt-1">
+                      <LuPhone className="h-4 w-4" />
+                      <span>{profile?.phone}</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </CardContent>
+
           <CardContent className="pt-6">
             <Card className="bg-white border border-slate-200">
               <CardHeader className="border-b">
