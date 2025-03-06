@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import {useParams} from "react-router";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
+import {toast, Toaster} from "sonner";
 
 interface UserProfile {
   id: number;
@@ -14,7 +15,7 @@ interface UserProfile {
 export default function Profile() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
   const {userId} = useParams();
 
   useEffect(() => {
@@ -51,31 +52,58 @@ export default function Profile() {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (profile && userId) {
-      fetch(`https://money-pie-2.fly.dev/api/v1/users/${userId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(profile),
-      })
-        .then((res) => {
-          if (!res.ok) throw new Error("Erreur lors de la sauvegarde");
-          return res.json();
-        })
-        .then((data) => {
-          setProfile(data);
-          setIsEditing(false);
-        })
-        .catch((error) => {
-          console.error("Erreur:", error);
+      try {
+        const response = await fetch(`https://money-pie-2.fly.dev/api/v1/users/${userId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(profile),
         });
+
+        if (!response.ok) {
+          throw new Error("Erreur lors de la sauvegarde");
+        }
+
+        const data = await response.json();
+        setProfile(data);
+        setIsEditing(false);
+        toast.success("Profil mis à jour avec succès!", {
+          style: {
+            backgroundColor: "white",
+            border: "1px solid #e2e8f0",
+            borderRadius: "0.5rem",
+          },
+        });
+      } catch (error) {
+        console.error("Erreur:", error);
+        toast.error("Erreur lors de la sauvegarde", {
+          style: {
+            backgroundColor: "white",
+            border: "1px solid #e2e8f0",
+            borderRadius: "0.5rem",
+          },
+        });
+      }
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {background: "white"},
+          classNames: {
+            toast:
+              "group toast group-[.toaster]:bg-white group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
+            success: "group-[.toaster]:border-l-4 group-[.toaster]:border-l-[#433BFF]",
+            error: "group-[.toaster]:border-l-4 group-[.toaster]:border-l-red-500",
+          },
+        }}
+      />
       <button onClick={() => console.log(profile)}>test</button>
       <div className="mx-auto max-w-3xl">
         <Card className="shadow-lg">
