@@ -2,7 +2,8 @@ import {useEffect, useState} from "react";
 import {useParams} from "react-router";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Input} from "@/components/ui/input";
-import {toast, Toaster} from "sonner";
+import {toast} from "sonner";
+import {Toaster} from "@/components/ui/sonner";
 import {LuUser, LuMail, LuPhone, LuLock, LuSave, LuX, LuPencil, LuCircleUser, LuCalendar} from "react-icons/lu";
 import {Address, UserProfile} from "@/types/interfaces";
 import {AddressForm} from "@/components/AddressForm";
@@ -177,20 +178,7 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-slate-100 py-8 px-4 sm:px-6 lg:px-8">
-      {/* Configuration du système de notifications toast */}
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          style: {background: "white"},
-          classNames: {
-            toast:
-              "group toast group-[.toaster]:bg-white group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
-            success: "group-[.toaster]:border-l-4 group-[.toaster]:border-l-[#433BFF]",
-            error: "group-[.toaster]:border-l-4 group-[.toaster]:border-l-red-500",
-          },
-        }}
-      />
-      {/* Conteneur de la carte principale avec largeur maximale */}
+      <Toaster position="top-right" />
       <div className="mx-auto max-w-3xl">
         <Card className="shadow-lg">
           {/* En-tête de la carte avec titre et boutons d'action */}
