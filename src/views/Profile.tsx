@@ -16,29 +16,7 @@ import {
   LuCalendar,
   LuMapPin,
 } from "react-icons/lu";
-
-// Interface pour une adresse
-interface Address {
-  id: number;
-  streetNumber: string;
-  streetName: string;
-  city: string;
-  province: string;
-  country: string;
-  type: string;
-}
-
-// Interface pour profil utilisateur
-interface UserProfile {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  password: string;
-  birthDate: string;
-  isActive: boolean;
-}
+import {Address, UserProfile} from "@/types/interfaces";
 
 export default function Profile() {
   // États pour gérer les données et l'état d'édition du profil
@@ -105,32 +83,6 @@ export default function Profile() {
     }
   };
 
-  // Gestion de changement pour les champs d'adresse
-  const handleAddressChange = (field: keyof Address) => (e: React.ChangeEvent<HTMLInputElement> | string) => {
-    if (addresses.length > 0) {
-      const newAddresses = [...addresses];
-      newAddresses[0] = {
-        ...newAddresses[0],
-        [field]: typeof e === "string" ? e : e.target.value,
-      };
-      setAddresses(newAddresses);
-    } else {
-      // Création d'une nouvelle adresse si aucune n'existe
-      setAddresses([
-        {
-          id: 0,
-          streetNumber: "",
-          streetName: "",
-          city: "",
-          province: typeof e === "string" ? e : "QC",
-          country: "CA",
-          type: "PERSONAL",
-          [field]: typeof e === "string" ? e : e.target.value,
-        },
-      ]);
-    }
-  };
-
   // Fonction pour sauvegarder les modifications du profil et de l'adresse
   const handleSave = async () => {
     if (profile && userId) {
@@ -156,19 +108,22 @@ export default function Profile() {
           throw new Error("Erreur lors de la sauvegarde du profil");
         }
 
-        // Sauvegarde de l'adresse si elle existe
-        if (addresses.length > 0) {
+        // Sauvegarde des adresses
+        for (const address of addresses) {
           const addressResponse = await fetch(`https://money-pie-2.fly.dev/api/v1/users/${userId}/addresses`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
               Accept: "application/json",
             },
-            body: JSON.stringify(addresses[0]),
+            body: JSON.stringify({
+              ...address,
+              id: address.id || 0, // Assurez-vous d'avoir toujours un ID, même si c'est 0
+            }),
           });
 
           if (!addressResponse.ok) {
-            throw new Error("Erreur lors de la sauvegarde de l'adresse");
+            throw new Error(`Erreur lors de la sauvegarde de l'adresse ${address.type}`);
           }
         }
 
@@ -399,69 +354,290 @@ export default function Profile() {
                   </div>
                   <div className="space-y-2 lg:col-span-2 group">
                     <label className="text-sm font-semibold text-slate-700 block tracking-tight flex items-center gap-2">
-                      <span>Adresse</span>
+                      <span>Adresses</span>
                       <div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent"></div>
                     </label>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="relative">
-                        <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
-                          <LuMapPin className="w-4 h-4 text-[#433BFF]" />
-                        </div>
-                        <Input
-                          type="text"
-                          placeholder="Numéro civique"
-                          value={addresses[0]?.streetNumber || ""}
-                          onChange={handleAddressChange("streetNumber")}
-                          disabled={!isEditing}
-                          className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
-                        />
-                      </div>
-                      <div className="relative">
-                        <Input
-                          type="text"
-                          placeholder="Nom de rue"
-                          value={addresses[0]?.streetName || ""}
-                          onChange={handleAddressChange("streetName")}
-                          disabled={!isEditing}
-                          className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
-                        />
-                      </div>
-                      <div className="relative">
-                        <Input
-                          type="text"
-                          placeholder="Ville"
-                          value={addresses[0]?.city || ""}
-                          onChange={handleAddressChange("city")}
-                          disabled={!isEditing}
-                          className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
-                        />
-                      </div>
-                      <div className="relative">
-                        <Select
-                          value={addresses[0]?.province || "QC"}
-                          onValueChange={(value: string) => handleAddressChange("province")(value)}
-                          disabled={!isEditing}
+                    <div className="space-y-4">
+                      {/* Affichage de l'adresse personnelle en premier */}
+                      {addresses
+                        .filter((addr) => addr.type === "PERSONAL")
+                        .map((address, index) => (
+                          <div
+                            key={`personal-${index}`}
+                            className="p-4 border border-slate-200 rounded-lg space-y-4 bg-white/50"
+                          >
+                            <div className="flex justify-between items-center">
+                              <h4 className="font-semibold text-slate-700">Adresse personnelle</h4>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="relative">
+                                <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
+                                  <LuMapPin className="w-4 h-4 text-[#433BFF]" />
+                                </div>
+                                <Input
+                                  type="text"
+                                  placeholder="Numéro civique"
+                                  value={address.streetNumber}
+                                  onChange={(e) => {
+                                    const newAddresses = [...addresses];
+                                    const addrIndex = addresses.findIndex((a) => a.type === "PERSONAL");
+                                    newAddresses[addrIndex] = {
+                                      ...newAddresses[addrIndex],
+                                      streetNumber: e.target.value,
+                                    };
+                                    setAddresses(newAddresses);
+                                  }}
+                                  disabled={!isEditing}
+                                  className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
+                                />
+                              </div>
+                              <div className="relative">
+                                <Input
+                                  type="text"
+                                  placeholder="Nom de rue"
+                                  value={address.streetName}
+                                  onChange={(e) => {
+                                    const newAddresses = [...addresses];
+                                    const addrIndex = addresses.findIndex((a) => a.type === "PERSONAL");
+                                    newAddresses[addrIndex] = {
+                                      ...newAddresses[addrIndex],
+                                      streetName: e.target.value,
+                                    };
+                                    setAddresses(newAddresses);
+                                  }}
+                                  disabled={!isEditing}
+                                  className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
+                                />
+                              </div>
+                              <div className="relative">
+                                <Input
+                                  type="text"
+                                  placeholder="Ville"
+                                  value={address.city}
+                                  onChange={(e) => {
+                                    const newAddresses = [...addresses];
+                                    const addrIndex = addresses.findIndex((a) => a.type === "PERSONAL");
+                                    newAddresses[addrIndex] = {
+                                      ...newAddresses[addrIndex],
+                                      city: e.target.value,
+                                    };
+                                    setAddresses(newAddresses);
+                                  }}
+                                  disabled={!isEditing}
+                                  className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
+                                />
+                              </div>
+                              <div className="relative">
+                                <Select
+                                  value={address.province}
+                                  onValueChange={(value: string) => {
+                                    const newAddresses = [...addresses];
+                                    const addrIndex = addresses.findIndex((a) => a.type === "PERSONAL");
+                                    newAddresses[addrIndex] = {
+                                      ...newAddresses[addrIndex],
+                                      province: value,
+                                    };
+                                    setAddresses(newAddresses);
+                                  }}
+                                  disabled={!isEditing}
+                                >
+                                  <SelectTrigger className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md">
+                                    <SelectValue placeholder="Province" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="QC">Québec (QC)</SelectItem>
+                                    <SelectItem value="ON">Ontario (ON)</SelectItem>
+                                    <SelectItem value="NL">Terre-Neuve-et-Labrador (NL)</SelectItem>
+                                    <SelectItem value="NS">Nouvelle-Écosse (NS)</SelectItem>
+                                    <SelectItem value="PE">Île-du-Prince-Édouard (PE)</SelectItem>
+                                    <SelectItem value="NB">Nouveau-Brunswick (NB)</SelectItem>
+                                    <SelectItem value="MB">Manitoba (MB)</SelectItem>
+                                    <SelectItem value="SK">Saskatchewan (SK)</SelectItem>
+                                    <SelectItem value="AB">Alberta (AB)</SelectItem>
+                                    <SelectItem value="BC">Colombie-Britannique (BC)</SelectItem>
+                                    <SelectItem value="YT">Yukon (YT)</SelectItem>
+                                    <SelectItem value="NT">Territoires du Nord-Ouest (NT)</SelectItem>
+                                    <SelectItem value="NU">Nunavut (NU)</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+
+                      {/* Affichage de l'adresse de travail si elle existe */}
+                      {addresses
+                        .filter((addr) => addr.type === "WORK")
+                        .map((address, index) => (
+                          <div
+                            key={`work-${index}`}
+                            className="p-4 border border-slate-200 rounded-lg space-y-4 bg-white/50"
+                          >
+                            <div className="flex justify-between items-center">
+                              <h4 className="font-semibold text-slate-700">Adresse de travail</h4>
+                              {isEditing && (
+                                <button
+                                  onClick={async () => {
+                                    try {
+                                      const response = await fetch(
+                                        `https://money-pie-2.fly.dev/api/v1/users/${userId}/addresses/WORK`,
+                                        {
+                                          method: "DELETE",
+                                          headers: {
+                                            Accept: "application/json",
+                                          },
+                                        },
+                                      );
+
+                                      if (!response.ok) {
+                                        throw new Error("Erreur lors de la suppression de l'adresse");
+                                      }
+
+                                      const newAddresses = addresses.filter((a) => a.type === "PERSONAL");
+                                      setAddresses(newAddresses);
+
+                                      toast.success("Adresse de travail supprimée avec succès!", {
+                                        style: {
+                                          backgroundColor: "white",
+                                          border: "1px solid #e2e8f0",
+                                          borderRadius: "0.5rem",
+                                        },
+                                      });
+                                    } catch (error) {
+                                      console.error("Erreur lors de la suppression:", error);
+                                      toast.error("Erreur lors de la suppression de l'adresse", {
+                                        style: {
+                                          backgroundColor: "white",
+                                          border: "1px solid #e2e8f0",
+                                          borderRadius: "0.5rem",
+                                        },
+                                      });
+                                    }
+                                  }}
+                                  className="px-3 py-1 text-red-600 text-sm border border-red-200 rounded hover:bg-red-50 transition-colors"
+                                >
+                                  Supprimer
+                                </button>
+                              )}
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="relative">
+                                <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
+                                  <LuMapPin className="w-4 h-4 text-[#433BFF]" />
+                                </div>
+                                <Input
+                                  type="text"
+                                  placeholder="Numéro civique"
+                                  value={address.streetNumber}
+                                  onChange={(e) => {
+                                    const newAddresses = [...addresses];
+                                    const addrIndex = addresses.findIndex((a) => a.type === "WORK");
+                                    newAddresses[addrIndex] = {
+                                      ...newAddresses[addrIndex],
+                                      streetNumber: e.target.value,
+                                    };
+                                    setAddresses(newAddresses);
+                                  }}
+                                  disabled={!isEditing}
+                                  className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
+                                />
+                              </div>
+                              <div className="relative">
+                                <Input
+                                  type="text"
+                                  placeholder="Nom de rue"
+                                  value={address.streetName}
+                                  onChange={(e) => {
+                                    const newAddresses = [...addresses];
+                                    const addrIndex = addresses.findIndex((a) => a.type === "WORK");
+                                    newAddresses[addrIndex] = {
+                                      ...newAddresses[addrIndex],
+                                      streetName: e.target.value,
+                                    };
+                                    setAddresses(newAddresses);
+                                  }}
+                                  disabled={!isEditing}
+                                  className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
+                                />
+                              </div>
+                              <div className="relative">
+                                <Input
+                                  type="text"
+                                  placeholder="Ville"
+                                  value={address.city}
+                                  onChange={(e) => {
+                                    const newAddresses = [...addresses];
+                                    const addrIndex = addresses.findIndex((a) => a.type === "WORK");
+                                    newAddresses[addrIndex] = {
+                                      ...newAddresses[addrIndex],
+                                      city: e.target.value,
+                                    };
+                                    setAddresses(newAddresses);
+                                  }}
+                                  disabled={!isEditing}
+                                  className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
+                                />
+                              </div>
+                              <div className="relative">
+                                <Select
+                                  value={address.province}
+                                  onValueChange={(value: string) => {
+                                    const newAddresses = [...addresses];
+                                    const addrIndex = addresses.findIndex((a) => a.type === "WORK");
+                                    newAddresses[addrIndex] = {
+                                      ...newAddresses[addrIndex],
+                                      province: value,
+                                    };
+                                    setAddresses(newAddresses);
+                                  }}
+                                  disabled={!isEditing}
+                                >
+                                  <SelectTrigger className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md">
+                                    <SelectValue placeholder="Province" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="QC">Québec (QC)</SelectItem>
+                                    <SelectItem value="ON">Ontario (ON)</SelectItem>
+                                    <SelectItem value="NL">Terre-Neuve-et-Labrador (NL)</SelectItem>
+                                    <SelectItem value="NS">Nouvelle-Écosse (NS)</SelectItem>
+                                    <SelectItem value="PE">Île-du-Prince-Édouard (PE)</SelectItem>
+                                    <SelectItem value="NB">Nouveau-Brunswick (NB)</SelectItem>
+                                    <SelectItem value="MB">Manitoba (MB)</SelectItem>
+                                    <SelectItem value="SK">Saskatchewan (SK)</SelectItem>
+                                    <SelectItem value="AB">Alberta (AB)</SelectItem>
+                                    <SelectItem value="BC">Colombie-Britannique (BC)</SelectItem>
+                                    <SelectItem value="YT">Yukon (YT)</SelectItem>
+                                    <SelectItem value="NT">Territoires du Nord-Ouest (NT)</SelectItem>
+                                    <SelectItem value="NU">Nunavut (NU)</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+
+                      {/* Bouton pour ajouter l'adresse de travail si elle n'existe pas */}
+                      {isEditing && !addresses.some((addr) => addr.type === "WORK") && (
+                        <button
+                          onClick={() => {
+                            setAddresses([
+                              ...addresses,
+                              {
+                                id: 0,
+                                streetNumber: "",
+                                streetName: "",
+                                city: "",
+                                province: "QC",
+                                country: "CA",
+                                type: "WORK",
+                              },
+                            ]);
+                          }}
+                          className="w-full px-4 py-2 text-[#433BFF] border border-[#433BFF] rounded-lg hover:bg-[#433BFF]/5 transition-colors font-medium"
                         >
-                          <SelectTrigger className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md">
-                            <SelectValue placeholder="Province" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="QC">Québec (QC)</SelectItem>
-                            <SelectItem value="ON">Ontario (ON)</SelectItem>
-                            <SelectItem value="NL">Terre-Neuve-et-Labrador (NL)</SelectItem>
-                            <SelectItem value="NS">Nouvelle-Écosse (NS)</SelectItem>
-                            <SelectItem value="PE">Île-du-Prince-Édouard (PE)</SelectItem>
-                            <SelectItem value="NB">Nouveau-Brunswick (NB)</SelectItem>
-                            <SelectItem value="MB">Manitoba (MB)</SelectItem>
-                            <SelectItem value="SK">Saskatchewan (SK)</SelectItem>
-                            <SelectItem value="AB">Alberta (AB)</SelectItem>
-                            <SelectItem value="BC">Colombie-Britannique (BC)</SelectItem>
-                            <SelectItem value="YT">Yukon (YT)</SelectItem>
-                            <SelectItem value="NT">Territoires du Nord-Ouest (NT)</SelectItem>
-                            <SelectItem value="NU">Nunavut (NU)</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+                          Ajouter une adresse de travail
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
