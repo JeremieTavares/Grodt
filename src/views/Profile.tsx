@@ -3,7 +3,7 @@ import {useParams} from "react-router";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Input} from "@/components/ui/input";
 import {toast, Toaster} from "sonner";
-import {LuUser, LuMail, LuPhone, LuLock, LuSave, LuX, LuPencil, LuCircleUser} from "react-icons/lu";
+import {LuUser, LuMail, LuPhone, LuLock, LuSave, LuX, LuPencil, LuCircleUser, LuCalendar} from "react-icons/lu";
 
 interface UserProfile {
   id: number;
@@ -12,6 +12,7 @@ interface UserProfile {
   email: string;
   phone: string;
   password: string;
+  birthDate: string;
 }
 
 export default function Profile() {
@@ -32,7 +33,7 @@ export default function Profile() {
         }
 
         const data = await response.json();
-        console.log("Données reçues:", data);
+        console.log("Données reçues du serveur:", data);
         setProfile(data);
       } catch (err) {
         console.error("Erreur:", err);
@@ -57,19 +58,45 @@ export default function Profile() {
   const handleSave = async () => {
     if (profile && userId) {
       try {
+        // Format the data before sending
+        const formattedProfile = {
+          id: profile.id,
+          firstName: profile.firstName,
+          lastName: profile.lastName,
+          email: profile.email,
+          phone: profile.phone,
+          password: profile.password,
+          birthDate: profile.birthDate ? new Date(profile.birthDate).toISOString() : null,
+          isActive: true,
+        };
+
+        console.log("Données envoyées au serveur:", JSON.stringify(formattedProfile, null, 2));
+
         const response = await fetch(`https://money-pie-2.fly.dev/api/v1/users/${userId}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            Accept: "application/json",
           },
-          body: JSON.stringify(profile),
+          body: JSON.stringify(formattedProfile),
         });
 
+        const responseText = await response.text();
+        console.log("Réponse brute du serveur:", responseText);
+
         if (!response.ok) {
-          throw new Error("Erreur lors de la sauvegarde");
+          let errorData;
+          try {
+            errorData = JSON.parse(responseText);
+          } catch (e) {
+            errorData = {message: responseText};
+          }
+          console.error("Erreur détaillée:", errorData);
+          throw new Error(errorData?.message || "Erreur lors de la sauvegarde");
         }
 
-        const data = await response.json();
+        const data = JSON.parse(responseText);
+        console.log("Données reçues après sauvegarde:", data);
         setProfile(data);
         setIsEditing(false);
         toast.success("Profil mis à jour avec succès!", {
@@ -80,7 +107,7 @@ export default function Profile() {
           },
         });
       } catch (error) {
-        console.error("Erreur:", error);
+        console.error("Erreur complète:", error);
         toast.error("Erreur lors de la sauvegarde", {
           style: {
             backgroundColor: "white",
@@ -144,23 +171,31 @@ export default function Profile() {
           </CardHeader>
 
           <CardContent className="pt-6">
-            <Card className="border-none shadow-[0_2px_8px_0px_rgba(67,59,255,0.08)] hover:shadow-[0_4px_12px_0px_rgba(67,59,255,0.12)] transition-shadow duration-200">
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="h-18 w-18 rounded-full bg-[#433BFF] flex items-center justify-center shadow-[0_2px_8px_0px_rgba(67,59,255,0.25)]">
-                    <LuUser className="h-10 w-10 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-slate-900 mb-1">
-                      {profile?.firstName} {profile?.lastName}
-                    </h3>
-                    <div className="flex items-center gap-2 text-sm text-slate-600">
-                      <LuMail className="h-4 w-4" />
-                      <span>{profile?.email}</span>
+            <Card className="border-none overflow-hidden bg-gradient-to-br from-white to-slate-50 shadow-[0_2px_8px_0px_rgba(67,59,255,0.08)] hover:shadow-[0_4px_12px_0px_rgba(67,59,255,0.12)] transition-all duration-300">
+              <CardContent className="p-8">
+                <div className="flex items-center gap-6">
+                  <div className="relative group">
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#433BFF] to-[#7A75FF] rounded-full blur-lg opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="h-24 w-24 rounded-full bg-gradient-to-br from-[#433BFF] to-[#7A75FF] flex items-center justify-center relative shadow-[0_2px_8px_0px_rgba(67,59,255,0.25)] group-hover:shadow-[0_4px_12px_0px_rgba(67,59,255,0.35)] transition-all duration-300">
+                      <LuUser className="h-12 w-12 text-white" />
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-slate-600 mt-1">
-                      <LuPhone className="h-4 w-4" />
-                      <span>{profile?.phone}</span>
+                  </div>
+                  <div className="flex-1 space-y-3">
+                    <div className="space-y-1">
+                      <h3 className="text-2xl font-bold text-slate-900">
+                        {profile?.firstName} {profile?.lastName}
+                      </h3>
+                      <div className="h-px w-24 bg-gradient-to-r from-[#433BFF] to-transparent"></div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-3 text-sm text-slate-600 bg-white/50 backdrop-blur-sm px-4 py-2 rounded-lg border border-slate-100 shadow-sm hover:shadow transition-shadow duration-200">
+                        <LuMail className="h-4 w-4 text-[#433BFF]" />
+                        <span className="font-medium">{profile?.email}</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-sm text-slate-600 bg-white/50 backdrop-blur-sm px-4 py-2 rounded-lg border border-slate-100 shadow-sm hover:shadow transition-shadow duration-200">
+                        <LuPhone className="h-4 w-4 text-[#433BFF]" />
+                        <span className="font-medium">{profile?.phone}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -169,76 +204,121 @@ export default function Profile() {
           </CardContent>
 
           <CardContent className="pt-6">
-            <Card className="bg-white border border-slate-200">
-              <CardHeader className="border-b">
-                <CardTitle className="text-xl font-semibold text-black tracking-tight">
-                  Renseignements personnels
-                </CardTitle>
+            <Card className="border-none overflow-hidden bg-gradient-to-br from-white to-slate-50 shadow-[0_2px_8px_0px_rgba(67,59,255,0.08)] hover:shadow-[0_4px_12px_0px_rgba(67,59,255,0.12)] transition-all duration-300">
+              <CardHeader className="border-b bg-white/50 backdrop-blur-sm">
+                <div className="flex items-center gap-3">
+                  <CardTitle className="text-xl font-bold text-slate-900 tracking-tight">
+                    Renseignements personnels
+                  </CardTitle>
+                </div>
               </CardHeader>
-              <CardContent className="pt-6">
+              <CardContent className="pt-8">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700 block tracking-tight">Nom</label>
+                  <div className="space-y-2 group">
+                    <label className="text-sm font-semibold text-slate-700 block tracking-tight flex items-center gap-2">
+                      <span>Nom</span>
+                      <div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent"></div>
+                    </label>
                     <div className="relative">
-                      <LuUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black w-4 h-4" />
+                      <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
+                        <LuUser className="w-4 h-4 text-[#433BFF]" />
+                      </div>
                       <Input
                         type="text"
                         value={profile?.lastName || ""}
                         onChange={handleChange("lastName")}
                         disabled={!isEditing}
-                        className="w-full bg-slate-50 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10"
+                        className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
                       />
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700 block tracking-tight">Prénom</label>
+                  <div className="space-y-2 group">
+                    <label className="text-sm font-semibold text-slate-700 block tracking-tight flex items-center gap-2">
+                      <span>Prénom</span>
+                      <div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent"></div>
+                    </label>
                     <div className="relative">
-                      <LuUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black w-4 h-4" />
+                      <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
+                        <LuUser className="w-4 h-4 text-[#433BFF]" />
+                      </div>
                       <Input
                         type="text"
                         value={profile?.firstName || ""}
                         onChange={handleChange("firstName")}
                         disabled={!isEditing}
-                        className="w-full bg-slate-50 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10"
+                        className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
                       />
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700 block tracking-tight">Mot de passe</label>
+                  <div className="space-y-2 group">
+                    <label className="text-sm font-semibold text-slate-700 block tracking-tight flex items-center gap-2">
+                      <span>Mot de passe</span>
+                      <div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent"></div>
+                    </label>
                     <div className="relative">
-                      <LuLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black w-4 h-4" />
+                      <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
+                        <LuLock className="w-4 h-4 text-[#433BFF]" />
+                      </div>
                       <Input
                         type="password"
                         value={profile?.password || ""}
                         onChange={handleChange("password")}
                         disabled={!isEditing}
-                        className="w-full bg-slate-50 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10"
+                        className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
                       />
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700 block tracking-tight">Courriel</label>
+                  <div className="space-y-2 group">
+                    <label className="text-sm font-semibold text-slate-700 block tracking-tight flex items-center gap-2">
+                      <span>Courriel</span>
+                      <div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent"></div>
+                    </label>
                     <div className="relative">
-                      <LuMail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black w-4 h-4" />
+                      <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
+                        <LuMail className="w-4 h-4 text-[#433BFF]" />
+                      </div>
                       <Input
                         type="email"
                         value={profile?.email || ""}
                         onChange={handleChange("email")}
                         disabled={!isEditing}
-                        className="w-full bg-slate-50 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10"
+                        className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
                       />
                     </div>
                   </div>
-                  <div className="space-y-2 lg:col-span-2">
-                    <label className="text-sm font-medium text-slate-700 block tracking-tight">Téléphone</label>
+                  <div className="space-y-2 group">
+                    <label className="text-sm font-semibold text-slate-700 block tracking-tight flex items-center gap-2">
+                      <span>Date de naissance</span>
+                      <div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent"></div>
+                    </label>
                     <div className="relative">
-                      <LuPhone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black w-4 h-4" />
+                      <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
+                        <LuCalendar className="w-4 h-4 text-[#433BFF]" />
+                      </div>
+                      <Input
+                        type="date"
+                        value={profile?.birthDate ? profile.birthDate.split("T")[0] : ""}
+                        onChange={handleChange("birthDate")}
+                        disabled={!isEditing}
+                        className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2 lg:col-span-2 group">
+                    <label className="text-sm font-semibold text-slate-700 block tracking-tight flex items-center gap-2">
+                      <span>Téléphone</span>
+                      <div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent"></div>
+                    </label>
+                    <div className="relative">
+                      <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
+                        <LuPhone className="w-4 h-4 text-[#433BFF]" />
+                      </div>
                       <Input
                         type="tel"
                         value={profile?.phone || ""}
                         onChange={handleChange("phone")}
                         disabled={!isEditing}
-                        className="w-full bg-slate-50 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10"
+                        className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
                       />
                     </div>
                   </div>
