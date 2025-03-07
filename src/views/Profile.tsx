@@ -2,60 +2,11 @@ import {useEffect, useState} from "react";
 import {useParams} from "react-router";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Input} from "@/components/ui/input";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {toast, Toaster} from "sonner";
-import {
-  LuUser,
-  LuMail,
-  LuPhone,
-  LuLock,
-  LuSave,
-  LuX,
-  LuPencil,
-  LuCircleUser,
-  LuCalendar,
-  LuMapPin,
-} from "react-icons/lu";
+import {LuUser, LuMail, LuPhone, LuLock, LuSave, LuX, LuPencil, LuCircleUser, LuCalendar} from "react-icons/lu";
 import {Address, UserProfile} from "@/types/interfaces";
-
-// Constante pour les provinces
-const PROVINCES = [
-  {value: "QC", label: "Québec (QC)"},
-  {value: "ON", label: "Ontario (ON)"},
-  {value: "NL", label: "Terre-Neuve-et-Labrador (NL)"},
-  {value: "NS", label: "Nouvelle-Écosse (NS)"},
-  {value: "PE", label: "Île-du-Prince-Édouard (PE)"},
-  {value: "NB", label: "Nouveau-Brunswick (NB)"},
-  {value: "MB", label: "Manitoba (MB)"},
-  {value: "SK", label: "Saskatchewan (SK)"},
-  {value: "AB", label: "Alberta (AB)"},
-  {value: "BC", label: "Colombie-Britannique (BC)"},
-  {value: "YT", label: "Yukon (YT)"},
-  {value: "NT", label: "Territoires du Nord-Ouest (NT)"},
-  {value: "NU", label: "Nunavut (NU)"},
-] as const;
-
-// Composant réutilisable pour le sélecteur de province
-interface ProvinceSelectProps {
-  value: string;
-  onValueChange: (value: string) => void;
-  disabled?: boolean;
-}
-
-const ProvinceSelect = ({value, onValueChange, disabled}: ProvinceSelectProps) => (
-  <Select value={value} onValueChange={onValueChange} disabled={disabled}>
-    <SelectTrigger className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md">
-      <SelectValue placeholder="Province" />
-    </SelectTrigger>
-    <SelectContent>
-      {PROVINCES.map((province) => (
-        <SelectItem key={province.value} value={province.value}>
-          {province.label}
-        </SelectItem>
-      ))}
-    </SelectContent>
-  </Select>
-);
+import {AddressForm} from "@/components/AddressForm";
+import {FormCard} from "@/components/FormCard";
 
 export default function Profile() {
   // États pour gérer les données et l'état d'édition du profil
@@ -329,303 +280,104 @@ export default function Profile() {
               {/* Formulaire des informations personnelles */}
               <CardContent className="pt-8">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div className="space-y-2 group">
-                    <label className="text-sm font-semibold text-slate-700 block tracking-tight flex items-center gap-2">
-                      <span>Nom</span>
-                      <div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent"></div>
-                    </label>
-                    <div className="relative">
-                      <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
-                        <LuUser className="w-4 h-4 text-[#433BFF]" />
-                      </div>
-                      <Input
-                        type="text"
-                        value={profile?.lastName || ""}
-                        onChange={handleChange("lastName")}
-                        disabled={!isEditing}
-                        className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2 group">
-                    <label className="text-sm font-semibold text-slate-700 block tracking-tight flex items-center gap-2">
-                      <span>Prénom</span>
-                      <div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent"></div>
-                    </label>
-                    <div className="relative">
-                      <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
-                        <LuUser className="w-4 h-4 text-[#433BFF]" />
-                      </div>
-                      <Input
-                        type="text"
-                        value={profile?.firstName || ""}
-                        onChange={handleChange("firstName")}
-                        disabled={!isEditing}
-                        className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2 group">
-                    <label className="text-sm font-semibold text-slate-700 block tracking-tight flex items-center gap-2">
-                      <span>Mot de passe</span>
-                      <div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent"></div>
-                    </label>
-                    <div className="relative">
-                      <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
-                        <LuLock className="w-4 h-4 text-[#433BFF]" />
-                      </div>
-                      <Input
-                        type="password"
-                        value={profile?.password || ""}
-                        onChange={handleChange("password")}
-                        disabled={!isEditing}
-                        className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2 group">
-                    <label className="text-sm font-semibold text-slate-700 block tracking-tight flex items-center gap-2">
-                      <span>Courriel</span>
-                      <div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent"></div>
-                    </label>
-                    <div className="relative">
-                      <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
-                        <LuMail className="w-4 h-4 text-[#433BFF]" />
-                      </div>
-                      <Input
-                        type="email"
-                        value={profile?.email || ""}
-                        onChange={handleChange("email")}
-                        disabled={!isEditing}
-                        className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2 group">
-                    <label className="text-sm font-semibold text-slate-700 block tracking-tight flex items-center gap-2">
-                      <span>Date de naissance</span>
-                      <div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent"></div>
-                    </label>
-                    <div className="relative">
-                      <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
-                        <LuCalendar className="w-4 h-4 text-[#433BFF]" />
-                      </div>
-                      <Input
-                        type="date"
-                        value={profile?.birthDate ? profile.birthDate.split("T")[0] : ""}
-                        onChange={handleChange("birthDate")}
-                        disabled={!isEditing}
-                        className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2 lg:col-span-2 group">
-                    <label className="text-sm font-semibold text-slate-700 block tracking-tight flex items-center gap-2">
-                      <span>Téléphone</span>
-                      <div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent"></div>
-                    </label>
-                    <div className="relative">
-                      <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
-                        <LuPhone className="w-4 h-4 text-[#433BFF]" />
-                      </div>
-                      <Input
-                        type="tel"
-                        value={profile?.phone || ""}
-                        onChange={handleChange("phone")}
-                        disabled={!isEditing}
-                        className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
-                      />
-                    </div>
-                  </div>
+                  <FormCard title="Nom" icon={LuUser}>
+                    <Input
+                      type="text"
+                      value={profile?.lastName || ""}
+                      onChange={handleChange("lastName")}
+                      disabled={!isEditing}
+                      className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
+                    />
+                  </FormCard>
+
+                  <FormCard title="Prénom" icon={LuUser}>
+                    <Input
+                      type="text"
+                      value={profile?.firstName || ""}
+                      onChange={handleChange("firstName")}
+                      disabled={!isEditing}
+                      className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
+                    />
+                  </FormCard>
+
+                  <FormCard title="Mot de passe" icon={LuLock}>
+                    <Input
+                      type="password"
+                      value={profile?.password || ""}
+                      onChange={handleChange("password")}
+                      disabled={!isEditing}
+                      className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
+                    />
+                  </FormCard>
+
+                  <FormCard title="Courriel" icon={LuMail}>
+                    <Input
+                      type="email"
+                      value={profile?.email || ""}
+                      onChange={handleChange("email")}
+                      disabled={!isEditing}
+                      className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
+                    />
+                  </FormCard>
+
+                  <FormCard title="Date de naissance" icon={LuCalendar}>
+                    <Input
+                      type="date"
+                      value={profile?.birthDate ? profile.birthDate.split("T")[0] : ""}
+                      onChange={handleChange("birthDate")}
+                      disabled={!isEditing}
+                      className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
+                    />
+                  </FormCard>
+
+                  <FormCard title="Téléphone" icon={LuPhone}>
+                    <Input
+                      type="tel"
+                      value={profile?.phone || ""}
+                      onChange={handleChange("phone")}
+                      disabled={!isEditing}
+                      className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
+                    />
+                  </FormCard>
+
                   {/* Section des adresses */}
-                  <div className="space-y-2 lg:col-span-2 group">
-                    <label className="text-sm font-semibold text-slate-700 block tracking-tight flex items-center gap-2">
-                      <span>Adresses</span>
-                      <div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent"></div>
-                    </label>
+                  <FormCard title="Adresses" className="lg:col-span-2">
                     <div className="space-y-4">
                       {/* Adresse personnelle */}
                       {addresses
                         .filter((addr) => addr.type === "PERSONAL")
-                        .map((address, index) => (
-                          <div
-                            key={`personal-${index}`}
-                            className="p-4 border border-slate-200 rounded-lg space-y-4 bg-white/50"
-                          >
-                            <div className="flex justify-between items-center">
-                              <h4 className="font-semibold text-slate-700">Adresse personnelle</h4>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div className="relative">
-                                <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
-                                  <LuMapPin className="w-4 h-4 text-[#433BFF]" />
-                                </div>
-                                <Input
-                                  type="text"
-                                  placeholder="Numéro civique"
-                                  value={address.streetNumber}
-                                  onChange={(e) => {
-                                    const newAddresses = [...addresses];
-                                    const addrIndex = addresses.findIndex((a) => a.type === "PERSONAL");
-                                    newAddresses[addrIndex] = {
-                                      ...newAddresses[addrIndex],
-                                      streetNumber: e.target.value,
-                                    };
-                                    setAddresses(newAddresses);
-                                  }}
-                                  disabled={!isEditing}
-                                  className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
-                                />
-                              </div>
-                              <div className="relative">
-                                <Input
-                                  type="text"
-                                  placeholder="Nom de rue"
-                                  value={address.streetName}
-                                  onChange={(e) => {
-                                    const newAddresses = [...addresses];
-                                    const addrIndex = addresses.findIndex((a) => a.type === "PERSONAL");
-                                    newAddresses[addrIndex] = {
-                                      ...newAddresses[addrIndex],
-                                      streetName: e.target.value,
-                                    };
-                                    setAddresses(newAddresses);
-                                  }}
-                                  disabled={!isEditing}
-                                  className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
-                                />
-                              </div>
-                              <div className="relative">
-                                <Input
-                                  type="text"
-                                  placeholder="Ville"
-                                  value={address.city}
-                                  onChange={(e) => {
-                                    const newAddresses = [...addresses];
-                                    const addrIndex = addresses.findIndex((a) => a.type === "PERSONAL");
-                                    newAddresses[addrIndex] = {
-                                      ...newAddresses[addrIndex],
-                                      city: e.target.value,
-                                    };
-                                    setAddresses(newAddresses);
-                                  }}
-                                  disabled={!isEditing}
-                                  className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
-                                />
-                              </div>
-                              <div className="relative">
-                                <ProvinceSelect
-                                  value={address.province}
-                                  onValueChange={(value: string) => {
-                                    const newAddresses = [...addresses];
-                                    const addrIndex = addresses.findIndex((a) => a.type === "PERSONAL");
-                                    newAddresses[addrIndex] = {
-                                      ...newAddresses[addrIndex],
-                                      province: value,
-                                    };
-                                    setAddresses(newAddresses);
-                                  }}
-                                  disabled={!isEditing}
-                                />
-                              </div>
-                            </div>
-                          </div>
+                        .map((address) => (
+                          <AddressForm
+                            key={`personal-${address.id}`}
+                            address={address}
+                            type="PERSONAL"
+                            isEditing={isEditing}
+                            onUpdate={(updatedAddress) => {
+                              const newAddresses = addresses.map((addr) =>
+                                addr.type === "PERSONAL" ? updatedAddress : addr,
+                              );
+                              setAddresses(newAddresses);
+                            }}
+                          />
                         ))}
 
                       {/* Adresse de travail */}
                       {addresses
                         .filter((addr) => addr.type === "WORK")
-                        .map((address, index) => (
-                          <div
-                            key={`work-${index}`}
-                            className="p-4 border border-slate-200 rounded-lg space-y-4 bg-white/50"
-                          >
-                            <div className="flex justify-between items-center">
-                              <h4 className="font-semibold text-slate-700">Adresse de travail</h4>
-                              {isEditing && (
-                                <button
-                                  onClick={deleteWorkAddress}
-                                  className="px-3 py-1 text-red-600 text-sm border border-red-200 rounded hover:bg-red-50 transition-colors"
-                                >
-                                  Supprimer
-                                </button>
-                              )}
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div className="relative">
-                                <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
-                                  <LuMapPin className="w-4 h-4 text-[#433BFF]" />
-                                </div>
-                                <Input
-                                  type="text"
-                                  placeholder="Numéro civique"
-                                  value={address.streetNumber}
-                                  onChange={(e) => {
-                                    const newAddresses = [...addresses];
-                                    const addrIndex = addresses.findIndex((a) => a.type === "WORK");
-                                    newAddresses[addrIndex] = {
-                                      ...newAddresses[addrIndex],
-                                      streetNumber: e.target.value,
-                                    };
-                                    setAddresses(newAddresses);
-                                  }}
-                                  disabled={!isEditing}
-                                  className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
-                                />
-                              </div>
-                              <div className="relative">
-                                <Input
-                                  type="text"
-                                  placeholder="Nom de rue"
-                                  value={address.streetName}
-                                  onChange={(e) => {
-                                    const newAddresses = [...addresses];
-                                    const addrIndex = addresses.findIndex((a) => a.type === "WORK");
-                                    newAddresses[addrIndex] = {
-                                      ...newAddresses[addrIndex],
-                                      streetName: e.target.value,
-                                    };
-                                    setAddresses(newAddresses);
-                                  }}
-                                  disabled={!isEditing}
-                                  className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
-                                />
-                              </div>
-                              <div className="relative">
-                                <Input
-                                  type="text"
-                                  placeholder="Ville"
-                                  value={address.city}
-                                  onChange={(e) => {
-                                    const newAddresses = [...addresses];
-                                    const addrIndex = addresses.findIndex((a) => a.type === "WORK");
-                                    newAddresses[addrIndex] = {
-                                      ...newAddresses[addrIndex],
-                                      city: e.target.value,
-                                    };
-                                    setAddresses(newAddresses);
-                                  }}
-                                  disabled={!isEditing}
-                                  className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
-                                />
-                              </div>
-                              <div className="relative">
-                                <ProvinceSelect
-                                  value={address.province}
-                                  onValueChange={(value: string) => {
-                                    const newAddresses = [...addresses];
-                                    const addrIndex = addresses.findIndex((a) => a.type === "WORK");
-                                    newAddresses[addrIndex] = {
-                                      ...newAddresses[addrIndex],
-                                      province: value,
-                                    };
-                                    setAddresses(newAddresses);
-                                  }}
-                                  disabled={!isEditing}
-                                />
-                              </div>
-                            </div>
-                          </div>
+                        .map((address) => (
+                          <AddressForm
+                            key={`work-${address.id}`}
+                            address={address}
+                            type="WORK"
+                            isEditing={isEditing}
+                            onDelete={deleteWorkAddress}
+                            onUpdate={(updatedAddress) => {
+                              const newAddresses = addresses.map((addr) =>
+                                addr.type === "WORK" ? updatedAddress : addr,
+                              );
+                              setAddresses(newAddresses);
+                            }}
+                          />
                         ))}
 
                       {/* Bouton d'ajout d'adresse de travail */}
@@ -651,7 +403,7 @@ export default function Profile() {
                         </button>
                       )}
                     </div>
-                  </div>
+                  </FormCard>
                 </div>
               </CardContent>
             </Card>
