@@ -2,9 +2,33 @@ import {useEffect, useState} from "react";
 import {useParams} from "react-router";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Input} from "@/components/ui/input";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {toast, Toaster} from "sonner";
-import {LuUser, LuMail, LuPhone, LuLock, LuSave, LuX, LuPencil, LuCircleUser, LuCalendar} from "react-icons/lu";
+import {
+  LuUser,
+  LuMail,
+  LuPhone,
+  LuLock,
+  LuSave,
+  LuX,
+  LuPencil,
+  LuCircleUser,
+  LuCalendar,
+  LuMapPin,
+} from "react-icons/lu";
 
+// Interface pour une adresse
+interface Address {
+  id: number;
+  streetNumber: string;
+  streetName: string;
+  city: string;
+  province: string;
+  country: string;
+  type: string;
+}
+
+// Interface pour profil utilisateur
 interface UserProfile {
   id: number;
   firstName: string;
@@ -13,15 +37,20 @@ interface UserProfile {
   phone: string;
   password: string;
   birthDate: string;
+  isActive: boolean;
 }
 
 export default function Profile() {
+  // États pour gérer les données et l'état d'édition du profil
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [addresses, setAddresses] = useState<Address[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [, setError] = useState<string | null>(null);
   const {userId} = useParams();
 
+  // Effet pour charger les données du profil et des adresses au chargement
   useEffect(() => {
+    // Fonction pour récupérer les données du profil depuis l'API
     const fetchProfile = async () => {
       try {
         const response = await fetch(`https://money-pie-2.fly.dev/api/v1/users/${userId}`, {
@@ -41,11 +70,32 @@ export default function Profile() {
       }
     };
 
+    // Fonction pour récupérer les adresses depuis l'API
+    const fetchAddresses = async () => {
+      try {
+        const response = await fetch(`https://money-pie-2.fly.dev/api/v1/users/${userId}/addresses`, {
+          method: "GET",
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP erreur status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("Adresses reçues:", data);
+        setAddresses(data);
+      } catch (err) {
+        console.error("Erreur lors de la récupération des adresses:", err);
+      }
+    };
+
     if (userId) {
       fetchProfile();
+      fetchAddresses();
     }
   }, [userId]);
 
+  // Gestion de changement pour les champs du profil
   const handleChange = (field: keyof UserProfile) => (e: React.ChangeEvent<HTMLInputElement>) => {
     if (profile) {
       setProfile({
@@ -55,24 +105,45 @@ export default function Profile() {
     }
   };
 
+  // Gestion de changement pour les champs d'adresse
+  const handleAddressChange = (field: keyof Address) => (e: React.ChangeEvent<HTMLInputElement> | string) => {
+    if (addresses.length > 0) {
+      const newAddresses = [...addresses];
+      newAddresses[0] = {
+        ...newAddresses[0],
+        [field]: typeof e === "string" ? e : e.target.value,
+      };
+      setAddresses(newAddresses);
+    } else {
+      // Création d'une nouvelle adresse si aucune n'existe
+      setAddresses([
+        {
+          id: 0,
+          streetNumber: "",
+          streetName: "",
+          city: "",
+          province: typeof e === "string" ? e : "QC",
+          country: "CA",
+          type: "PERSONAL",
+          [field]: typeof e === "string" ? e : e.target.value,
+        },
+      ]);
+    }
+  };
+
+  // Fonction pour sauvegarder les modifications du profil et de l'adresse
   const handleSave = async () => {
     if (profile && userId) {
       try {
-        // Format the data before sending
+        // Formatage et envoi des données du profil
         const formattedProfile = {
-          id: profile.id,
-          firstName: profile.firstName,
-          lastName: profile.lastName,
-          email: profile.email,
-          phone: profile.phone,
-          password: profile.password,
+          ...profile,
           birthDate: profile.birthDate ? new Date(profile.birthDate).toISOString() : null,
-          isActive: true,
         };
 
-        console.log("Données envoyées au serveur:", JSON.stringify(formattedProfile, null, 2));
+        console.log("Données du profil envoyées:", JSON.stringify(formattedProfile, null, 2));
 
-        const response = await fetch(`https://money-pie-2.fly.dev/api/v1/users/${userId}`, {
+        const profileResponse = await fetch(`https://money-pie-2.fly.dev/api/v1/users/${userId}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -81,23 +152,27 @@ export default function Profile() {
           body: JSON.stringify(formattedProfile),
         });
 
-        const responseText = await response.text();
-        console.log("Réponse brute du serveur:", responseText);
-
-        if (!response.ok) {
-          let errorData;
-          try {
-            errorData = JSON.parse(responseText);
-          } catch (e) {
-            errorData = {message: responseText};
-          }
-          console.error("Erreur détaillée:", errorData);
-          throw new Error(errorData?.message || "Erreur lors de la sauvegarde");
+        if (!profileResponse.ok) {
+          throw new Error("Erreur lors de la sauvegarde du profil");
         }
 
-        const data = JSON.parse(responseText);
-        console.log("Données reçues après sauvegarde:", data);
-        setProfile(data);
+        // Sauvegarde de l'adresse si elle existe
+        if (addresses.length > 0) {
+          const addressResponse = await fetch(`https://money-pie-2.fly.dev/api/v1/users/${userId}/addresses`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: JSON.stringify(addresses[0]),
+          });
+
+          if (!addressResponse.ok) {
+            throw new Error("Erreur lors de la sauvegarde de l'adresse");
+          }
+        }
+
+        // Désactivation du mode édition et affichage du message de succès
         setIsEditing(false);
         toast.success("Profil mis à jour avec succès!", {
           style: {
@@ -320,6 +395,73 @@ export default function Profile() {
                         disabled={!isEditing}
                         className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
                       />
+                    </div>
+                  </div>
+                  <div className="space-y-2 lg:col-span-2 group">
+                    <label className="text-sm font-semibold text-slate-700 block tracking-tight flex items-center gap-2">
+                      <span>Adresse</span>
+                      <div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent"></div>
+                    </label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="relative">
+                        <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
+                          <LuMapPin className="w-4 h-4 text-[#433BFF]" />
+                        </div>
+                        <Input
+                          type="text"
+                          placeholder="Numéro civique"
+                          value={addresses[0]?.streetNumber || ""}
+                          onChange={handleAddressChange("streetNumber")}
+                          disabled={!isEditing}
+                          className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
+                        />
+                      </div>
+                      <div className="relative">
+                        <Input
+                          type="text"
+                          placeholder="Nom de rue"
+                          value={addresses[0]?.streetName || ""}
+                          onChange={handleAddressChange("streetName")}
+                          disabled={!isEditing}
+                          className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
+                        />
+                      </div>
+                      <div className="relative">
+                        <Input
+                          type="text"
+                          placeholder="Ville"
+                          value={addresses[0]?.city || ""}
+                          onChange={handleAddressChange("city")}
+                          disabled={!isEditing}
+                          className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
+                        />
+                      </div>
+                      <div className="relative">
+                        <Select
+                          value={addresses[0]?.province || "QC"}
+                          onValueChange={(value: string) => handleAddressChange("province")(value)}
+                          disabled={!isEditing}
+                        >
+                          <SelectTrigger className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md">
+                            <SelectValue placeholder="Province" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="QC">Québec (QC)</SelectItem>
+                            <SelectItem value="ON">Ontario (ON)</SelectItem>
+                            <SelectItem value="NL">Terre-Neuve-et-Labrador (NL)</SelectItem>
+                            <SelectItem value="NS">Nouvelle-Écosse (NS)</SelectItem>
+                            <SelectItem value="PE">Île-du-Prince-Édouard (PE)</SelectItem>
+                            <SelectItem value="NB">Nouveau-Brunswick (NB)</SelectItem>
+                            <SelectItem value="MB">Manitoba (MB)</SelectItem>
+                            <SelectItem value="SK">Saskatchewan (SK)</SelectItem>
+                            <SelectItem value="AB">Alberta (AB)</SelectItem>
+                            <SelectItem value="BC">Colombie-Britannique (BC)</SelectItem>
+                            <SelectItem value="YT">Yukon (YT)</SelectItem>
+                            <SelectItem value="NT">Territoires du Nord-Ouest (NT)</SelectItem>
+                            <SelectItem value="NU">Nunavut (NU)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
                   </div>
                 </div>
