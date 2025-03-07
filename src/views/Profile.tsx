@@ -18,6 +18,45 @@ import {
 } from "react-icons/lu";
 import {Address, UserProfile} from "@/types/interfaces";
 
+// Constante pour les provinces
+const PROVINCES = [
+  {value: "QC", label: "Québec (QC)"},
+  {value: "ON", label: "Ontario (ON)"},
+  {value: "NL", label: "Terre-Neuve-et-Labrador (NL)"},
+  {value: "NS", label: "Nouvelle-Écosse (NS)"},
+  {value: "PE", label: "Île-du-Prince-Édouard (PE)"},
+  {value: "NB", label: "Nouveau-Brunswick (NB)"},
+  {value: "MB", label: "Manitoba (MB)"},
+  {value: "SK", label: "Saskatchewan (SK)"},
+  {value: "AB", label: "Alberta (AB)"},
+  {value: "BC", label: "Colombie-Britannique (BC)"},
+  {value: "YT", label: "Yukon (YT)"},
+  {value: "NT", label: "Territoires du Nord-Ouest (NT)"},
+  {value: "NU", label: "Nunavut (NU)"},
+] as const;
+
+// Composant réutilisable pour le sélecteur de province
+interface ProvinceSelectProps {
+  value: string;
+  onValueChange: (value: string) => void;
+  disabled?: boolean;
+}
+
+const ProvinceSelect = ({value, onValueChange, disabled}: ProvinceSelectProps) => (
+  <Select value={value} onValueChange={onValueChange} disabled={disabled}>
+    <SelectTrigger className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md">
+      <SelectValue placeholder="Province" />
+    </SelectTrigger>
+    <SelectContent>
+      {PROVINCES.map((province) => (
+        <SelectItem key={province.value} value={province.value}>
+          {province.label}
+        </SelectItem>
+      ))}
+    </SelectContent>
+  </Select>
+);
+
 export default function Profile() {
   // États pour gérer les données et l'état d'édition du profil
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -25,6 +64,42 @@ export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [, setError] = useState<string | null>(null);
   const {userId} = useParams();
+
+  // Fonction pour supprimer l'adresse de travail
+  const deleteWorkAddress = async () => {
+    try {
+      const response = await fetch(`https://money-pie-2.fly.dev/api/v1/users/${userId}/addresses/WORK`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de la suppression de l'adresse");
+      }
+
+      const newAddresses = addresses.filter((a) => a.type === "PERSONAL");
+      setAddresses(newAddresses);
+
+      toast.success("Adresse de travail supprimée avec succès!", {
+        style: {
+          backgroundColor: "white",
+          border: "1px solid #e2e8f0",
+          borderRadius: "0.5rem",
+        },
+      });
+    } catch (error) {
+      console.error("Erreur lors de la suppression:", error);
+      toast.error("Erreur lors de la suppression de l'adresse", {
+        style: {
+          backgroundColor: "white",
+          border: "1px solid #e2e8f0",
+          borderRadius: "0.5rem",
+        },
+      });
+    }
+  };
 
   // Effet pour charger les données du profil et des adresses au chargement
   useEffect(() => {
@@ -151,6 +226,7 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-slate-100 py-8 px-4 sm:px-6 lg:px-8">
+      {/* Configuration du système de notifications toast */}
       <Toaster
         position="top-right"
         toastOptions={{
@@ -163,13 +239,17 @@ export default function Profile() {
           },
         }}
       />
+      {/* Conteneur de la carte principale avec largeur maximale */}
       <div className="mx-auto max-w-3xl">
         <Card className="shadow-lg">
+          {/* En-tête de la carte avec titre et boutons d'action */}
           <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0 pb-7 border-b">
+            {/* Titre avec icône */}
             <div className="flex items-center gap-3">
               <LuCircleUser className="w-8 h-8 text-[#433BFF]" />
               <CardTitle className="text-2xl font-bold text-slate-800 tracking-tight">Détail du profil</CardTitle>
             </div>
+            {/* Boutons d'action (édition/sauvegarde) */}
             <div className="flex gap-2 w-full sm:w-auto">
               {isEditing ? (
                 <>
@@ -200,6 +280,7 @@ export default function Profile() {
             </div>
           </CardHeader>
 
+          {/* Section de la carte de profil avec photo */}
           <CardContent className="pt-6">
             <Card className="border-none overflow-hidden bg-gradient-to-br from-white to-slate-50 shadow-[0_2px_8px_0px_rgba(67,59,255,0.08)] hover:shadow-[0_4px_12px_0px_rgba(67,59,255,0.12)] transition-all duration-300">
               <CardContent className="p-8">
@@ -210,6 +291,7 @@ export default function Profile() {
                       <LuUser className="h-12 w-12 text-white" />
                     </div>
                   </div>
+                  {/* Informations principales (nom et contacts) */}
                   <div className="flex-1 space-y-3">
                     <div className="space-y-1">
                       <h3 className="text-2xl font-bold text-slate-900">
@@ -217,6 +299,7 @@ export default function Profile() {
                       </h3>
                       <div className="h-px w-24 bg-gradient-to-r from-[#433BFF] to-transparent"></div>
                     </div>
+                    {/* Badges d'information (email et téléphone) */}
                     <div className="space-y-2">
                       <div className="flex items-center gap-3 text-sm text-slate-600 bg-white/50 backdrop-blur-sm px-4 py-2 rounded-lg border border-slate-100 shadow-sm hover:shadow transition-shadow duration-200">
                         <LuMail className="h-4 w-4 text-[#433BFF]" />
@@ -233,6 +316,7 @@ export default function Profile() {
             </Card>
           </CardContent>
 
+          {/* Section des informations détaillées */}
           <CardContent className="pt-6">
             <Card className="border-none overflow-hidden bg-gradient-to-br from-white to-slate-50 shadow-[0_2px_8px_0px_rgba(67,59,255,0.08)] hover:shadow-[0_4px_12px_0px_rgba(67,59,255,0.12)] transition-all duration-300">
               <CardHeader className="border-b bg-white/50 backdrop-blur-sm">
@@ -242,6 +326,7 @@ export default function Profile() {
                   </CardTitle>
                 </div>
               </CardHeader>
+              {/* Formulaire des informations personnelles */}
               <CardContent className="pt-8">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div className="space-y-2 group">
@@ -352,13 +437,14 @@ export default function Profile() {
                       />
                     </div>
                   </div>
+                  {/* Section des adresses */}
                   <div className="space-y-2 lg:col-span-2 group">
                     <label className="text-sm font-semibold text-slate-700 block tracking-tight flex items-center gap-2">
                       <span>Adresses</span>
                       <div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent"></div>
                     </label>
                     <div className="space-y-4">
-                      {/* Affichage de l'adresse personnelle en premier */}
+                      {/* Adresse personnelle */}
                       {addresses
                         .filter((addr) => addr.type === "PERSONAL")
                         .map((address, index) => (
@@ -428,7 +514,7 @@ export default function Profile() {
                                 />
                               </div>
                               <div className="relative">
-                                <Select
+                                <ProvinceSelect
                                   value={address.province}
                                   onValueChange={(value: string) => {
                                     const newAddresses = [...addresses];
@@ -440,32 +526,13 @@ export default function Profile() {
                                     setAddresses(newAddresses);
                                   }}
                                   disabled={!isEditing}
-                                >
-                                  <SelectTrigger className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md">
-                                    <SelectValue placeholder="Province" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="QC">Québec (QC)</SelectItem>
-                                    <SelectItem value="ON">Ontario (ON)</SelectItem>
-                                    <SelectItem value="NL">Terre-Neuve-et-Labrador (NL)</SelectItem>
-                                    <SelectItem value="NS">Nouvelle-Écosse (NS)</SelectItem>
-                                    <SelectItem value="PE">Île-du-Prince-Édouard (PE)</SelectItem>
-                                    <SelectItem value="NB">Nouveau-Brunswick (NB)</SelectItem>
-                                    <SelectItem value="MB">Manitoba (MB)</SelectItem>
-                                    <SelectItem value="SK">Saskatchewan (SK)</SelectItem>
-                                    <SelectItem value="AB">Alberta (AB)</SelectItem>
-                                    <SelectItem value="BC">Colombie-Britannique (BC)</SelectItem>
-                                    <SelectItem value="YT">Yukon (YT)</SelectItem>
-                                    <SelectItem value="NT">Territoires du Nord-Ouest (NT)</SelectItem>
-                                    <SelectItem value="NU">Nunavut (NU)</SelectItem>
-                                  </SelectContent>
-                                </Select>
+                                />
                               </div>
                             </div>
                           </div>
                         ))}
 
-                      {/* Affichage de l'adresse de travail si elle existe */}
+                      {/* Adresse de travail */}
                       {addresses
                         .filter((addr) => addr.type === "WORK")
                         .map((address, index) => (
@@ -477,43 +544,7 @@ export default function Profile() {
                               <h4 className="font-semibold text-slate-700">Adresse de travail</h4>
                               {isEditing && (
                                 <button
-                                  onClick={async () => {
-                                    try {
-                                      const response = await fetch(
-                                        `https://money-pie-2.fly.dev/api/v1/users/${userId}/addresses/WORK`,
-                                        {
-                                          method: "DELETE",
-                                          headers: {
-                                            Accept: "application/json",
-                                          },
-                                        },
-                                      );
-
-                                      if (!response.ok) {
-                                        throw new Error("Erreur lors de la suppression de l'adresse");
-                                      }
-
-                                      const newAddresses = addresses.filter((a) => a.type === "PERSONAL");
-                                      setAddresses(newAddresses);
-
-                                      toast.success("Adresse de travail supprimée avec succès!", {
-                                        style: {
-                                          backgroundColor: "white",
-                                          border: "1px solid #e2e8f0",
-                                          borderRadius: "0.5rem",
-                                        },
-                                      });
-                                    } catch (error) {
-                                      console.error("Erreur lors de la suppression:", error);
-                                      toast.error("Erreur lors de la suppression de l'adresse", {
-                                        style: {
-                                          backgroundColor: "white",
-                                          border: "1px solid #e2e8f0",
-                                          borderRadius: "0.5rem",
-                                        },
-                                      });
-                                    }
-                                  }}
+                                  onClick={deleteWorkAddress}
                                   className="px-3 py-1 text-red-600 text-sm border border-red-200 rounded hover:bg-red-50 transition-colors"
                                 >
                                   Supprimer
@@ -579,7 +610,7 @@ export default function Profile() {
                                 />
                               </div>
                               <div className="relative">
-                                <Select
+                                <ProvinceSelect
                                   value={address.province}
                                   onValueChange={(value: string) => {
                                     const newAddresses = [...addresses];
@@ -591,32 +622,13 @@ export default function Profile() {
                                     setAddresses(newAddresses);
                                   }}
                                   disabled={!isEditing}
-                                >
-                                  <SelectTrigger className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md">
-                                    <SelectValue placeholder="Province" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="QC">Québec (QC)</SelectItem>
-                                    <SelectItem value="ON">Ontario (ON)</SelectItem>
-                                    <SelectItem value="NL">Terre-Neuve-et-Labrador (NL)</SelectItem>
-                                    <SelectItem value="NS">Nouvelle-Écosse (NS)</SelectItem>
-                                    <SelectItem value="PE">Île-du-Prince-Édouard (PE)</SelectItem>
-                                    <SelectItem value="NB">Nouveau-Brunswick (NB)</SelectItem>
-                                    <SelectItem value="MB">Manitoba (MB)</SelectItem>
-                                    <SelectItem value="SK">Saskatchewan (SK)</SelectItem>
-                                    <SelectItem value="AB">Alberta (AB)</SelectItem>
-                                    <SelectItem value="BC">Colombie-Britannique (BC)</SelectItem>
-                                    <SelectItem value="YT">Yukon (YT)</SelectItem>
-                                    <SelectItem value="NT">Territoires du Nord-Ouest (NT)</SelectItem>
-                                    <SelectItem value="NU">Nunavut (NU)</SelectItem>
-                                  </SelectContent>
-                                </Select>
+                                />
                               </div>
                             </div>
                           </div>
                         ))}
 
-                      {/* Bouton pour ajouter l'adresse de travail si elle n'existe pas */}
+                      {/* Bouton d'ajout d'adresse de travail */}
                       {isEditing && !addresses.some((addr) => addr.type === "WORK") && (
                         <button
                           onClick={() => {
