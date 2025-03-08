@@ -3,7 +3,7 @@ import {LuMapPin, LuGlobe} from "react-icons/lu";
 import {Address} from "@/types/user/address";
 import {ProvinceSelect} from "@/components/forms/address/ProvinceSelect";
 import {CountrySelect} from "@/components/forms/address/CountrySelect";
-import {AddressType, ADDRESS_TYPE_LABELS} from "@/enums/address";
+import {AddressType, ADDRESS_TYPE_LABELS} from "@/enums/address/address";
 
 interface AddressFormProps {
   address: Address;

@@ -1,5 +1,5 @@
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {Province, PROVINCE_LABELS} from "@/enums/province";
+import {Province, PROVINCE_LABELS} from "@/enums/address/province";
 
 interface ProvinceSelectProps {
   value: Province;

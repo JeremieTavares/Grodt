@@ -9,8 +9,8 @@ import {Address} from "@/types/user/address";
 import {UserProfile} from "@/types/user/user";
 import {AddressForm} from "@/components/forms/address/AddressForm";
 import {FormCard} from "@/components/forms/FormCard";
-import {Province} from "@/enums/province";
-import {Country, AddressType} from "@/enums/address";
+import {Province} from "@/enums/address/province";
+import {Country, AddressType} from "@/enums/address/address";
 
 export default function Profile() {
   // États pour gérer les données et l'état d'édition du profil

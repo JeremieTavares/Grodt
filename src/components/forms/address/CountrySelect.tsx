@@ -1,5 +1,5 @@
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {Country, COUNTRY_LABELS} from "@/enums/address";
+import {Country, COUNTRY_LABELS} from "@/enums/address/address";
 
 interface CountrySelectProps {
   value: Country;
