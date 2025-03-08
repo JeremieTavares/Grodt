@@ -7,8 +7,8 @@ import {Toaster} from "@/components/ui/sonner";
 import {LuUser, LuMail, LuPhone, LuLock, LuSave, LuX, LuPencil, LuCircleUser, LuCalendar} from "react-icons/lu";
 import {Address} from "@/types/user/address";
 import {UserProfile} from "@/types/user/user";
-import {AddressForm} from "@/components/AddressForm";
-import {FormCard} from "@/components/FormCard";
+import {AddressForm} from "@/components/forms/address/AddressForm";
+import {FormCard} from "@/components/forms/FormCard";
 import {Province} from "@/enums/province";
 import {Country, AddressType} from "@/enums/address";
 

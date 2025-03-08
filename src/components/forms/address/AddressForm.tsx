@@ -1,8 +1,8 @@
 import {Input} from "@/components/ui/input";
 import {LuMapPin, LuGlobe} from "react-icons/lu";
 import {Address} from "@/types/user/address";
-import {ProvinceSelect} from "@/components/ProvinceSelect";
-import {CountrySelect} from "@/components/CountrySelect";
+import {ProvinceSelect} from "@/components/forms/address/ProvinceSelect";
+import {CountrySelect} from "@/components/forms/address/CountrySelect";
 import {AddressType, ADDRESS_TYPE_LABELS} from "@/enums/address";
 
 interface AddressFormProps {
