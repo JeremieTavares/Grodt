@@ -1,6 +1,6 @@
 import {Input} from "@/components/ui/input";
 import {LuMapPin} from "react-icons/lu";
-import {Address} from "@/types/interfaces";
+import {Address} from "@/types/user/address";
 import {ProvinceSelect} from "@/components/ProvinceSelect";
 
 interface AddressFormProps {

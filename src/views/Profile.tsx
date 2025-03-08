@@ -5,7 +5,8 @@ import {Input} from "@/components/ui/input";
 import {toast} from "sonner";
 import {Toaster} from "@/components/ui/sonner";
 import {LuUser, LuMail, LuPhone, LuLock, LuSave, LuX, LuPencil, LuCircleUser, LuCalendar} from "react-icons/lu";
-import {Address, UserProfile} from "@/types/interfaces";
+import {Address} from "@/types/user/address";
+import {UserProfile} from "@/types/user/user";
 import {AddressForm} from "@/components/AddressForm";
 import {FormCard} from "@/components/FormCard";
 
