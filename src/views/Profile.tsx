@@ -9,6 +9,7 @@ import {Address} from "@/types/user/address";
 import {UserProfile} from "@/types/user/user";
 import {AddressForm} from "@/components/AddressForm";
 import {FormCard} from "@/components/FormCard";
+import {Province} from "@/enums/province";
 
 export default function Profile() {
   // États pour gérer les données et l'état d'édition du profil
@@ -380,7 +381,7 @@ export default function Profile() {
                                 streetNumber: "",
                                 streetName: "",
                                 city: "",
-                                province: "QC",
+                                province: Province.QC,
                                 country: "CA",
                                 type: "WORK",
                               },
