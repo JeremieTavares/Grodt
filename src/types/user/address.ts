@@ -1,4 +1,5 @@
 import {Province} from "@/enums/province";
+import {Country, AddressType} from "@/enums/address";
 
 export interface Address {
   id: number;
@@ -6,6 +7,7 @@ export interface Address {
   streetName: string;
   city: string;
   province: Province;
-  country: string;
-  type: "PERSONAL" | "WORK";
+  country: Country;
+  type: AddressType;
+  user?: string;
 }

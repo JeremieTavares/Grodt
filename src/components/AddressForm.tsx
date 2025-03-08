@@ -1,11 +1,13 @@
 import {Input} from "@/components/ui/input";
-import {LuMapPin} from "react-icons/lu";
+import {LuMapPin, LuGlobe} from "react-icons/lu";
 import {Address} from "@/types/user/address";
 import {ProvinceSelect} from "@/components/ProvinceSelect";
+import {CountrySelect} from "@/components/CountrySelect";
+import {AddressType, ADDRESS_TYPE_LABELS} from "@/enums/address";
 
 interface AddressFormProps {
   address: Address;
-  type: "PERSONAL" | "WORK";
+  type: AddressType;
   isEditing: boolean;
   onDelete?: () => void;
   onUpdate: (updatedAddress: Address) => void;
@@ -22,10 +24,8 @@ export const AddressForm = ({address, type, isEditing, onDelete, onUpdate}: Addr
   return (
     <div className="p-4 border border-slate-200 rounded-lg space-y-4 bg-white/50">
       <div className="flex justify-between items-center">
-        <h4 className="font-semibold text-slate-700">
-          {type === "PERSONAL" ? "Adresse personnelle" : "Adresse de travail"}
-        </h4>
-        {type === "WORK" && isEditing && onDelete && (
+        <h4 className="font-semibold text-slate-700">{ADDRESS_TYPE_LABELS[type]}</h4>
+        {type === AddressType.WORK && isEditing && onDelete && (
           <button
             onClick={onDelete}
             className="px-3 py-1 text-red-600 text-sm border border-red-200 rounded hover:bg-red-50 transition-colors"
@@ -70,6 +70,14 @@ export const AddressForm = ({address, type, isEditing, onDelete, onUpdate}: Addr
         </div>
         <div className="relative">
           <ProvinceSelect value={address.province} onValueChange={handleChange("province")} disabled={!isEditing} />
+        </div>
+        <div className="relative">
+          <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
+            <LuGlobe className="w-4 h-4 text-[#433BFF]" />
+          </div>
+          <div className="pl-10">
+            <CountrySelect value={address.country} onValueChange={handleChange("country")} disabled={!isEditing} />
+          </div>
         </div>
       </div>
     </div>

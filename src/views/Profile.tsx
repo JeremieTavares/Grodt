@@ -10,6 +10,7 @@ import {UserProfile} from "@/types/user/user";
 import {AddressForm} from "@/components/AddressForm";
 import {FormCard} from "@/components/FormCard";
 import {Province} from "@/enums/province";
+import {Country, AddressType} from "@/enums/address";
 
 export default function Profile() {
   // États pour gérer les données et l'état d'édition du profil
@@ -33,7 +34,7 @@ export default function Profile() {
         throw new Error("Erreur lors de la suppression de l'adresse");
       }
 
-      const newAddresses = addresses.filter((a) => a.type === "PERSONAL");
+      const newAddresses = addresses.filter((a) => a.type === AddressType.PERSONAL);
       setAddresses(newAddresses);
 
       toast.success("Adresse de travail supprimée avec succès!", {
@@ -335,16 +336,16 @@ export default function Profile() {
                     <div className="space-y-4">
                       {/* Adresse personnelle */}
                       {addresses
-                        .filter((addr) => addr.type === "PERSONAL")
+                        .filter((addr) => addr.type === AddressType.PERSONAL)
                         .map((address) => (
                           <AddressForm
                             key={`personal-${address.id}`}
                             address={address}
-                            type="PERSONAL"
+                            type={AddressType.PERSONAL}
                             isEditing={isEditing}
                             onUpdate={(updatedAddress) => {
                               const newAddresses = addresses.map((addr) =>
-                                addr.type === "PERSONAL" ? updatedAddress : addr,
+                                addr.type === AddressType.PERSONAL ? updatedAddress : addr,
                               );
                               setAddresses(newAddresses);
                             }}
@@ -353,17 +354,17 @@ export default function Profile() {
 
                       {/* Adresse de travail */}
                       {addresses
-                        .filter((addr) => addr.type === "WORK")
+                        .filter((addr) => addr.type === AddressType.WORK)
                         .map((address) => (
                           <AddressForm
                             key={`work-${address.id}`}
                             address={address}
-                            type="WORK"
+                            type={AddressType.WORK}
                             isEditing={isEditing}
                             onDelete={deleteWorkAddress}
                             onUpdate={(updatedAddress) => {
                               const newAddresses = addresses.map((addr) =>
-                                addr.type === "WORK" ? updatedAddress : addr,
+                                addr.type === AddressType.WORK ? updatedAddress : addr,
                               );
                               setAddresses(newAddresses);
                             }}
@@ -371,7 +372,7 @@ export default function Profile() {
                         ))}
 
                       {/* Bouton d'ajout d'adresse de travail */}
-                      {isEditing && !addresses.some((addr) => addr.type === "WORK") && (
+                      {isEditing && !addresses.some((addr) => addr.type === AddressType.WORK) && (
                         <button
                           onClick={() => {
                             setAddresses([
@@ -382,8 +383,8 @@ export default function Profile() {
                                 streetName: "",
                                 city: "",
                                 province: Province.QC,
-                                country: "CA",
-                                type: "WORK",
+                                country: Country.CA,
+                                type: AddressType.WORK,
                               },
                             ]);
                           }}
