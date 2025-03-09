@@ -3,8 +3,9 @@ import {LuMapPin, LuGlobe} from "react-icons/lu";
 import {Address} from "@/types/user/address";
 import {ProvinceSelect} from "./ProvinceSelect";
 import {CountrySelect} from "./CountrySelect";
-import {AddressType, ADDRESS_TYPE_LABELS, Country} from "@/enums/address/address";
+import {AddressType, ADDRESS_TYPE_LABELS} from "@/enums/address/address";
 import {Province} from "@/enums/address/province";
+import {Country} from "@/enums/address/country";
 
 interface AddressFormProps {
   address: Address;
@@ -26,11 +27,13 @@ export const AddressForm = ({address, type, isEditing, onDelete, onUpdate}: Addr
     handleChange(field)(e.target.value);
   };
 
+  const showDeleteButton = type === AddressType.WORK && isEditing && onDelete;
+
   return (
     <div className="p-4 border border-slate-200 rounded-lg space-y-4 bg-white/50">
       <div className="flex justify-between items-center">
         <h4 className="font-semibold text-slate-700">{ADDRESS_TYPE_LABELS[type]}</h4>
-        {type === AddressType.WORK && isEditing && onDelete && (
+        {showDeleteButton && (
           <button
             onClick={onDelete}
             className="px-3 py-1 text-red-600 text-sm border border-red-200 rounded hover:bg-red-50 transition-colors"
