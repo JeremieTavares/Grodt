@@ -1,9 +1,10 @@
 import {Input} from "@/components/ui/input";
 import {LuMapPin, LuGlobe} from "react-icons/lu";
 import {Address} from "@/types/user/address";
-import {ProvinceSelect} from "@/components/forms/address/ProvinceSelect";
-import {CountrySelect} from "@/components/forms/address/CountrySelect";
-import {AddressType, ADDRESS_TYPE_LABELS} from "@/enums/address/address";
+import {ProvinceSelect} from "./ProvinceSelect";
+import {CountrySelect} from "./CountrySelect";
+import {AddressType, ADDRESS_TYPE_LABELS, Country} from "@/enums/address/address";
+import {Province} from "@/enums/address/province";
 
 interface AddressFormProps {
   address: Address;
@@ -14,11 +15,15 @@ interface AddressFormProps {
 }
 
 export const AddressForm = ({address, type, isEditing, onDelete, onUpdate}: AddressFormProps) => {
-  const handleChange = (field: keyof Address) => (value: string) => {
+  const handleChange = (field: keyof Address) => (value: string | Province | Country) => {
     onUpdate({
       ...address,
       [field]: value,
     });
+  };
+
+  const handleInputChange = (field: keyof Address) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleChange(field)(e.target.value);
   };
 
   return (
@@ -43,7 +48,7 @@ export const AddressForm = ({address, type, isEditing, onDelete, onUpdate}: Addr
             type="text"
             placeholder="Numéro civique"
             value={address.streetNumber}
-            onChange={(e) => handleChange("streetNumber")(e.target.value)}
+            onChange={handleInputChange("streetNumber")}
             disabled={!isEditing}
             className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
           />
@@ -53,7 +58,7 @@ export const AddressForm = ({address, type, isEditing, onDelete, onUpdate}: Addr
             type="text"
             placeholder="Nom de rue"
             value={address.streetName}
-            onChange={(e) => handleChange("streetName")(e.target.value)}
+            onChange={handleInputChange("streetName")}
             disabled={!isEditing}
             className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
           />
@@ -63,7 +68,7 @@ export const AddressForm = ({address, type, isEditing, onDelete, onUpdate}: Addr
             type="text"
             placeholder="Ville"
             value={address.city}
-            onChange={(e) => handleChange("city")(e.target.value)}
+            onChange={handleInputChange("city")}
             disabled={!isEditing}
             className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
           />
