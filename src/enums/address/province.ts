@@ -1,0 +1,31 @@
+export enum Province {
+  QC = "QC",
+  ON = "ON",
+  NL = "NL",
+  NS = "NS",
+  PE = "PE",
+  NB = "NB",
+  MB = "MB",
+  SK = "SK",
+  AB = "AB",
+  BC = "BC",
+  YT = "YT",
+  NT = "NT",
+  NU = "NU",
+}
+
+export const PROVINCE_LABELS: Record<Province, string> = {
+  [Province.QC]: "Québec (QC)",
+  [Province.ON]: "Ontario (ON)",
+  [Province.NL]: "Terre-Neuve-et-Labrador (NL)",
+  [Province.NS]: "Nouvelle-Écosse (NS)",
+  [Province.PE]: "Île-du-Prince-Édouard (PE)",
+  [Province.NB]: "Nouveau-Brunswick (NB)",
+  [Province.MB]: "Manitoba (MB)",
+  [Province.SK]: "Saskatchewan (SK)",
+  [Province.AB]: "Alberta (AB)",
+  [Province.BC]: "Colombie-Britannique (BC)",
+  [Province.YT]: "Yukon (YT)",
+  [Province.NT]: "Territoires du Nord-Ouest (NT)",
+  [Province.NU]: "Nunavut (NU)",
+};
