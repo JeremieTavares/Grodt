@@ -14,7 +14,7 @@ export const FormCard = ({title, icon: Icon, children, className}: FormCardProps
       <CardContent className="p-4 space-y-4">
         <div className="flex items-center gap-3">
           {Icon && <Icon className="w-4 h-4 text-[#433BFF]" />}
-          <h4 className="font-semibold text-slate-700">{title}</h4>
+          <h4 className="font-semibold text-slate-700 dark:text-slate-200">{title}</h4>
         </div>
         {children}
       </CardContent>

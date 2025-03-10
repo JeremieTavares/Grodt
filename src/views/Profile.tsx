@@ -181,16 +181,18 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 py-8 px-4 sm:px-6 lg:px-8">
       <Toaster position="top-right" />
       <div className="mx-auto max-w-3xl">
         <Card className="shadow-lg">
           {/* En-tête de la carte avec titre et boutons d'action */}
-          <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0 pb-7 border-b">
+          <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0 pb-7 border-b dark:border-slate-700">
             {/* Titre avec icône */}
             <div className="flex items-center gap-3">
               <LuCircleUser className="w-8 h-8 text-[#433BFF]" />
-              <CardTitle className="text-2xl font-bold text-slate-800 tracking-tight">Détail du profil</CardTitle>
+              <CardTitle className="text-2xl font-bold text-slate-800 dark:text-slate-100 tracking-tight">
+                Détail du profil
+              </CardTitle>
             </div>
             {/* Boutons d'action (édition/sauvegarde) */}
             <div className="flex gap-2 w-full sm:w-auto">
@@ -198,7 +200,7 @@ export default function Profile() {
                 <>
                   <button
                     onClick={() => setIsEditing(false)}
-                    className="flex-1 sm:flex-none px-4 py-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium inline-flex items-center gap-2"
+                    className="flex-1 sm:flex-none px-4 py-2 text-gray-600 dark:text-gray-300 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors font-medium inline-flex items-center gap-2"
                   >
                     <LuX className="w-4 h-4" />
                     Annuler
@@ -225,7 +227,7 @@ export default function Profile() {
 
           {/* Section de la carte de profil avec photo */}
           <CardContent className="pt-6">
-            <Card className="border-none overflow-hidden bg-gradient-to-br from-white to-slate-50 shadow-[0_2px_8px_0px_rgba(67,59,255,0.08)] hover:shadow-[0_4px_12px_0px_rgba(67,59,255,0.12)] transition-all duration-300">
+            <Card className="border-none overflow-hidden bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 shadow-[0_2px_8px_0px_rgba(67,59,255,0.08)] hover:shadow-[0_4px_12px_0px_rgba(67,59,255,0.12)] transition-all duration-300">
               <CardContent className="p-8">
                 <div className="flex items-center gap-6">
                   <div className="relative group">
@@ -237,18 +239,18 @@ export default function Profile() {
                   {/* Informations principales (nom et contacts) */}
                   <div className="flex-1 space-y-3">
                     <div className="space-y-1">
-                      <h3 className="text-2xl font-bold text-slate-900">
+                      <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
                         {profile?.firstName} {profile?.lastName}
                       </h3>
                       <div className="h-px w-24 bg-gradient-to-r from-[#433BFF] to-transparent"></div>
                     </div>
                     {/* Badges d'information (email et téléphone) */}
                     <div className="space-y-2">
-                      <div className="flex items-center gap-3 text-sm text-slate-600 bg-white/50 backdrop-blur-sm px-4 py-2 rounded-lg border border-slate-100 shadow-sm hover:shadow transition-shadow duration-200">
+                      <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm px-4 py-2 rounded-lg border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow transition-shadow duration-200">
                         <LuMail className="h-4 w-4 text-[#433BFF]" />
                         <span className="font-medium">{profile?.email}</span>
                       </div>
-                      <div className="flex items-center gap-3 text-sm text-slate-600 bg-white/50 backdrop-blur-sm px-4 py-2 rounded-lg border border-slate-100 shadow-sm hover:shadow transition-shadow duration-200">
+                      <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm px-4 py-2 rounded-lg border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow transition-shadow duration-200">
                         <LuPhone className="h-4 w-4 text-[#433BFF]" />
                         <span className="font-medium">{profile?.phone}</span>
                       </div>
@@ -261,10 +263,10 @@ export default function Profile() {
 
           {/* Section des informations détaillées */}
           <CardContent className="pt-6">
-            <Card className="border-none overflow-hidden bg-gradient-to-br from-white to-slate-50 shadow-[0_2px_8px_0px_rgba(67,59,255,0.08)] hover:shadow-[0_4px_12px_0px_rgba(67,59,255,0.12)] transition-all duration-300">
-              <CardHeader className="border-b bg-white/50 backdrop-blur-sm">
+            <Card className="border-none overflow-hidden bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 shadow-[0_2px_8px_0px_rgba(67,59,255,0.08)] hover:shadow-[0_4px_12px_0px_rgba(67,59,255,0.12)] transition-all duration-300">
+              <CardHeader className="border-b border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm">
                 <div className="flex items-center gap-3">
-                  <CardTitle className="text-xl font-bold text-slate-900 tracking-tight">
+                  <CardTitle className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
                     Renseignements personnels
                   </CardTitle>
                 </div>
@@ -278,7 +280,7 @@ export default function Profile() {
                       value={profile?.lastName || ""}
                       onChange={handleChange("lastName")}
                       disabled={!isEditing}
-                      className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
+                      className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white"
                     />
                   </FormCard>
 
@@ -288,7 +290,7 @@ export default function Profile() {
                       value={profile?.firstName || ""}
                       onChange={handleChange("firstName")}
                       disabled={!isEditing}
-                      className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
+                      className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white"
                     />
                   </FormCard>
 
@@ -298,7 +300,7 @@ export default function Profile() {
                       value={profile?.password || ""}
                       onChange={handleChange("password")}
                       disabled={!isEditing}
-                      className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
+                      className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white"
                     />
                   </FormCard>
 
@@ -308,7 +310,7 @@ export default function Profile() {
                       value={profile?.email || ""}
                       onChange={handleChange("email")}
                       disabled={!isEditing}
-                      className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
+                      className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white"
                     />
                   </FormCard>
 
@@ -318,7 +320,7 @@ export default function Profile() {
                       value={profile?.birthDate ? profile.birthDate.split("T")[0] : ""}
                       onChange={handleChange("birthDate")}
                       disabled={!isEditing}
-                      className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
+                      className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white"
                     />
                   </FormCard>
 
@@ -328,7 +330,7 @@ export default function Profile() {
                       value={profile?.phone || ""}
                       onChange={handleChange("phone")}
                       disabled={!isEditing}
-                      className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
+                      className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white"
                     />
                   </FormCard>
 
@@ -389,7 +391,7 @@ export default function Profile() {
                               },
                             ]);
                           }}
-                          className="w-full px-4 py-2 text-[#433BFF] border border-[#433BFF] rounded-lg hover:bg-[#433BFF]/5 transition-colors font-medium"
+                          className="w-full px-4 py-2 text-[#433BFF] dark:text-[#7A75FF] border border-[#433BFF] dark:border-[#7A75FF] rounded-lg hover:bg-[#433BFF]/5 dark:hover:bg-[#7A75FF]/10 transition-colors font-medium"
                         >
                           Ajouter une adresse de travail
                         </button>

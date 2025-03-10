@@ -30,13 +30,13 @@ export const AddressForm = ({address, type, isEditing, onDelete, onUpdate}: Addr
   const showDeleteButton = type === AddressType.WORK && isEditing && onDelete;
 
   return (
-    <div className="p-4 border border-slate-200 rounded-lg space-y-4 bg-white/50">
+    <div className="p-4 border border-slate-200 dark:border-slate-700 rounded-lg space-y-4 bg-white/50 dark:bg-slate-800/50">
       <div className="flex justify-between items-center">
-        <h4 className="font-semibold text-slate-700">{ADDRESS_TYPE_LABELS[type]}</h4>
+        <h4 className="font-semibold text-slate-700 dark:text-slate-200">{ADDRESS_TYPE_LABELS[type]}</h4>
         {showDeleteButton && (
           <button
             onClick={onDelete}
-            className="px-3 py-1 text-red-600 text-sm border border-red-200 rounded hover:bg-red-50 transition-colors"
+            className="px-3 py-1 text-red-600 dark:text-red-400 text-sm border border-red-200 dark:border-red-900 rounded hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
           >
             Supprimer
           </button>
@@ -54,7 +54,7 @@ export const AddressForm = ({address, type, isEditing, onDelete, onUpdate}: Addr
             value={address.streetNumber}
             onChange={handleInputChange("streetNumber")}
             disabled={!isEditing}
-            className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
+            className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white"
           />
         </div>
 
@@ -65,7 +65,7 @@ export const AddressForm = ({address, type, isEditing, onDelete, onUpdate}: Addr
             value={address.streetName}
             onChange={handleInputChange("streetName")}
             disabled={!isEditing}
-            className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
+            className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white"
           />
         </div>
 
@@ -76,7 +76,7 @@ export const AddressForm = ({address, type, isEditing, onDelete, onUpdate}: Addr
             value={address.city}
             onChange={handleInputChange("city")}
             disabled={!isEditing}
-            className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
+            className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white"
           />
         </div>
 
