@@ -10,7 +10,7 @@ interface ProvinceSelectProps {
 export const ProvinceSelect = ({value, onValueChange, disabled}: ProvinceSelectProps) => {
   return (
     <Select value={value} onValueChange={onValueChange} disabled={disabled}>
-      <SelectTrigger className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md">
+      <SelectTrigger className="w-full disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus-visible:ring-primary focus-visible:border-primary transition-shadow">
         <SelectValue placeholder="Province" />
       </SelectTrigger>
       <SelectContent>

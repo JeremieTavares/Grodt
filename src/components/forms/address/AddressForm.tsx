@@ -42,7 +42,8 @@ export const AddressForm = ({address, type, isEditing, onDelete, onUpdate}: Addr
           </button>
         )}
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+      <div className="space-y-4">
         <div className="relative">
           <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
             <LuMapPin className="w-4 h-4 text-[#433BFF]" />
@@ -56,6 +57,7 @@ export const AddressForm = ({address, type, isEditing, onDelete, onUpdate}: Addr
             className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
           />
         </div>
+
         <div className="relative">
           <Input
             type="text"
@@ -66,6 +68,7 @@ export const AddressForm = ({address, type, isEditing, onDelete, onUpdate}: Addr
             className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
           />
         </div>
+
         <div className="relative">
           <Input
             type="text"
@@ -76,9 +79,11 @@ export const AddressForm = ({address, type, isEditing, onDelete, onUpdate}: Addr
             className="w-full bg-white border-slate-200 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md"
           />
         </div>
+
         <div className="relative">
           <ProvinceSelect value={address.province} onValueChange={handleChange("province")} disabled={!isEditing} />
         </div>
+
         <div className="relative">
           <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
             <LuGlobe className="w-4 h-4 text-[#433BFF]" />
