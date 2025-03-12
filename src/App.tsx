@@ -1,15 +1,16 @@
 import "./App.css";
-import {NavLink, Outlet} from "react-router";
+import { Outlet } from "react-router";
+import AppSidebar from "./components/app-sidebar";
+
 function App() {
   return (
-      <main>
-        <NavLink to="/" className={({isActive}) => (isActive ? "active" : "")}>
-          Home
-        </NavLink>
-        <div className="flex flex-col gap-4">
-          <Outlet />
-        </div>
-      </main>
+    <main>
+      <div className="flex min-h-screen">
+        <AppSidebar />
+        <Outlet />
+      </div>
+    </main>
+
   );
 }
 
