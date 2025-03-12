@@ -3,7 +3,7 @@ import {useParams} from "react-router";
 import {Input} from "@/components/ui/input";
 import {toast} from "sonner";
 import {Toaster} from "@/components/ui/sonner";
-import {LuUser, LuPhone, LuSave, LuX, LuPencil, LuCalendar, LuBriefcase, LuMapPin} from "react-icons/lu";
+import {LuUser, LuPhone, LuSave, LuX, LuPencil, LuCalendar, LuBriefcase, LuMapPin, LuSettings} from "react-icons/lu";
 import {Address} from "@/types/user/address";
 import {UserProfile} from "@/types/user/user";
 import {AddressForm} from "@/components/forms/address/AddressForm";
@@ -11,6 +11,16 @@ import {FormCard} from "@/components/forms/FormCard";
 import {Province} from "@/enums/address/province";
 import {Country} from "@/enums/address/country";
 import {AddressType} from "@/enums/address/address";
+import {useTheme} from "next-themes";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {Switch} from "@/components/ui/switch";
 
 export default function Profile() {
   // États pour gérer les données et l'état d'édition du profil
@@ -19,6 +29,7 @@ export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [, setError] = useState<string | null>(null);
   const {userId} = useParams();
+  const {theme, setTheme} = useTheme();
 
   // Fonction pour supprimer l'adresse de travail
   const deleteWorkAddress = async () => {
@@ -219,8 +230,35 @@ export default function Profile() {
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Profile Card */}
         <div className="lg:col-span-1">
-          <FormCard title="Mon profil" noPadding>
+          <FormCard noPadding>
             <div className="relative h-32 bg-gradient-to-r from-[#433BFF] to-[#7A75FF]">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="absolute right-4 top-4 p-2 text-white bg-white/10 rounded-full hover:bg-white/20 transition-all duration-200">
+                    <LuSettings className="w-5 h-5" />
+                  </button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Paramètres</DialogTitle>
+                    <DialogDescription>Personnalisez votre expérience utilisateur</DialogDescription>
+                  </DialogHeader>
+                  <div className="flex items-center justify-between py-4">
+                    <div className="space-y-0.5">
+                      <div className="text-sm font-medium text-slate-900 dark:text-slate-50">Mode sombre</div>
+                      <div className="text-sm text-slate-500 dark:text-slate-400">
+                        Basculer entre le mode clair et sombre
+                      </div>
+                    </div>
+                    <Switch
+                      checked={theme === "dark"}
+                      onCheckedChange={(checked: boolean) => {
+                        setTheme(checked ? "dark" : "light");
+                      }}
+                    />
+                  </div>
+                </DialogContent>
+              </Dialog>
               <div className="absolute -bottom-12 left-6">
                 <div className="relative group">
                   <div className="h-24 w-24 rounded-2xl bg-white dark:bg-slate-700 p-1">
