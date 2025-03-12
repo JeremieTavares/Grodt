@@ -48,22 +48,10 @@ export default function Profile() {
       const newAddresses = addresses.filter((a) => a.type === AddressType.PERSONAL);
       setAddresses(newAddresses);
 
-      toast.success("Adresse de travail supprimée avec succès!", {
-        style: {
-          backgroundColor: "white",
-          border: "1px solid #e2e8f0",
-          borderRadius: "0.5rem",
-        },
-      });
+      toast.success("Adresse de travail supprimée avec succès!");
     } catch (error) {
       console.error("Erreur lors de la suppression:", error);
-      toast.error("Erreur lors de la suppression de l'adresse", {
-        style: {
-          backgroundColor: "white",
-          border: "1px solid #e2e8f0",
-          borderRadius: "0.5rem",
-        },
-      });
+      toast.error("Erreur lors de la suppression de l'adresse");
     }
   };
 
@@ -170,22 +158,10 @@ export default function Profile() {
 
         // Désactivation du mode édition et affichage du message de succès
         setIsEditing(false);
-        toast.success("Profil mis à jour avec succès!", {
-          style: {
-            backgroundColor: "white",
-            border: "1px solid #e2e8f0",
-            borderRadius: "0.5rem",
-          },
-        });
+        toast.success("Profil mis à jour avec succès!");
       } catch (error) {
         console.error("Erreur complète:", error);
-        toast.error("Erreur lors de la sauvegarde", {
-          style: {
-            backgroundColor: "white",
-            border: "1px solid #e2e8f0",
-            borderRadius: "0.5rem",
-          },
-        });
+        toast.error("Erreur lors de la sauvegarde");
       }
     }
   };
