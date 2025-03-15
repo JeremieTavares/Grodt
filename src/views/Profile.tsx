@@ -5,13 +5,14 @@ import {toast} from "sonner";
 import {Toaster} from "@/components/ui/sonner";
 import {LuUser, LuPhone, LuSave, LuX, LuPencil, LuCalendar, LuBriefcase, LuMapPin, LuSettings} from "react-icons/lu";
 import {Address} from "@/types/user/address";
-import {UserProfile} from "@/types/user/user";
+import {UpdateUserDto} from "@/types/user/user";
 import {AddressForm} from "@/components/forms/address/AddressForm";
 import {FormCard} from "@/components/forms/FormCard";
 import {Province} from "@/enums/address/province";
 import {Country} from "@/enums/address/country";
 import {AddressType} from "@/enums/address/address";
 import {useTheme} from "next-themes";
+import {useApi} from "@/hooks/useApi";
 import {
   Dialog,
   DialogContent,
@@ -24,30 +25,22 @@ import {Switch} from "@/components/ui/switch";
 
 export default function Profile() {
   // États pour gérer les données et l'état d'édition du profil
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [profile, setProfile] = useState<UpdateUserDto | null>(null);
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [, setError] = useState<string | null>(null);
   const {userId} = useParams();
   const {theme, setTheme} = useTheme();
+  const api = useApi(Number(userId));
 
   // Fonction pour supprimer l'adresse de travail
   const deleteWorkAddress = async () => {
+    if (!userId) return;
+
     try {
-      const response = await fetch(`https://money-pie-2.fly.dev/api/v1/users/${userId}/addresses/WORK`, {
-        method: "DELETE",
-        headers: {
-          Accept: "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Erreur lors de la suppression de l'adresse");
-      }
-
+      await api.users.deleteUserAddress(userId, "WORK");
       const newAddresses = addresses.filter((a) => a.type === AddressType.PERSONAL);
       setAddresses(newAddresses);
-
       toast.success("Adresse de travail supprimée avec succès!");
     } catch (error) {
       console.error("Erreur lors de la suppression:", error);
@@ -57,57 +50,32 @@ export default function Profile() {
 
   // Effet pour charger les données du profil et des adresses au chargement
   useEffect(() => {
-    // Fonction pour récupérer les données du profil depuis l'API
-    const fetchProfile = async () => {
+    const fetchData = async () => {
+      if (!userId) return;
+
       try {
-        const response = await fetch(`https://money-pie-2.fly.dev/api/v1/users/${userId}`, {
-          method: "GET",
-        });
+        const profileResponse = await api.users.getById(Number(userId));
+        console.log("Données reçues du serveur:", profileResponse.data);
+        setProfile(profileResponse.data);
 
-        if (!response.ok) {
-          throw new Error(`HTTP erreur status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log("Données reçues du serveur:", data);
-        setProfile(data);
+        const addressesResponse = await api.users.getUserAddresses(userId);
+        console.log("Adresses reçues:", addressesResponse.data);
+        setAddresses(addressesResponse.data);
       } catch (err) {
         console.error("Erreur:", err);
         setError(err instanceof Error ? err.message : "Une erreur est survenue");
       }
     };
 
-    // Fonction pour récupérer les adresses depuis l'API
-    const fetchAddresses = async () => {
-      try {
-        const response = await fetch(`https://money-pie-2.fly.dev/api/v1/users/${userId}/addresses`, {
-          method: "GET",
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP erreur status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log("Adresses reçues:", data);
-        setAddresses(data);
-      } catch (err) {
-        console.error("Erreur lors de la récupération des adresses:", err);
-      }
-    };
-
-    if (userId) {
-      fetchProfile();
-      fetchAddresses();
-    }
-  }, [userId]);
+    fetchData();
+  }, [userId, api.users]);
 
   // Gestion de changement pour les champs du profil
-  const handleChange = (field: keyof UserProfile) => (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (field: keyof UpdateUserDto) => (e: React.ChangeEvent<HTMLInputElement>) => {
     if (profile) {
       setProfile({
         ...profile,
-        [field]: e.target.value,
+        [field]: field === "birthDate" ? new Date(e.target.value) : e.target.value,
       });
     }
   };
@@ -117,43 +85,18 @@ export default function Profile() {
     if (profile && userId) {
       try {
         // Formatage et envoi des données du profil
-        const formattedProfile = {
+        const formattedProfile: UpdateUserDto = {
           ...profile,
-          birthDate: profile.birthDate ? new Date(profile.birthDate).toISOString() : null,
+          birthDate: profile.birthDate ? new Date(profile.birthDate) : undefined,
         };
 
         console.log("Données du profil envoyées:", JSON.stringify(formattedProfile, null, 2));
 
-        const profileResponse = await fetch(`https://money-pie-2.fly.dev/api/v1/users/${userId}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify(formattedProfile),
-        });
-
-        if (!profileResponse.ok) {
-          throw new Error("Erreur lors de la sauvegarde du profil");
-        }
+        await api.users.update(Number(userId), formattedProfile);
 
         // Sauvegarde des adresses
         for (const address of addresses) {
-          const addressResponse = await fetch(`https://money-pie-2.fly.dev/api/v1/users/${userId}/addresses`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-            body: JSON.stringify({
-              ...address,
-              id: address.id || 0, // Assurez-vous d'avoir toujours un ID, même si c'est 0
-            }),
-          });
-
-          if (!addressResponse.ok) {
-            throw new Error(`Erreur lors de la sauvegarde de l'adresse ${address.type}`);
-          }
+          await api.users.updateUserAddress(userId, address);
         }
 
         // Désactivation du mode édition et affichage du message de succès
@@ -343,7 +286,7 @@ export default function Profile() {
                 <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Date de naissance</label>
                 <Input
                   type="date"
-                  value={profile?.birthDate ? profile.birthDate.split("T")[0] : ""}
+                  value={profile?.birthDate ? new Date(profile.birthDate).toISOString().split("T")[0] : ""}
                   onChange={handleChange("birthDate")}
                   disabled={!isEditing}
                   className="w-full bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600 rounded-xl focus:ring-[#433BFF] focus:border-[#433BFF]"
