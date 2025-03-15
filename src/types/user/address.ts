@@ -1,6 +1,6 @@
-import {Province} from "@/enums/address/province";
-import {Country} from "@/enums/address/country";
-import {AddressType} from "@/enums/address/address";
+import { Province } from "@/enums/address/province";
+import { Country } from "@/enums/address/country";
+import { AddressType } from "@/enums/address/address";
 
 export interface Address {
   id: number;
@@ -12,3 +12,6 @@ export interface Address {
   type: AddressType;
   user?: string;
 }
+
+export type CreateAddressDto = Omit<Address, 'id' | 'user'>;
+export type UpdateAddressDto = Partial<CreateAddressDto>;
