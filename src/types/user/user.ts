@@ -1,7 +1,8 @@
-import { BankingDetails } from "../banking-details/banking-details";
-import { SchoolDetails } from "../school-details/school-details";
-import { Address } from "./address";
-import { Transaction } from "../transaction/transaction";
+import {BankingDetails} from "../banking-details/banking-details";
+import {SchoolDetails} from "./school-details";
+import {Address} from "./address";
+import {Transaction} from "../transaction/transaction";
+
 export interface User {
   id: number;
   firstName: string;
@@ -17,9 +18,9 @@ export interface User {
   bankingDetails?: BankingDetails;
 }
 
-export interface LoginDto extends Pick<User, 'email' | 'password'> { }
-export interface LoggedInUser extends Pick<User, 'id' | 'firstName' | 'lastName' | 'email' | 'birthDate' | 'phone' | 'addresses'> { }
+export interface LoginDto extends Pick<User, "email" | "password"> {}
+export interface LoggedInUser
+  extends Pick<User, "id" | "firstName" | "lastName" | "email" | "birthDate" | "phone" | "addresses"> {}
 
-export type CreateUserDto = Omit<User, 'id'>;
-// export type CreateUserDto = Omit<User, 'id' | 'addresses' | 'transactions' | 'schoolDetails' | 'bankingDetails'>;
+export type CreateUserDto = Omit<User, "id" | "addresses" | "transactions" | "schoolDetails" | "bankingDetails">;
 export type UpdateUserDto = Partial<CreateUserDto>;

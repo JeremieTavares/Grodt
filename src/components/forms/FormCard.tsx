@@ -15,7 +15,7 @@ export const FormCard = ({title, icon: Icon, children, className, headerAction, 
 
   return (
     <Card
-      className={`overflow-hidden bg-white dark:bg-slate-800 shadow-xl hover:shadow-2xl transition-all duration-300 border-0 ${
+      className={`overflow-hidden bg-white dark:bg-slate-800 shadow-xl pt-1 hover:shadow-2xl transition-all duration-300 border-0 ${
         className || ""
       }`}
     >

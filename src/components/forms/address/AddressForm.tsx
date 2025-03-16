@@ -44,52 +44,78 @@ export const AddressForm = ({address, type, isEditing, onDelete, onUpdate}: Addr
       </div>
 
       <div className="space-y-4">
-        <div className="relative">
-          <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
-            <LuMapPin className="w-4 h-4 text-[#433BFF]" />
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Numéro civique</label>
+          <div className="relative">
+            <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
+              <LuMapPin className="w-4 h-4 text-[#433BFF]" />
+            </div>
+            <Input
+              type="text"
+              placeholder="Numéro civique"
+              value={address.streetNumber}
+              onChange={handleInputChange("streetNumber")}
+              disabled={!isEditing}
+              className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white"
+            />
           </div>
-          <Input
-            type="text"
-            placeholder="Numéro civique"
-            value={address.streetNumber}
-            onChange={handleInputChange("streetNumber")}
-            disabled={!isEditing}
-            className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white"
-          />
         </div>
 
-        <div className="relative">
-          <Input
-            type="text"
-            placeholder="Nom de rue"
-            value={address.streetName}
-            onChange={handleInputChange("streetName")}
-            disabled={!isEditing}
-            className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white"
-          />
-        </div>
-
-        <div className="relative">
-          <Input
-            type="text"
-            placeholder="Ville"
-            value={address.city}
-            onChange={handleInputChange("city")}
-            disabled={!isEditing}
-            className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white"
-          />
-        </div>
-
-        <div className="relative">
-          <ProvinceSelect value={address.province} onValueChange={handleChange("province")} disabled={!isEditing} />
-        </div>
-
-        <div className="relative">
-          <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
-            <LuGlobe className="w-4 h-4 text-[#433BFF]" />
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Nom de la rue</label>
+          <div className="relative">
+            <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
+              <LuMapPin className="w-4 h-4 text-[#433BFF]" />
+            </div>
+            <Input
+              type="text"
+              placeholder="Nom de rue"
+              value={address.streetName}
+              onChange={handleInputChange("streetName")}
+              disabled={!isEditing}
+              className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white"
+            />
           </div>
-          <div className="pl-10">
-            <CountrySelect value={address.country} onValueChange={handleChange("country")} disabled={!isEditing} />
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Ville</label>
+          <div className="relative">
+            <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
+              <LuMapPin className="w-4 h-4 text-[#433BFF]" />
+            </div>
+            <Input
+              type="text"
+              placeholder="Ville"
+              value={address.city}
+              onChange={handleInputChange("city")}
+              disabled={!isEditing}
+              className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white"
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Province</label>
+          <div className="relative">
+            <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
+              <LuGlobe className="w-4 h-4 text-[#433BFF]" />
+            </div>
+            <div className="pl-10">
+              <ProvinceSelect value={address.province} onValueChange={handleChange("province")} disabled={!isEditing} />
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Pays</label>
+          <div className="relative">
+            <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
+              <LuGlobe className="w-4 h-4 text-[#433BFF]" />
+            </div>
+            <div className="pl-10">
+              <CountrySelect value={address.country} onValueChange={handleChange("country")} disabled={!isEditing} />
+            </div>
           </div>
         </div>
       </div>

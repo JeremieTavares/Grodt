@@ -3,34 +3,26 @@ import {useParams} from "react-router";
 import {Input} from "@/components/ui/input";
 import {toast} from "sonner";
 import {Toaster} from "@/components/ui/sonner";
-import {LuUser, LuPhone, LuSave, LuX, LuPencil, LuCalendar, LuBriefcase, LuMapPin, LuSettings} from "react-icons/lu";
+import {LuUser, LuBriefcase, LuMapPin, LuGraduationCap} from "react-icons/lu";
 import {Address} from "@/types/user/address";
-import {UpdateUserDto} from "@/types/user/user";
+import {User, UpdateUserDto} from "@/types/user/user";
 import {AddressForm} from "@/components/forms/address/AddressForm";
+import {SchoolDetailsForm} from "@/components/forms/school/SchoolDetailsForm";
 import {FormCard} from "@/components/forms/FormCard";
 import {Province} from "@/enums/address/province";
 import {Country} from "@/enums/address/country";
 import {AddressType} from "@/enums/address/address";
-import {useTheme} from "next-themes";
 import {useApi} from "@/hooks/useApi";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {Switch} from "@/components/ui/switch";
+import {SchoolDetails} from "@/types/user/school-details";
+import {ProfileHeader} from "@/components/profile/ProfileHeader";
+import {ProfileCard} from "@/components/profile/ProfileCard";
 
 export default function Profile() {
-  // États pour gérer les données et l'état d'édition du profil
-  const [profile, setProfile] = useState<UpdateUserDto | null>(null);
+  const [profile, setProfile] = useState<User | null>(null);
   const [addresses, setAddresses] = useState<Address[]>([]);
+  const [schoolDetails, setSchoolDetails] = useState<SchoolDetails | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [, setError] = useState<string | null>(null);
   const {userId} = useParams();
-  const {theme, setTheme} = useTheme();
   const api = useApi(Number(userId));
 
   // Fonction pour supprimer l'adresse de travail
@@ -54,16 +46,24 @@ export default function Profile() {
       if (!userId) return;
 
       try {
-        const profileResponse = await api.users.getById(Number(userId));
-        console.log("Données reçues du serveur:", profileResponse.data);
-        setProfile(profileResponse.data);
+        const [profileResponse, addressesResponse] = await Promise.all([
+          api.users.getById(Number(userId)),
+          api.users.getUserAddresses(userId),
+        ]);
 
-        const addressesResponse = await api.users.getUserAddresses(userId);
-        console.log("Adresses reçues:", addressesResponse.data);
+        setProfile(profileResponse.data);
         setAddresses(addressesResponse.data);
+
+        try {
+          const schoolResponse = await api.users.getUserSchoolDetails(userId);
+          setSchoolDetails(schoolResponse.data);
+        } catch (error) {
+          console.log("Pas de détails scolaires trouvés");
+          setSchoolDetails(null);
+        }
       } catch (err) {
         console.error("Erreur:", err);
-        setError(err instanceof Error ? err.message : "Une erreur est survenue");
+        toast.error("Erreur lors du chargement du profil");
       }
     };
 
@@ -80,11 +80,27 @@ export default function Profile() {
     }
   };
 
+  const handleSchoolDetailsUpdate = (updatedSchoolDetails: SchoolDetails) => {
+    setSchoolDetails(updatedSchoolDetails);
+  };
+
+  const handleDeleteSchoolDetails = async () => {
+    if (!userId) return;
+
+    try {
+      await api.users.deleteUserSchoolDetails(userId);
+      setSchoolDetails(null);
+      toast.success("Détails scolaires supprimés avec succès!");
+    } catch (error) {
+      console.error("Erreur lors de la suppression:", error);
+      toast.error("Erreur lors de la suppression des détails scolaires");
+    }
+  };
+
   // Fonction pour sauvegarder les modifications du profil et de l'adresse
   const handleSave = async () => {
     if (profile && userId) {
       try {
-        // Formatage et envoi des données du profil
         const formattedProfile: UpdateUserDto = {
           ...profile,
           birthDate: profile.birthDate ? new Date(profile.birthDate) : undefined,
@@ -92,14 +108,19 @@ export default function Profile() {
 
         console.log("Données du profil envoyées:", JSON.stringify(formattedProfile, null, 2));
 
-        await api.users.update(Number(userId), formattedProfile);
+        await Promise.all([
+          api.users.update(Number(userId), formattedProfile),
+          ...addresses.map((address) => api.users.updateUserAddress(userId, address)),
+          schoolDetails
+            ? api.users.updateUserSchoolDetails(userId, {
+                schoolName: schoolDetails.schoolName,
+                fieldOfStudy: schoolDetails.fieldOfStudy,
+                startDate: schoolDetails.startDate,
+                projectedEndDate: schoolDetails.projectedEndDate,
+              })
+            : Promise.resolve(),
+        ]);
 
-        // Sauvegarde des adresses
-        for (const address of addresses) {
-          await api.users.updateUserAddress(userId, address);
-        }
-
-        // Désactivation du mode édition et affichage du message de succès
         setIsEditing(false);
         toast.success("Profil mis à jour avec succès!");
       } catch (error) {
@@ -113,116 +134,18 @@ export default function Profile() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 py-12 px-4 sm:px-6 lg:px-8">
       <Toaster position="top-right" />
 
-      {/* Header Section */}
-      <div className="max-w-7xl mx-auto mb-8">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Mon profil</h1>
-          {isEditing ? (
-            <div className="flex gap-2">
-              <button
-                onClick={() => setIsEditing(false)}
-                className="px-4 py-2 text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 rounded-full hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 font-medium inline-flex items-center gap-2 shadow-sm"
-              >
-                <LuX className="w-4 h-4" />
-                Annuler
-              </button>
-              <button
-                onClick={handleSave}
-                className="px-4 py-2 text-white rounded-full bg-[#433BFF] hover:bg-[#3530CC] transition-all duration-200 font-medium inline-flex items-center gap-2 shadow-lg hover:shadow-[#433BFF]/25"
-              >
-                <LuSave className="w-4 h-4" />
-                Sauvegarder
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="px-4 py-2 text-white rounded-full bg-[#433BFF] hover:bg-[#3530CC] transition-all duration-200 font-medium inline-flex items-center gap-2 shadow-lg hover:shadow-[#433BFF]/25"
-            >
-              <LuPencil className="w-4 h-4" />
-              Modifier
-            </button>
-          )}
-        </div>
-      </div>
+      <ProfileHeader
+        isEditing={isEditing}
+        onEdit={() => setIsEditing(true)}
+        onSave={handleSave}
+        onCancel={() => setIsEditing(false)}
+      />
 
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Profile Card */}
         <div className="lg:col-span-1">
-          <FormCard noPadding>
-            <div className="relative h-32 bg-gradient-to-r from-[#433BFF] to-[#7A75FF]">
-              <Dialog>
-                <DialogTrigger asChild>
-                  <button className="absolute right-4 top-4 p-2 text-white bg-white/10 rounded-full hover:bg-white/20 transition-all duration-200">
-                    <LuSettings className="w-5 h-5" />
-                  </button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Paramètres</DialogTitle>
-                    <DialogDescription>Personnalisez votre expérience utilisateur</DialogDescription>
-                  </DialogHeader>
-                  <div className="flex items-center justify-between py-4">
-                    <div className="space-y-0.5">
-                      <div className="text-sm font-medium text-slate-900 dark:text-slate-50">Mode sombre</div>
-                      <div className="text-sm text-slate-500 dark:text-slate-400">
-                        Basculer entre le mode clair et sombre
-                      </div>
-                    </div>
-                    <Switch
-                      checked={theme === "dark"}
-                      onCheckedChange={(checked: boolean) => {
-                        setTheme(checked ? "dark" : "light");
-                      }}
-                    />
-                  </div>
-                </DialogContent>
-              </Dialog>
-              <div className="absolute -bottom-12 left-6">
-                <div className="relative group">
-                  <div className="h-24 w-24 rounded-2xl bg-white dark:bg-slate-700 p-1">
-                    <div className="h-full w-full rounded-xl bg-gradient-to-br from-[#433BFF] to-[#7A75FF] flex items-center justify-center relative">
-                      <LuUser className="h-12 w-12 text-white" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-16 px-6 pb-6">
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">
-                {profile?.firstName} {profile?.lastName}
-              </h2>
-              <p className="text-slate-500 dark:text-slate-400 mb-6">{profile?.email}</p>
-
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-700/50">
-                  <div className="w-10 h-10 rounded-lg bg-[#433BFF]/10 flex items-center justify-center">
-                    <LuPhone className="w-5 h-5 text-[#433BFF]" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">Téléphone</p>
-                    <p className="font-medium text-slate-900 dark:text-white">{profile?.phone}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-700/50">
-                  <div className="w-10 h-10 rounded-lg bg-[#433BFF]/10 flex items-center justify-center">
-                    <LuCalendar className="w-5 h-5 text-[#433BFF]" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">Date de naissance</p>
-                    <p className="font-medium text-slate-900 dark:text-white">
-                      {profile?.birthDate ? new Date(profile.birthDate).toLocaleDateString() : "-"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </FormCard>
+          <ProfileCard profile={profile} />
         </div>
 
-        {/* Main Content */}
         <div className="lg:col-span-2 space-y-8">
           {/* Personal Information */}
           <FormCard title="Informations personnelles" icon={LuUser}>
@@ -383,6 +306,18 @@ export default function Profile() {
                   </>
                 )}
               </div>
+            </div>
+          </FormCard>
+
+          {/* School Information */}
+          <FormCard title="Informations scolaires" icon={LuGraduationCap}>
+            <div className="space-y-4">
+              <SchoolDetailsForm
+                schoolDetails={schoolDetails}
+                isEditing={isEditing}
+                onDelete={handleDeleteSchoolDetails}
+                onUpdate={handleSchoolDetailsUpdate}
+              />
             </div>
           </FormCard>
         </div>

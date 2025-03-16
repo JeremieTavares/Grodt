@@ -3,6 +3,7 @@ import {BaseApiService} from "./core/base-api-service";
 import {ApiResponse} from "./core/http-client";
 import {User, CreateUserDto, UpdateUserDto} from "@/types/user/user";
 import {Address} from "@/types/user/address";
+import {SchoolDetails, CreateSchoolDetailsDto, UpdateSchoolDetailsDto} from "@/types/user/school-details";
 
 export class UserService extends BaseApiService<User, CreateUserDto, UpdateUserDto> {
   constructor(axios: AxiosInstance) {
@@ -23,5 +24,20 @@ export class UserService extends BaseApiService<User, CreateUserDto, UpdateUserD
 
   async deleteUserAddress(userId: number | string, type: string): Promise<ApiResponse<void>> {
     return this.delete(`${this.basePath}/${userId}/addresses/${type}`);
+  }
+
+  async getUserSchoolDetails(userId: number | string): Promise<ApiResponse<SchoolDetails>> {
+    return this.get<SchoolDetails>(`${this.basePath}/${userId}/school-details`);
+  }
+
+  async updateUserSchoolDetails(
+    userId: number | string,
+    schoolDetails: CreateSchoolDetailsDto,
+  ): Promise<ApiResponse<SchoolDetails>> {
+    return this.put<SchoolDetails, CreateSchoolDetailsDto>(`${this.basePath}/${userId}/school-details`, schoolDetails);
+  }
+
+  async deleteUserSchoolDetails(userId: number | string): Promise<ApiResponse<void>> {
+    return this.delete(`${this.basePath}/${userId}/school-details`);
   }
 }
