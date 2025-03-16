@@ -3,7 +3,7 @@ import {BaseApiService} from "./core/base-api-service";
 import {ApiResponse} from "./core/http-client";
 import {User, CreateUserDto, UpdateUserDto} from "@/types/user/user";
 import {Address} from "@/types/user/address";
-import {SchoolDetails, CreateSchoolDetailsDto, UpdateSchoolDetailsDto} from "@/types/user/school-details";
+import {SchoolDetails, CreateSchoolDetailsDto} from "@/types/user/school-details";
 
 export class UserService extends BaseApiService<User, CreateUserDto, UpdateUserDto> {
   constructor(axios: AxiosInstance) {

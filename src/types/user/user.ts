@@ -1,7 +1,7 @@
-import {BankingDetails} from "../banking-details/banking-details";
 import {SchoolDetails} from "./school-details";
 import {Address} from "./address";
 import {Transaction} from "../transaction/transaction";
+import {BankingDetails} from "./banking-details";
 
 export interface User {
   id: number;

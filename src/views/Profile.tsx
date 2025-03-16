@@ -1,6 +1,5 @@
 import {useEffect, useState} from "react";
 import {useParams} from "react-router";
-import {Input} from "@/components/ui/input";
 import {toast} from "sonner";
 import {Toaster} from "@/components/ui/sonner";
 import {LuUser, LuBriefcase, LuMapPin, LuGraduationCap} from "react-icons/lu";
@@ -16,6 +15,7 @@ import {useApi} from "@/hooks/useApi";
 import {SchoolDetails} from "@/types/user/school-details";
 import {ProfileHeader} from "@/components/profile/ProfileHeader";
 import {ProfileCard} from "@/components/profile/ProfileCard";
+import {PersonalInfoForm} from "@/components/forms/personal/PersonalInfoForm";
 
 export default function Profile() {
   const [profile, setProfile] = useState<User | null>(null);
@@ -69,16 +69,6 @@ export default function Profile() {
 
     fetchData();
   }, [userId, api.users]);
-
-  // Gestion de changement pour les champs du profil
-  const handleChange = (field: keyof UpdateUserDto) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (profile) {
-      setProfile({
-        ...profile,
-        [field]: field === "birthDate" ? new Date(e.target.value) : e.target.value,
-      });
-    }
-  };
 
   const handleSchoolDetailsUpdate = (updatedSchoolDetails: SchoolDetails) => {
     setSchoolDetails(updatedSchoolDetails);
@@ -149,73 +139,18 @@ export default function Profile() {
         <div className="lg:col-span-2 space-y-8">
           {/* Personal Information */}
           <FormCard title="Informations personnelles" icon={LuUser}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Prénom</label>
-                <Input
-                  type="text"
-                  value={profile?.firstName || ""}
-                  onChange={handleChange("firstName")}
-                  disabled={!isEditing}
-                  className="w-full bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600 rounded-xl focus:ring-[#433BFF] focus:border-[#433BFF]"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Nom</label>
-                <Input
-                  type="text"
-                  value={profile?.lastName || ""}
-                  onChange={handleChange("lastName")}
-                  disabled={!isEditing}
-                  className="w-full bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600 rounded-xl focus:ring-[#433BFF] focus:border-[#433BFF]"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Email</label>
-                <Input
-                  type="email"
-                  value={profile?.email || ""}
-                  onChange={handleChange("email")}
-                  disabled={!isEditing}
-                  className="w-full bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600 rounded-xl focus:ring-[#433BFF] focus:border-[#433BFF]"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Téléphone</label>
-                <Input
-                  type="tel"
-                  value={profile?.phone || ""}
-                  onChange={handleChange("phone")}
-                  disabled={!isEditing}
-                  className="w-full bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600 rounded-xl focus:ring-[#433BFF] focus:border-[#433BFF]"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Mot de passe</label>
-                <Input
-                  type="password"
-                  value={profile?.password || ""}
-                  onChange={handleChange("password")}
-                  disabled={!isEditing}
-                  className="w-full bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600 rounded-xl focus:ring-[#433BFF] focus:border-[#433BFF]"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Date de naissance</label>
-                <Input
-                  type="date"
-                  value={profile?.birthDate ? new Date(profile.birthDate).toISOString().split("T")[0] : ""}
-                  onChange={handleChange("birthDate")}
-                  disabled={!isEditing}
-                  className="w-full bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600 rounded-xl focus:ring-[#433BFF] focus:border-[#433BFF]"
-                />
-              </div>
-            </div>
+            <PersonalInfoForm
+              profile={profile}
+              isEditing={isEditing}
+              onUpdate={(field, value) => {
+                if (profile) {
+                  setProfile({
+                    ...profile,
+                    [field]: field === "birthDate" ? new Date(value) : value,
+                  });
+                }
+              }}
+            />
           </FormCard>
 
           {/* Addresses */}
