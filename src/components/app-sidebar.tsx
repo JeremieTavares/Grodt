@@ -25,7 +25,7 @@ const AppSidebar: React.FC = () => {
   return (
     <aside
       className={cn(
-        "h-screen text-white transition-all duration-300 flex flex-col",
+        "min-h-screen sticky top-0 text-white transition-all duration-300 flex flex-col",
         isExpanded ? "w-64 p-4" : "w-16 p-2",
         "bg-[#433bff]",
       )}
