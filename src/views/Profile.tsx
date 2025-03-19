@@ -2,17 +2,19 @@ import {useEffect, useState} from "react";
 import {useParams} from "react-router";
 import {toast} from "sonner";
 import {Toaster} from "@/components/ui/sonner";
-import {LuUser, LuBriefcase, LuMapPin, LuGraduationCap} from "react-icons/lu";
+import {LuUser, LuBriefcase, LuMapPin, LuGraduationCap, LuWallet} from "react-icons/lu";
 import {Address} from "@/types/user/address";
 import {User, UpdateUserDto} from "@/types/user/user";
 import {AddressForm} from "@/components/forms/address/AddressForm";
 import {SchoolDetailsForm} from "@/components/forms/school/SchoolDetailsForm";
+import {BankingDetailsForm} from "@/components/forms/banking/BankingDetailsForm";
 import {FormCard} from "@/components/forms/FormCard";
 import {Province} from "@/enums/address/province";
 import {Country} from "@/enums/address/country";
 import {AddressType} from "@/enums/address/address";
 import {useApi} from "@/hooks/useApi";
 import {SchoolDetails} from "@/types/user/school-details";
+import {BankingDetails} from "@/types/user/banking-details";
 import {ProfileHeader} from "@/components/profile/ProfileHeader";
 import {ProfileCard} from "@/components/profile/ProfileCard";
 import {PersonalInfoForm} from "@/components/forms/personal/PersonalInfoForm";
@@ -21,6 +23,7 @@ export default function Profile() {
   const [profile, setProfile] = useState<User | null>(null);
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [schoolDetails, setSchoolDetails] = useState<SchoolDetails | null>(null);
+  const [bankingDetails, setBankingDetails] = useState<BankingDetails | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const {userId} = useParams();
   const api = useApi(Number(userId));
@@ -55,11 +58,16 @@ export default function Profile() {
         setAddresses(addressesResponse.data);
 
         try {
-          const schoolResponse = await api.users.getUserSchoolDetails(userId);
+          const [schoolResponse, bankingResponse] = await Promise.all([
+            api.users.getUserSchoolDetails(userId),
+            api.users.getUserBankingDetails(userId),
+          ]);
           setSchoolDetails(schoolResponse.data);
+          setBankingDetails(bankingResponse.data);
         } catch (error) {
-          console.log("Pas de détails scolaires trouvés");
+          console.log("Pas de détails scolaires ou bancaires trouvés");
           setSchoolDetails(null);
+          setBankingDetails(null);
         }
       } catch (err) {
         console.error("Erreur:", err);
@@ -87,6 +95,23 @@ export default function Profile() {
     }
   };
 
+  const handleBankingDetailsUpdate = (updatedBankingDetails: BankingDetails) => {
+    setBankingDetails(updatedBankingDetails);
+  };
+
+  const handleDeleteBankingDetails = async () => {
+    if (!userId) return;
+
+    try {
+      await api.users.deleteUserBankingDetails(userId);
+      setBankingDetails(null);
+      toast.success("Détails bancaires supprimés avec succès!");
+    } catch (error) {
+      console.error("Erreur lors de la suppression:", error);
+      toast.error("Erreur lors de la suppression des détails bancaires");
+    }
+  };
+
   // Fonction pour sauvegarder les modifications du profil et de l'adresse
   const handleSave = async () => {
     if (profile && userId) {
@@ -107,6 +132,12 @@ export default function Profile() {
                 fieldOfStudy: schoolDetails.fieldOfStudy,
                 startDate: schoolDetails.startDate,
                 projectedEndDate: schoolDetails.projectedEndDate,
+              })
+            : Promise.resolve(),
+          bankingDetails
+            ? api.users.updateUserBankingDetails(userId, {
+                institutionName: bankingDetails.institutionName,
+                accountInfo: bankingDetails.accountInfo,
               })
             : Promise.resolve(),
         ]);
@@ -244,17 +275,32 @@ export default function Profile() {
             </div>
           </FormCard>
 
-          {/* School Information */}
-          <FormCard title="Informations scolaires" icon={LuGraduationCap}>
-            <div className="space-y-4">
-              <SchoolDetailsForm
-                schoolDetails={schoolDetails}
-                isEditing={isEditing}
-                onDelete={handleDeleteSchoolDetails}
-                onUpdate={handleSchoolDetailsUpdate}
-              />
-            </div>
-          </FormCard>
+          {/* School and Banking Information */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* School Information */}
+            <FormCard title="Information Scolaire" icon={LuGraduationCap}>
+              <div className="space-y-4">
+                <SchoolDetailsForm
+                  schoolDetails={schoolDetails}
+                  isEditing={isEditing}
+                  onDelete={handleDeleteSchoolDetails}
+                  onUpdate={handleSchoolDetailsUpdate}
+                />
+              </div>
+            </FormCard>
+
+            {/* Banking Information */}
+            <FormCard title="Information Bancaire" icon={LuWallet}>
+              <div className="space-y-4">
+                <BankingDetailsForm
+                  bankingDetails={bankingDetails}
+                  isEditing={isEditing}
+                  onDelete={handleDeleteBankingDetails}
+                  onUpdate={handleBankingDetailsUpdate}
+                />
+              </div>
+            </FormCard>
+          </div>
         </div>
       </div>
     </div>
