@@ -59,11 +59,11 @@ export default function Profile() {
 
         try {
           const [schoolResponse, bankingResponse] = await Promise.all([
-            api.users.getUserSchoolDetails(userId),
-            api.users.getUserBankingDetails(userId),
+            api.school?.getById(Number(userId)),
+            api.banking?.getById(Number(userId)),
           ]);
-          setSchoolDetails(schoolResponse.data);
-          setBankingDetails(bankingResponse.data);
+          setSchoolDetails(schoolResponse?.data || null);
+          setBankingDetails(bankingResponse?.data || null);
         } catch (error) {
           console.log("Pas de détails scolaires ou bancaires trouvés");
           setSchoolDetails(null);
@@ -76,17 +76,36 @@ export default function Profile() {
     };
 
     fetchData();
-  }, [userId, api.users]);
+  }, [userId, api.users, api.school, api.banking]);
 
-  const handleSchoolDetailsUpdate = (updatedSchoolDetails: SchoolDetails) => {
-    setSchoolDetails(updatedSchoolDetails);
+  const handleSchoolDetailsUpdate = async (updatedSchoolDetails: SchoolDetails) => {
+    if (!schoolDetails) {
+      // Création d'un nouveau détail scolaire
+      try {
+        const response = await api.school?.create({
+          schoolName: updatedSchoolDetails.schoolName,
+          fieldOfStudy: updatedSchoolDetails.fieldOfStudy,
+          startDate: updatedSchoolDetails.startDate,
+          projectedEndDate: updatedSchoolDetails.projectedEndDate,
+        });
+        if (response?.data) {
+          setSchoolDetails(response.data);
+          toast.success("Détails scolaires créés avec succès!");
+        }
+      } catch (error) {
+        console.error("Erreur lors de la création:", error);
+        toast.error("Erreur lors de la création des détails scolaires");
+      }
+    } else {
+      setSchoolDetails(updatedSchoolDetails);
+    }
   };
 
   const handleDeleteSchoolDetails = async () => {
     if (!userId) return;
 
     try {
-      await api.users.deleteUserSchoolDetails(userId);
+      await api.school?.deleteById(Number(userId));
       setSchoolDetails(null);
       toast.success("Détails scolaires supprimés avec succès!");
     } catch (error) {
@@ -95,15 +114,32 @@ export default function Profile() {
     }
   };
 
-  const handleBankingDetailsUpdate = (updatedBankingDetails: BankingDetails) => {
-    setBankingDetails(updatedBankingDetails);
+  const handleBankingDetailsUpdate = async (updatedBankingDetails: BankingDetails) => {
+    if (!bankingDetails) {
+      // Création d'un nouveau détail bancaire
+      try {
+        const response = await api.banking?.create({
+          institutionName: updatedBankingDetails.institutionName,
+          accountInfo: updatedBankingDetails.accountInfo,
+        });
+        if (response?.data) {
+          setBankingDetails(response.data);
+          toast.success("Détails bancaires créés avec succès!");
+        }
+      } catch (error) {
+        console.error("Erreur lors de la création:", error);
+        toast.error("Erreur lors de la création des détails bancaires");
+      }
+    } else {
+      setBankingDetails(updatedBankingDetails);
+    }
   };
 
   const handleDeleteBankingDetails = async () => {
     if (!userId) return;
 
     try {
-      await api.users.deleteUserBankingDetails(userId);
+      await api.banking?.deleteById(Number(userId));
       setBankingDetails(null);
       toast.success("Détails bancaires supprimés avec succès!");
     } catch (error) {
@@ -121,13 +157,11 @@ export default function Profile() {
           birthDate: profile.birthDate ? new Date(profile.birthDate) : undefined,
         };
 
-        console.log("Données du profil envoyées:", JSON.stringify(formattedProfile, null, 2));
-
         await Promise.all([
           api.users.update(Number(userId), formattedProfile),
           ...addresses.map((address) => api.users.updateUserAddress(userId, address)),
           schoolDetails
-            ? api.users.updateUserSchoolDetails(userId, {
+            ? api.school?.update(Number(userId), {
                 schoolName: schoolDetails.schoolName,
                 fieldOfStudy: schoolDetails.fieldOfStudy,
                 startDate: schoolDetails.startDate,
@@ -135,9 +169,11 @@ export default function Profile() {
               })
             : Promise.resolve(),
           bankingDetails
-            ? api.users.updateUserBankingDetails(userId, {
+            ? api.banking?.update(Number(userId), {
                 institutionName: bankingDetails.institutionName,
                 accountInfo: bankingDetails.accountInfo,
+                loanInfo: bankingDetails.loanInfo,
+                other: bankingDetails.other,
               })
             : Promise.resolve(),
         ]);

@@ -12,10 +12,16 @@ interface BankingDetailsFormProps {
 export const BankingDetailsForm = ({bankingDetails, isEditing, onDelete, onUpdate}: BankingDetailsFormProps) => {
   const handleChange =
     (field: keyof Omit<BankingDetails, "id" | "user">) => (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (!bankingDetails) return;
+      const newBankingDetails = bankingDetails || {
+        id: 0,
+        institutionName: "",
+        accountInfo: "",
+        loanInfo: "",
+        other: "",
+      };
 
       onUpdate({
-        ...bankingDetails,
+        ...newBankingDetails,
         [field]: e.target.value,
       });
     };
