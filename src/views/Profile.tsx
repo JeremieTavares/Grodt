@@ -1,115 +1,150 @@
 import {useEffect, useState} from "react";
 import {useParams} from "react-router";
-import {Input} from "@/components/ui/input";
 import {toast} from "sonner";
 import {Toaster} from "@/components/ui/sonner";
-import {LuUser, LuPhone, LuSave, LuX, LuPencil, LuCalendar, LuBriefcase, LuMapPin} from "react-icons/lu";
+import {LuUser, LuBriefcase, LuMapPin, LuGraduationCap, LuWallet} from "react-icons/lu";
 import {Address} from "@/types/user/address";
-import {UserProfile} from "@/types/user/user";
+import {User, UpdateUserDto} from "@/types/user/user";
 import {AddressForm} from "@/components/forms/address/AddressForm";
+import {SchoolDetailsForm} from "@/components/forms/school/SchoolDetailsForm";
+import {BankingDetailsForm} from "@/components/forms/banking/BankingDetailsForm";
 import {FormCard} from "@/components/forms/FormCard";
 import {Province} from "@/enums/address/province";
 import {Country} from "@/enums/address/country";
 import {AddressType} from "@/enums/address/address";
+import {useApi} from "@/hooks/useApi";
+import {SchoolDetails} from "@/types/user/school-details";
+import {BankingDetails} from "@/types/user/banking-details";
+import {ProfileHeader} from "@/components/profile/ProfileHeader";
+import {ProfileCard} from "@/components/profile/ProfileCard";
+import {PersonalInfoForm} from "@/components/forms/personal/PersonalInfoForm";
 
 export default function Profile() {
-  // États pour gérer les données et l'état d'édition du profil
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [profile, setProfile] = useState<User | null>(null);
   const [addresses, setAddresses] = useState<Address[]>([]);
+  const [schoolDetails, setSchoolDetails] = useState<SchoolDetails | null>(null);
+  const [bankingDetails, setBankingDetails] = useState<BankingDetails | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [, setError] = useState<string | null>(null);
   const {userId} = useParams();
+  const api = useApi(Number(userId));
 
   // Fonction pour supprimer l'adresse de travail
   const deleteWorkAddress = async () => {
+    if (!userId) return;
+
     try {
-      const response = await fetch(`https://money-pie-2.fly.dev/api/v1/users/${userId}/addresses/WORK`, {
-        method: "DELETE",
-        headers: {
-          Accept: "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Erreur lors de la suppression de l'adresse");
-      }
-
+      await api.users.deleteUserAddress(userId, "WORK");
       const newAddresses = addresses.filter((a) => a.type === AddressType.PERSONAL);
       setAddresses(newAddresses);
-
-      toast.success("Adresse de travail supprimée avec succès!", {
-        style: {
-          backgroundColor: "white",
-          border: "1px solid #e2e8f0",
-          borderRadius: "0.5rem",
-        },
-      });
+      toast.success("Adresse de travail supprimée avec succès!");
     } catch (error) {
       console.error("Erreur lors de la suppression:", error);
-      toast.error("Erreur lors de la suppression de l'adresse", {
-        style: {
-          backgroundColor: "white",
-          border: "1px solid #e2e8f0",
-          borderRadius: "0.5rem",
-        },
-      });
+      toast.error("Erreur lors de la suppression de l'adresse");
     }
   };
 
   // Effet pour charger les données du profil et des adresses au chargement
   useEffect(() => {
-    // Fonction pour récupérer les données du profil depuis l'API
-    const fetchProfile = async () => {
+    const fetchData = async () => {
+      if (!userId) return;
+
       try {
-        const response = await fetch(`https://money-pie-2.fly.dev/api/v1/users/${userId}`, {
-          method: "GET",
-        });
+        const [profileResponse, addressesResponse] = await Promise.all([
+          api.users.getById(Number(userId)),
+          api.users.getUserAddresses(userId),
+        ]);
 
-        if (!response.ok) {
-          throw new Error(`HTTP erreur status: ${response.status}`);
+        setProfile(profileResponse.data);
+        setAddresses(addressesResponse.data);
+
+        try {
+          const [schoolResponse, bankingResponse] = await Promise.all([
+            api.school?.getById(Number(userId)),
+            api.banking?.getById(Number(userId)),
+          ]);
+          setSchoolDetails(schoolResponse?.data || null);
+          setBankingDetails(bankingResponse?.data || null);
+        } catch (error) {
+          console.log("Pas de détails scolaires ou bancaires trouvés");
+          setSchoolDetails(null);
+          setBankingDetails(null);
         }
-
-        const data = await response.json();
-        console.log("Données reçues du serveur:", data);
-        setProfile(data);
       } catch (err) {
         console.error("Erreur:", err);
-        setError(err instanceof Error ? err.message : "Une erreur est survenue");
+        toast.error("Erreur lors du chargement du profil");
       }
     };
 
-    // Fonction pour récupérer les adresses depuis l'API
-    const fetchAddresses = async () => {
+    fetchData();
+  }, [userId, api.users, api.school, api.banking]);
+
+  const handleSchoolDetailsUpdate = async (updatedSchoolDetails: SchoolDetails) => {
+    if (!schoolDetails) {
+      // Création d'un nouveau détail scolaire
       try {
-        const response = await fetch(`https://money-pie-2.fly.dev/api/v1/users/${userId}/addresses`, {
-          method: "GET",
+        const response = await api.school?.create({
+          schoolName: updatedSchoolDetails.schoolName,
+          fieldOfStudy: updatedSchoolDetails.fieldOfStudy,
+          startDate: updatedSchoolDetails.startDate,
+          projectedEndDate: updatedSchoolDetails.projectedEndDate,
         });
-
-        if (!response.ok) {
-          throw new Error(`HTTP erreur status: ${response.status}`);
+        if (response?.data) {
+          setSchoolDetails(response.data);
+          toast.success("Détails scolaires créés avec succès!");
         }
-
-        const data = await response.json();
-        console.log("Adresses reçues:", data);
-        setAddresses(data);
-      } catch (err) {
-        console.error("Erreur lors de la récupération des adresses:", err);
+      } catch (error) {
+        console.error("Erreur lors de la création:", error);
+        toast.error("Erreur lors de la création des détails scolaires");
       }
-    };
-
-    if (userId) {
-      fetchProfile();
-      fetchAddresses();
+    } else {
+      setSchoolDetails(updatedSchoolDetails);
     }
-  }, [userId]);
+  };
 
-  // Gestion de changement pour les champs du profil
-  const handleChange = (field: keyof UserProfile) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (profile) {
-      setProfile({
-        ...profile,
-        [field]: e.target.value,
-      });
+  const handleDeleteSchoolDetails = async () => {
+    if (!userId) return;
+
+    try {
+      await api.school?.deleteById(Number(userId));
+      setSchoolDetails(null);
+      toast.success("Détails scolaires supprimés avec succès!");
+    } catch (error) {
+      console.error("Erreur lors de la suppression:", error);
+      toast.error("Erreur lors de la suppression des détails scolaires");
+    }
+  };
+
+  const handleBankingDetailsUpdate = async (updatedBankingDetails: BankingDetails) => {
+    if (!bankingDetails) {
+      // Création d'un nouveau détail bancaire
+      try {
+        const response = await api.banking?.create({
+          institutionName: updatedBankingDetails.institutionName,
+          accountInfo: updatedBankingDetails.accountInfo,
+        });
+        if (response?.data) {
+          setBankingDetails(response.data);
+          toast.success("Détails bancaires créés avec succès!");
+        }
+      } catch (error) {
+        console.error("Erreur lors de la création:", error);
+        toast.error("Erreur lors de la création des détails bancaires");
+      }
+    } else {
+      setBankingDetails(updatedBankingDetails);
+    }
+  };
+
+  const handleDeleteBankingDetails = async () => {
+    if (!userId) return;
+
+    try {
+      await api.banking?.deleteById(Number(userId));
+      setBankingDetails(null);
+      toast.success("Détails bancaires supprimés avec succès!");
+    } catch (error) {
+      console.error("Erreur lors de la suppression:", error);
+      toast.error("Erreur lors de la suppression des détails bancaires");
     }
   };
 
@@ -117,64 +152,37 @@ export default function Profile() {
   const handleSave = async () => {
     if (profile && userId) {
       try {
-        // Formatage et envoi des données du profil
-        const formattedProfile = {
+        const formattedProfile: UpdateUserDto = {
           ...profile,
-          birthDate: profile.birthDate ? new Date(profile.birthDate).toISOString() : null,
+          birthDate: profile.birthDate ? new Date(profile.birthDate) : undefined,
         };
 
-        console.log("Données du profil envoyées:", JSON.stringify(formattedProfile, null, 2));
+        await Promise.all([
+          api.users.update(Number(userId), formattedProfile),
+          ...addresses.map((address) => api.users.updateUserAddress(userId, address)),
+          schoolDetails
+            ? api.school?.update(Number(userId), {
+                schoolName: schoolDetails.schoolName,
+                fieldOfStudy: schoolDetails.fieldOfStudy,
+                startDate: schoolDetails.startDate,
+                projectedEndDate: schoolDetails.projectedEndDate,
+              })
+            : Promise.resolve(),
+          bankingDetails
+            ? api.banking?.update(Number(userId), {
+                institutionName: bankingDetails.institutionName,
+                accountInfo: bankingDetails.accountInfo,
+                loanInfo: bankingDetails.loanInfo,
+                other: bankingDetails.other,
+              })
+            : Promise.resolve(),
+        ]);
 
-        const profileResponse = await fetch(`https://money-pie-2.fly.dev/api/v1/users/${userId}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify(formattedProfile),
-        });
-
-        if (!profileResponse.ok) {
-          throw new Error("Erreur lors de la sauvegarde du profil");
-        }
-
-        // Sauvegarde des adresses
-        for (const address of addresses) {
-          const addressResponse = await fetch(`https://money-pie-2.fly.dev/api/v1/users/${userId}/addresses`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-            body: JSON.stringify({
-              ...address,
-              id: address.id || 0, // Assurez-vous d'avoir toujours un ID, même si c'est 0
-            }),
-          });
-
-          if (!addressResponse.ok) {
-            throw new Error(`Erreur lors de la sauvegarde de l'adresse ${address.type}`);
-          }
-        }
-
-        // Désactivation du mode édition et affichage du message de succès
         setIsEditing(false);
-        toast.success("Profil mis à jour avec succès!", {
-          style: {
-            backgroundColor: "white",
-            border: "1px solid #e2e8f0",
-            borderRadius: "0.5rem",
-          },
-        });
+        toast.success("Profil mis à jour avec succès!");
       } catch (error) {
         console.error("Erreur complète:", error);
-        toast.error("Erreur lors de la sauvegarde", {
-          style: {
-            backgroundColor: "white",
-            border: "1px solid #e2e8f0",
-            borderRadius: "0.5rem",
-          },
-        });
+        toast.error("Erreur lors de la sauvegarde");
       }
     }
   };
@@ -183,159 +191,33 @@ export default function Profile() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 py-12 px-4 sm:px-6 lg:px-8">
       <Toaster position="top-right" />
 
-      {/* Header Section */}
-      <div className="max-w-7xl mx-auto mb-8">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Mon profil</h1>
-          {isEditing ? (
-            <div className="flex gap-2">
-              <button
-                onClick={() => setIsEditing(false)}
-                className="px-4 py-2 text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 rounded-full hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 font-medium inline-flex items-center gap-2 shadow-sm"
-              >
-                <LuX className="w-4 h-4" />
-                Annuler
-              </button>
-              <button
-                onClick={handleSave}
-                className="px-4 py-2 text-white rounded-full bg-[#433BFF] hover:bg-[#3530CC] transition-all duration-200 font-medium inline-flex items-center gap-2 shadow-lg hover:shadow-[#433BFF]/25"
-              >
-                <LuSave className="w-4 h-4" />
-                Sauvegarder
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="px-4 py-2 text-white rounded-full bg-[#433BFF] hover:bg-[#3530CC] transition-all duration-200 font-medium inline-flex items-center gap-2 shadow-lg hover:shadow-[#433BFF]/25"
-            >
-              <LuPencil className="w-4 h-4" />
-              Modifier
-            </button>
-          )}
-        </div>
-      </div>
+      <ProfileHeader
+        isEditing={isEditing}
+        onEdit={() => setIsEditing(true)}
+        onSave={handleSave}
+        onCancel={() => setIsEditing(false)}
+      />
 
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Profile Card */}
         <div className="lg:col-span-1">
-          <FormCard title="Mon profil" noPadding>
-            <div className="relative h-32 bg-gradient-to-r from-[#433BFF] to-[#7A75FF]">
-              <div className="absolute -bottom-12 left-6">
-                <div className="relative group">
-                  <div className="h-24 w-24 rounded-2xl bg-white dark:bg-slate-700 p-1">
-                    <div className="h-full w-full rounded-xl bg-gradient-to-br from-[#433BFF] to-[#7A75FF] flex items-center justify-center relative">
-                      <LuUser className="h-12 w-12 text-white" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-16 px-6 pb-6">
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">
-                {profile?.firstName} {profile?.lastName}
-              </h2>
-              <p className="text-slate-500 dark:text-slate-400 mb-6">{profile?.email}</p>
-
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-700/50">
-                  <div className="w-10 h-10 rounded-lg bg-[#433BFF]/10 flex items-center justify-center">
-                    <LuPhone className="w-5 h-5 text-[#433BFF]" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">Téléphone</p>
-                    <p className="font-medium text-slate-900 dark:text-white">{profile?.phone}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-700/50">
-                  <div className="w-10 h-10 rounded-lg bg-[#433BFF]/10 flex items-center justify-center">
-                    <LuCalendar className="w-5 h-5 text-[#433BFF]" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">Date de naissance</p>
-                    <p className="font-medium text-slate-900 dark:text-white">
-                      {profile?.birthDate ? new Date(profile.birthDate).toLocaleDateString() : "-"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </FormCard>
+          <ProfileCard profile={profile} />
         </div>
 
-        {/* Main Content */}
         <div className="lg:col-span-2 space-y-8">
           {/* Personal Information */}
           <FormCard title="Informations personnelles" icon={LuUser}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Prénom</label>
-                <Input
-                  type="text"
-                  value={profile?.firstName || ""}
-                  onChange={handleChange("firstName")}
-                  disabled={!isEditing}
-                  className="w-full bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600 rounded-xl focus:ring-[#433BFF] focus:border-[#433BFF]"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Nom</label>
-                <Input
-                  type="text"
-                  value={profile?.lastName || ""}
-                  onChange={handleChange("lastName")}
-                  disabled={!isEditing}
-                  className="w-full bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600 rounded-xl focus:ring-[#433BFF] focus:border-[#433BFF]"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Email</label>
-                <Input
-                  type="email"
-                  value={profile?.email || ""}
-                  onChange={handleChange("email")}
-                  disabled={!isEditing}
-                  className="w-full bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600 rounded-xl focus:ring-[#433BFF] focus:border-[#433BFF]"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Téléphone</label>
-                <Input
-                  type="tel"
-                  value={profile?.phone || ""}
-                  onChange={handleChange("phone")}
-                  disabled={!isEditing}
-                  className="w-full bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600 rounded-xl focus:ring-[#433BFF] focus:border-[#433BFF]"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Mot de passe</label>
-                <Input
-                  type="password"
-                  value={profile?.password || ""}
-                  onChange={handleChange("password")}
-                  disabled={!isEditing}
-                  className="w-full bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600 rounded-xl focus:ring-[#433BFF] focus:border-[#433BFF]"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Date de naissance</label>
-                <Input
-                  type="date"
-                  value={profile?.birthDate ? profile.birthDate.split("T")[0] : ""}
-                  onChange={handleChange("birthDate")}
-                  disabled={!isEditing}
-                  className="w-full bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600 rounded-xl focus:ring-[#433BFF] focus:border-[#433BFF]"
-                />
-              </div>
-            </div>
+            <PersonalInfoForm
+              profile={profile}
+              isEditing={isEditing}
+              onUpdate={(field, value) => {
+                if (profile) {
+                  setProfile({
+                    ...profile,
+                    [field]: field === "birthDate" ? new Date(value) : value,
+                  });
+                }
+              }}
+            />
           </FormCard>
 
           {/* Addresses */}
@@ -428,6 +310,33 @@ export default function Profile() {
               </div>
             </div>
           </FormCard>
+
+          {/* School and Banking Information */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* School Information */}
+            <FormCard title="Information Scolaire" icon={LuGraduationCap}>
+              <div className="space-y-4">
+                <SchoolDetailsForm
+                  schoolDetails={schoolDetails}
+                  isEditing={isEditing}
+                  onDelete={handleDeleteSchoolDetails}
+                  onUpdate={handleSchoolDetailsUpdate}
+                />
+              </div>
+            </FormCard>
+
+            {/* Banking Information */}
+            <FormCard title="Information Bancaire" icon={LuWallet}>
+              <div className="space-y-4">
+                <BankingDetailsForm
+                  bankingDetails={bankingDetails}
+                  isEditing={isEditing}
+                  onDelete={handleDeleteBankingDetails}
+                  onUpdate={handleBankingDetailsUpdate}
+                />
+              </div>
+            </FormCard>
+          </div>
         </div>
       </div>
     </div>
