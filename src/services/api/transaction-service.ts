@@ -20,8 +20,12 @@ export class TransactionService extends BaseApiService<Transaction, CreateTransa
         return super.create(data);
     }
 
-    async update(transactionId: number, data: UpdateTransactionDto): Promise<ApiResponse<Transaction>> {
-        return super.update(transactionId, data);
+    async update(data: UpdateTransactionDto): Promise<ApiResponse<Transaction>> {
+        return super.update(data);
+    }
+
+    async updateById(transactionId: number, data: UpdateTransactionDto): Promise<ApiResponse<Transaction>> {
+        return super.updateById(transactionId, data);
     }
 
     async deleteById(transactionId: number): Promise<ApiResponse<void>> {

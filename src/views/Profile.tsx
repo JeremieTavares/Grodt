@@ -1,5 +1,4 @@
 import {useEffect, useState} from "react";
-import {useParams} from "react-router";
 import {toast} from "sonner";
 import {Toaster} from "@/components/ui/sonner";
 import {LuUser, LuBriefcase, LuMapPin, LuGraduationCap, LuWallet} from "react-icons/lu";
@@ -60,25 +59,25 @@ export default function Profile() {
         setProfile(profileResponse.data);
         setAddresses(addressesResponse.data);
 
+        // Load banking and school details independently
         try {
-          const [schoolResponse, bankingResponse] = await Promise.all([api.school?.getAll(), api.banking?.getAll()]);
-
-          let bankingDetails: BankingDetails | null = null;
+          const bankingResponse = await api.banking?.getAll();
           if (bankingResponse?.data && typeof bankingResponse?.data === "object") {
-            bankingDetails = bankingResponse?.data as unknown as BankingDetails;
+            setBankingDetails(bankingResponse?.data as unknown as BankingDetails);
           }
-
-          let schoolDetails: SchoolDetails | null = null;
-          if (schoolResponse?.data && typeof schoolResponse?.data === "object") {
-            schoolDetails = schoolResponse?.data as unknown as SchoolDetails;
-          }
-
-          setBankingDetails(bankingDetails);
-          setSchoolDetails(schoolDetails);
         } catch (error) {
-          console.log("Pas de détails scolaires ou bancaires trouvés");
-          setSchoolDetails(null);
+          console.log("Pas de détails bancaires trouvés");
           setBankingDetails(null);
+        }
+
+        try {
+          const schoolResponse = await api.school?.getAll();
+          if (schoolResponse?.data && typeof schoolResponse?.data === "object") {
+            setSchoolDetails(schoolResponse?.data as unknown as SchoolDetails);
+          }
+        } catch (error) {
+          console.log("Pas de détails scolaires trouvés");
+          setSchoolDetails(null);
         }
       } catch (err) {
         console.error("Erreur:", err);
@@ -91,22 +90,7 @@ export default function Profile() {
 
   const handleSchoolDetailsUpdate = async (updatedSchoolDetails: SchoolDetails) => {
     if (!schoolDetails) {
-      // Création d'un nouveau détail scolaire
-      try {
-        const response = await api.school?.create({
-          schoolName: updatedSchoolDetails.schoolName,
-          fieldOfStudy: updatedSchoolDetails.fieldOfStudy,
-          startDate: updatedSchoolDetails.startDate,
-          projectedEndDate: updatedSchoolDetails.projectedEndDate,
-        });
-        if (response?.data) {
-          setSchoolDetails(response.data);
-          toast.success("Détails scolaires créés avec succès!");
-        }
-      } catch (error) {
-        console.error("Erreur lors de la création:", error);
-        toast.error("Erreur lors de la création des détails scolaires");
-      }
+      setSchoolDetails(updatedSchoolDetails);
     } else {
       setSchoolDetails(updatedSchoolDetails);
     }
@@ -127,20 +111,7 @@ export default function Profile() {
 
   const handleBankingDetailsUpdate = async (updatedBankingDetails: BankingDetails) => {
     if (!bankingDetails) {
-      // Création d'un nouveau détail bancaire
-      try {
-        const response = await api.banking?.create({
-          institutionName: updatedBankingDetails.institutionName,
-          accountInfo: updatedBankingDetails.accountInfo,
-        });
-        if (response?.data) {
-          setBankingDetails(response.data);
-          toast.success("Détails bancaires créés avec succès!");
-        }
-      } catch (error) {
-        console.error("Erreur lors de la création:", error);
-        toast.error("Erreur lors de la création des détails bancaires");
-      }
+      setBankingDetails(updatedBankingDetails);
     } else {
       setBankingDetails(updatedBankingDetails);
     }
@@ -150,7 +121,7 @@ export default function Profile() {
     if (!userId) return;
 
     try {
-      await api.banking?.deleteById(Number(userId));
+      await api.banking?.delete();
       setBankingDetails(null);
       toast.success("Détails bancaires supprimés avec succès!");
     } catch (error) {
@@ -169,10 +140,10 @@ export default function Profile() {
         };
 
         await Promise.all([
-          api.users.update(Number(userId), formattedProfile),
+          api.users.updateById(Number(userId), formattedProfile),
           ...addresses.map((address) => api.users.updateUserAddress(userId, address)),
           schoolDetails
-            ? api.school?.update(Number(userId), {
+            ? api.school?.update({
                 schoolName: schoolDetails.schoolName,
                 fieldOfStudy: schoolDetails.fieldOfStudy,
                 startDate: schoolDetails.startDate,
@@ -180,7 +151,7 @@ export default function Profile() {
               })
             : Promise.resolve(),
           bankingDetails
-            ? api.banking?.update(Number(userId), {
+            ? api.banking?.update({
                 institutionName: bankingDetails.institutionName,
                 accountInfo: bankingDetails.accountInfo,
                 loanInfo: bankingDetails.loanInfo,

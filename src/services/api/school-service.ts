@@ -1,7 +1,7 @@
-import {AxiosInstance} from "axios";
-import {BaseApiService} from "./core/base-api-service";
-import {ApiResponse} from "./core/http-client";
-import {SchoolDetails, CreateSchoolDetailsDto, UpdateSchoolDetailsDto} from "@/types/user/school-details";
+import { AxiosInstance } from "axios";
+import { BaseApiService } from "./core/base-api-service";
+import { ApiResponse } from "./core/http-client";
+import { SchoolDetails, CreateSchoolDetailsDto, UpdateSchoolDetailsDto } from "@/types/user/school-details";
 
 export class SchoolService extends BaseApiService<SchoolDetails, CreateSchoolDetailsDto, UpdateSchoolDetailsDto> {
   constructor(axios: AxiosInstance, userId: number) {
@@ -20,8 +20,16 @@ export class SchoolService extends BaseApiService<SchoolDetails, CreateSchoolDet
     return super.create(data);
   }
 
-  async update(id: number, data: UpdateSchoolDetailsDto): Promise<ApiResponse<SchoolDetails>> {
-    return super.update(id, data);
+  async update(data: UpdateSchoolDetailsDto): Promise<ApiResponse<SchoolDetails>> {
+    return super.update(data);
+  }
+
+  async updateById(id: number | string, data: UpdateSchoolDetailsDto): Promise<ApiResponse<SchoolDetails>> {
+    return super.updateById(id, data);
+  }
+
+  async delete(): Promise<ApiResponse<void>> {
+    return super.delete();
   }
 
   async deleteById(id: number): Promise<ApiResponse<void>> {

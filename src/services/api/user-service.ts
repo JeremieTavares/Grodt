@@ -22,6 +22,6 @@ export class UserService extends BaseApiService<User, CreateUserDto, UpdateUserD
   }
 
   async deleteUserAddress(userId: number | string, type: string): Promise<ApiResponse<void>> {
-    return this.delete(`${this.basePath}/${userId}/addresses/${type}`);
+    return this.destroy(`${this.basePath}/${userId}/addresses/${type}`);
   }
 }
