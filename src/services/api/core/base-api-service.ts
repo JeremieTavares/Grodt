@@ -29,7 +29,12 @@ export abstract class BaseApiService<T, CreateDto, UpdateDto> extends HttpClient
         return this.put<T, UpdateDto>(`${this.basePath}`, data);
     }
 
-    async deleteById(id: number | string): Promise<ApiResponse<void>> {
-        return this.delete(`${this.basePath}/${id}`);
+    async delete(): Promise<ApiResponse<void>> {
+        return super.destroy(this.basePath);
     }
+
+    async deleteById(id: number | string): Promise<ApiResponse<void>> {
+        return super.destroy(`${this.basePath}/${id}`);
+    }
+
 } 

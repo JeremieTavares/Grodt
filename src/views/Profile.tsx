@@ -150,7 +150,7 @@ export default function Profile() {
     if (!userId) return;
 
     try {
-      await api.banking?.deleteById(Number(userId));
+      await api.banking?.delete();
       setBankingDetails(null);
       toast.success("Détails bancaires supprimés avec succès!");
     } catch (error) {

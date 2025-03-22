@@ -28,6 +28,10 @@ export class BankingService extends BaseApiService<BankingDetails, CreateBanking
     return super.updateById(id, data);
   }
 
+  async delete(): Promise<ApiResponse<void>> {
+    return super.delete();
+  }
+
   async deleteById(id: number): Promise<ApiResponse<void>> {
     return super.deleteById(id);
   }
