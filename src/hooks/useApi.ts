@@ -1,14 +1,15 @@
-import { useMemo } from 'react';
-import { apiClient } from '@/services/api/core/config';
-import { UserService } from '@/services/api/user-service';
-import { TransactionService } from '@/services/api/transaction-service';
-
+import {useMemo} from "react";
+import {apiClient} from "@/services/api/core/config";
+import {UserService} from "@/services/api/user-service";
+import {TransactionService} from "@/services/api/transaction-service";
+import {BankingService} from "@/services/api/banking-service";
+import {SchoolService} from "@/services/api/school-service";
 
 /**
  * useApi is a hook that provides a set of services for the current user.
  * @param userId - The ID of the current user.
  * @returns A set of services for the current user.
- * 
+ *
  * @example
  * // Example usage:
  * const Profile = () => {
@@ -44,7 +45,8 @@ export const useApi = (userId?: number) => {
     return {
       users: new UserService(apiClient),
       transactions: userId ? new TransactionService(apiClient, userId) : null,
-      // Add other api services here as needed
+      banking: userId ? new BankingService(apiClient, userId) : null,
+      school: userId ? new SchoolService(apiClient, userId) : null,
     };
   }, [userId]);
 
