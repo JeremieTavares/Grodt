@@ -172,7 +172,7 @@ export default function Profile() {
           api.users.update(Number(userId), formattedProfile),
           ...addresses.map((address) => api.users.updateUserAddress(userId, address)),
           schoolDetails
-            ? api.school?.update(Number(userId), {
+            ? api.school?.updateDetails({
                 schoolName: schoolDetails.schoolName,
                 fieldOfStudy: schoolDetails.fieldOfStudy,
                 startDate: schoolDetails.startDate,
@@ -180,7 +180,7 @@ export default function Profile() {
               })
             : Promise.resolve(),
           bankingDetails
-            ? api.banking?.update(Number(userId), {
+            ? api.banking?.updateDetails({
                 institutionName: bankingDetails.institutionName,
                 accountInfo: bankingDetails.accountInfo,
                 loanInfo: bankingDetails.loanInfo,

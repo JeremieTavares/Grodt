@@ -1,7 +1,7 @@
-import {AxiosInstance} from "axios";
-import {BaseApiService} from "./core/base-api-service";
-import {ApiResponse} from "./core/http-client";
-import {BankingDetails, CreateBankingDetailsDto, UpdateBankingDetailsDto} from "@/types/user/banking-details";
+import { AxiosInstance } from "axios";
+import { BaseApiService } from "./core/base-api-service";
+import { ApiResponse } from "./core/http-client";
+import { BankingDetails, CreateBankingDetailsDto, UpdateBankingDetailsDto } from "@/types/user/banking-details";
 
 export class BankingService extends BaseApiService<BankingDetails, CreateBankingDetailsDto, UpdateBankingDetailsDto> {
   constructor(axios: AxiosInstance, userId: number) {
@@ -20,8 +20,12 @@ export class BankingService extends BaseApiService<BankingDetails, CreateBanking
     return super.create(data);
   }
 
-  async update(id: number, data: UpdateBankingDetailsDto): Promise<ApiResponse<BankingDetails>> {
-    return super.update(id, data);
+  async update(id: number | string, data: UpdateBankingDetailsDto): Promise<ApiResponse<BankingDetails>> {
+    throw new Error("Not implemented in the backend");
+  }
+
+  async updateDetails(data: UpdateBankingDetailsDto): Promise<ApiResponse<BankingDetails>> {
+    return super.update('', data);
   }
 
   async deleteById(id: number): Promise<ApiResponse<void>> {
