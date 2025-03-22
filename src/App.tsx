@@ -12,7 +12,7 @@ function App() {
         <div className="flex-1">
           <Routes>
             <Route path="/" element={<Landing />} />
-            <Route path="/profile/:userId" element={<Profile />} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
         </div>
       </div>

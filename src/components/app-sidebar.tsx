@@ -51,7 +51,7 @@ const AppSidebar: React.FC = () => {
           isExpanded={isExpanded}
         />
         <SidebarItem
-          to="/profile/:userId"
+          to="/profile"
           icon={<FaUser className="w-6 h-6" />}
           label="Profile"
           isExpanded={isExpanded}

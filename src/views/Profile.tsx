@@ -18,6 +18,7 @@ import {BankingDetails} from "@/types/user/banking-details";
 import {ProfileHeader} from "@/components/profile/ProfileHeader";
 import {ProfileCard} from "@/components/profile/ProfileCard";
 import {PersonalInfoForm} from "@/components/forms/personal/PersonalInfoForm";
+import {useAuth} from "@/hooks/useAuth";
 
 export default function Profile() {
   const [profile, setProfile] = useState<User | null>(null);
@@ -25,8 +26,10 @@ export default function Profile() {
   const [schoolDetails, setSchoolDetails] = useState<SchoolDetails | null>(null);
   const [bankingDetails, setBankingDetails] = useState<BankingDetails | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const {userId} = useParams();
-  const api = useApi(Number(userId));
+  const {user} = useAuth();
+  const api = useApi(Number(user?.id));
+
+  const userId = user?.id;
 
   // Fonction pour supprimer l'adresse de travail
   const deleteWorkAddress = async () => {
@@ -58,12 +61,20 @@ export default function Profile() {
         setAddresses(addressesResponse.data);
 
         try {
-          const [schoolResponse, bankingResponse] = await Promise.all([
-            api.school?.getById(Number(userId)),
-            api.banking?.getById(Number(userId)),
-          ]);
-          setSchoolDetails(schoolResponse?.data || null);
-          setBankingDetails(bankingResponse?.data || null);
+          const [schoolResponse, bankingResponse] = await Promise.all([api.school?.getAll(), api.banking?.getAll()]);
+
+          let bankingDetails: BankingDetails | null = null;
+          if (bankingResponse?.data && typeof bankingResponse?.data === "object") {
+            bankingDetails = bankingResponse?.data as unknown as BankingDetails;
+          }
+
+          let schoolDetails: SchoolDetails | null = null;
+          if (schoolResponse?.data && typeof schoolResponse?.data === "object") {
+            schoolDetails = schoolResponse?.data as unknown as SchoolDetails;
+          }
+
+          setBankingDetails(bankingDetails);
+          setSchoolDetails(schoolDetails);
         } catch (error) {
           console.log("Pas de détails scolaires ou bancaires trouvés");
           setSchoolDetails(null);

@@ -8,19 +8,23 @@ export class BankingService extends BaseApiService<BankingDetails, CreateBanking
     super(axios, `/api/v1/users/${userId}/banking-details`);
   }
 
-  async getById(_id: number): Promise<ApiResponse<BankingDetails>> {
-    return this.get<BankingDetails>(`${this.basePath}`);
+  async getAll(): Promise<ApiResponse<BankingDetails[]>> {
+    return super.getAll();
+  }
+
+  async getById(id: number): Promise<ApiResponse<BankingDetails>> {
+    return super.getById(id);
   }
 
   async create(data: CreateBankingDetailsDto): Promise<ApiResponse<BankingDetails>> {
-    return this.post<BankingDetails, CreateBankingDetailsDto>(this.basePath, data);
+    return super.create(data);
   }
 
-  async update(_id: number, data: UpdateBankingDetailsDto): Promise<ApiResponse<BankingDetails>> {
-    return this.put<BankingDetails, UpdateBankingDetailsDto>(this.basePath, data);
+  async update(id: number, data: UpdateBankingDetailsDto): Promise<ApiResponse<BankingDetails>> {
+    return super.update(id, data);
   }
 
-  async deleteById(_id: number): Promise<ApiResponse<void>> {
-    return this.delete(this.basePath);
+  async deleteById(id: number): Promise<ApiResponse<void>> {
+    return super.deleteById(id);
   }
 }

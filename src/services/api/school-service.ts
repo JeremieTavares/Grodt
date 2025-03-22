@@ -8,19 +8,23 @@ export class SchoolService extends BaseApiService<SchoolDetails, CreateSchoolDet
     super(axios, `/api/v1/users/${userId}/school-details`);
   }
 
-  async getById(_id: number): Promise<ApiResponse<SchoolDetails>> {
-    return this.get<SchoolDetails>(`${this.basePath}`);
+  async getAll(): Promise<ApiResponse<SchoolDetails[]>> {
+    return super.getAll();
+  }
+
+  async getById(id: number): Promise<ApiResponse<SchoolDetails>> {
+    return super.getById(id);
   }
 
   async create(data: CreateSchoolDetailsDto): Promise<ApiResponse<SchoolDetails>> {
-    return this.post<SchoolDetails, CreateSchoolDetailsDto>(this.basePath, data);
+    return super.create(data);
   }
 
-  async update(_id: number, data: UpdateSchoolDetailsDto): Promise<ApiResponse<SchoolDetails>> {
-    return this.put<SchoolDetails, UpdateSchoolDetailsDto>(this.basePath, data);
+  async update(id: number, data: UpdateSchoolDetailsDto): Promise<ApiResponse<SchoolDetails>> {
+    return super.update(id, data);
   }
 
-  async deleteById(_id: number): Promise<ApiResponse<void>> {
-    return this.delete(this.basePath);
+  async deleteById(id: number): Promise<ApiResponse<void>> {
+    return super.deleteById(id);
   }
 }
