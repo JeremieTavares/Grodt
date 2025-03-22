@@ -20,12 +20,12 @@ export class SchoolService extends BaseApiService<SchoolDetails, CreateSchoolDet
     return super.create(data);
   }
 
-  async update(id: number, data: UpdateSchoolDetailsDto): Promise<ApiResponse<SchoolDetails>> {
-    throw new Error("Not implemented in the backend");
+  async update(data: UpdateSchoolDetailsDto): Promise<ApiResponse<SchoolDetails>> {
+    return super.update(data);
   }
 
-  async updateDetails(data: UpdateSchoolDetailsDto): Promise<ApiResponse<SchoolDetails>> {
-    return super.update('', data);
+  async updateById(id: number | string, data: UpdateSchoolDetailsDto): Promise<ApiResponse<SchoolDetails>> {
+    return super.updateById(id, data);
   }
 
   async deleteById(id: number): Promise<ApiResponse<void>> {

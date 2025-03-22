@@ -20,12 +20,12 @@ export class BankingService extends BaseApiService<BankingDetails, CreateBanking
     return super.create(data);
   }
 
-  async update(id: number | string, data: UpdateBankingDetailsDto): Promise<ApiResponse<BankingDetails>> {
-    throw new Error("Not implemented in the backend");
+  async update(data: UpdateBankingDetailsDto): Promise<ApiResponse<BankingDetails>> {
+    return super.update(data);
   }
 
-  async updateDetails(data: UpdateBankingDetailsDto): Promise<ApiResponse<BankingDetails>> {
-    return super.update('', data);
+  async updateById(id: number | string, data: UpdateBankingDetailsDto): Promise<ApiResponse<BankingDetails>> {
+    return super.updateById(id, data);
   }
 
   async deleteById(id: number): Promise<ApiResponse<void>> {

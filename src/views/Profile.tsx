@@ -129,7 +129,7 @@ export default function Profile() {
     if (!bankingDetails) {
       // Création d'un nouveau détail bancaire
       try {
-        const response = await api.banking?.create({
+        const response = await api.banking?.update({
           institutionName: updatedBankingDetails.institutionName,
           accountInfo: updatedBankingDetails.accountInfo,
         });
@@ -169,10 +169,10 @@ export default function Profile() {
         };
 
         await Promise.all([
-          api.users.update(Number(userId), formattedProfile),
+          api.users.updateById(Number(userId), formattedProfile),
           ...addresses.map((address) => api.users.updateUserAddress(userId, address)),
           schoolDetails
-            ? api.school?.updateDetails({
+            ? api.school?.update({
                 schoolName: schoolDetails.schoolName,
                 fieldOfStudy: schoolDetails.fieldOfStudy,
                 startDate: schoolDetails.startDate,
@@ -180,7 +180,7 @@ export default function Profile() {
               })
             : Promise.resolve(),
           bankingDetails
-            ? api.banking?.updateDetails({
+            ? api.banking?.update({
                 institutionName: bankingDetails.institutionName,
                 accountInfo: bankingDetails.accountInfo,
                 loanInfo: bankingDetails.loanInfo,
