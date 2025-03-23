@@ -41,7 +41,7 @@ export const Profile = () => {
 
         <div className="lg:col-span-2 space-y-8">
           <FormCard title="Informations personnelles" icon={LuUser}>
-            <PersonalInfoForm profile={user} isEditing={isEditing} onUpdate={() => setUser} />
+            <PersonalInfoForm profile={user} isEditing={isEditing} onUpdate={setUser} />
           </FormCard>
 
           <AddressSection
