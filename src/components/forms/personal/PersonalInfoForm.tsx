@@ -1,15 +1,20 @@
 import {Input} from "@/components/ui/input";
-import {User, UpdateUserDto} from "@/types/user/user";
+import {User} from "@/types/user/user";
 
-interface PersonalInfoFormProps {
+// Those fields are not supposed to be updated by the user
+type PersonalInfoFormProps = {
   profile: User | null;
   isEditing: boolean;
-  onUpdate: (field: keyof UpdateUserDto, value: string) => void;
-}
+  onUpdate: (user: User) => void;
+};
 
 export const PersonalInfoForm = ({profile, isEditing, onUpdate}: PersonalInfoFormProps) => {
-  const handleChange = (field: keyof UpdateUserDto) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    onUpdate(field, field === "birthDate" ? e.target.value : e.target.value);
+  const handleChange = (field: keyof User) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!profile) return;
+    onUpdate({
+      ...profile,
+      [field]: e.target.value,
+    });
   };
 
   return (

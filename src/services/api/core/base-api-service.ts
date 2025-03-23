@@ -36,5 +36,4 @@ export abstract class BaseApiService<T, CreateDto, UpdateDto> extends HttpClient
     async deleteById(id: number | string): Promise<ApiResponse<void>> {
         return super.destroy(`${this.basePath}/${id}`);
     }
-
 } 
