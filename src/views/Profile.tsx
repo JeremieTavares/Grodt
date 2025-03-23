@@ -21,7 +21,7 @@ import {useAuth} from "@/hooks/useAuth";
 
 export default function Profile() {
   const [profile, setProfile] = useState<User | null>(null);
-  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [addresses, setAddresses] = useState<Address[] | []>([]);
   const [schoolDetails, setSchoolDetails] = useState<SchoolDetails | null>(null);
   const [bankingDetails, setBankingDetails] = useState<BankingDetails | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -35,7 +35,7 @@ export default function Profile() {
     if (!userId) return;
 
     try {
-      await api.users.deleteUserAddress(userId, "WORK");
+      await api.address?.deleteByType(AddressType.WORK);
       const newAddresses = addresses.filter((a) => a.type === AddressType.PERSONAL);
       setAddresses(newAddresses);
       toast.success("Adresse de travail supprimée avec succès!");
@@ -53,31 +53,48 @@ export default function Profile() {
       try {
         const [profileResponse, addressesResponse] = await Promise.all([
           api.users.getById(Number(userId)),
-          api.users.getUserAddresses(userId),
+          api.address?.getAll(),
         ]);
 
         setProfile(profileResponse.data);
-        setAddresses(addressesResponse.data);
 
-        // Load banking and school details independently
-        try {
-          const bankingResponse = await api.banking?.getAll();
-          if (bankingResponse?.data && typeof bankingResponse?.data === "object") {
-            setBankingDetails(bankingResponse?.data as unknown as BankingDetails);
-          }
-        } catch (error) {
-          console.log("Pas de détails bancaires trouvés");
-          setBankingDetails(null);
+        if (addressesResponse?.data) {
+          setAddresses(Array.isArray(addressesResponse.data) ? addressesResponse.data : [addressesResponse.data]);
         }
 
         try {
-          const schoolResponse = await api.school?.getAll();
-          if (schoolResponse?.data && typeof schoolResponse?.data === "object") {
-            setSchoolDetails(schoolResponse?.data as unknown as SchoolDetails);
-          }
-        } catch (error) {
-          console.log("Pas de détails scolaires trouvés");
-          setSchoolDetails(null);
+            const [schoolResult, bankingResult] = await Promise.allSettled([
+                api.school?.getAll(),
+                api.banking?.getAll()
+            ]);
+
+            let schoolDetails: SchoolDetails | null = null;
+            let bankingDetails: BankingDetails | null = null;
+
+            if (
+                schoolResult.status === 'fulfilled' &&
+                schoolResult.value?.data &&
+                typeof schoolResult.value?.data === 'object'
+            ) {
+                schoolDetails = schoolResult.value.data as unknown as SchoolDetails;
+            } else {
+                console.error("Erreur lors de la récupération des détails scolaires :",
+                    schoolResult.status === 'rejected' ? schoolResult.reason : 'Données invalides');
+            }
+
+            if (
+                bankingResult.status === 'fulfilled' &&
+                bankingResult.value?.data &&
+                typeof bankingResult.value?.data === 'object'
+            ) {
+                bankingDetails = bankingResult.value.data as unknown as BankingDetails;
+            } else {
+                console.error("Erreur lors de la récupération des détails bancaires :",
+                    bankingResult.status === 'rejected' ? bankingResult.reason : 'Données invalides');
+            }
+
+            setSchoolDetails(schoolDetails);
+            setBankingDetails(bankingDetails);
         }
       } catch (err) {
         console.error("Erreur:", err);
@@ -90,7 +107,22 @@ export default function Profile() {
 
   const handleSchoolDetailsUpdate = async (updatedSchoolDetails: SchoolDetails) => {
     if (!schoolDetails) {
-      setSchoolDetails(updatedSchoolDetails);
+      // Création d'un nouveau détail scolaire
+      try {
+        const response = await api.school?.create({
+          schoolName: updatedSchoolDetails.schoolName,
+          fieldOfStudy: updatedSchoolDetails.fieldOfStudy,
+          startDate: updatedSchoolDetails.startDate,
+          projectedEndDate: updatedSchoolDetails.projectedEndDate,
+        });
+        if (response?.data) {
+          setSchoolDetails(response.data);
+          toast.success("Détails scolaires créés avec succès!");
+        }
+      } catch (error) {
+        console.error("Erreur lors de la création:", error);
+        toast.error("Erreur lors de la création des détails scolaires");
+      }
     } else {
       setSchoolDetails(updatedSchoolDetails);
     }
@@ -100,7 +132,7 @@ export default function Profile() {
     if (!userId) return;
 
     try {
-      await api.school?.deleteById(Number(userId));
+      await api.school?.delete();
       setSchoolDetails(null);
       toast.success("Détails scolaires supprimés avec succès!");
     } catch (error) {
@@ -111,7 +143,20 @@ export default function Profile() {
 
   const handleBankingDetailsUpdate = async (updatedBankingDetails: BankingDetails) => {
     if (!bankingDetails) {
-      setBankingDetails(updatedBankingDetails);
+      // Création d'un nouveau détail bancaire
+      try {
+        const response = await api.banking?.update({
+          institutionName: updatedBankingDetails.institutionName,
+          accountInfo: updatedBankingDetails.accountInfo,
+        });
+        if (response?.data) {
+          setBankingDetails(response.data);
+          toast.success("Détails bancaires créés avec succès!");
+        }
+      } catch (error) {
+        console.error("Erreur lors de la création:", error);
+        toast.error("Erreur lors de la création des détails bancaires");
+      }
     } else {
       setBankingDetails(updatedBankingDetails);
     }
@@ -141,7 +186,17 @@ export default function Profile() {
 
         await Promise.all([
           api.users.updateById(Number(userId), formattedProfile),
-          ...addresses.map((address) => api.users.updateUserAddress(userId, address)),
+          ...addresses.map((address) =>
+            api.address?.update({
+              id: address.id,
+              streetNumber: address.streetNumber,
+              streetName: address.streetName,
+              city: address.city,
+              province: address.province,
+              country: address.country,
+              type: address.type,
+            }),
+          ),
           schoolDetails
             ? api.school?.update({
                 schoolName: schoolDetails.schoolName,
