@@ -8,14 +8,7 @@ import {SlLogout} from "react-icons/sl";
 import {LuSettings} from "react-icons/lu";
 import {cn} from "@/lib/utils";
 import {useTheme} from "next-themes";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {Switch} from "@/components/ui/switch";
 import type {SVGProps} from "react";
 
