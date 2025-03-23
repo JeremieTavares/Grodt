@@ -1,4 +1,4 @@
-import {User} from "./user";
+import { User } from "./user";
 
 export interface SchoolDetails {
   id: number;
@@ -6,7 +6,7 @@ export interface SchoolDetails {
   fieldOfStudy: string;
   startDate: string;
   projectedEndDate?: string;
-  user: User;
+  user?: User;
 }
 
 export type CreateSchoolDetailsDto = Omit<SchoolDetails, "id" | "user">;

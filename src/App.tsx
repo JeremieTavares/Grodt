@@ -2,7 +2,7 @@ import "./App.css";
 import AppSidebar from "./components/app-sidebar";
 import {Routes, Route} from "react-router-dom";
 import Landing from "./views/Landing";
-import Profile from "./views/Profile";
+import {Profile} from "./views/profile/Profile";
 
 function App() {
   return (
