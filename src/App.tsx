@@ -1,6 +1,6 @@
 import "./App.css";
 import { Outlet } from "react-router";
-import AppSidebar from "./components/app-sidebar";
+import AppSidebar from "./components/AppSidebar";
 
 function App() {
   return (
