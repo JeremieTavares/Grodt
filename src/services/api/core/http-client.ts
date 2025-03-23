@@ -42,7 +42,7 @@ export class HttpClient {
         }
     }
 
-    protected async delete<T>(path: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+    protected async destroy<T>(path: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
         try {
             const response = await this.axios.delete<T>(path, config);
             return this.processResponse(response);

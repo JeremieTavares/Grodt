@@ -1,4 +1,4 @@
-import {User} from "./user";
+import { User } from "./user";
 
 export interface BankingDetails {
   id: number;
@@ -6,7 +6,7 @@ export interface BankingDetails {
   accountInfo: string;
   loanInfo?: string;
   other?: string;
-  user: User;
+  user?: User;
 }
 
 export type CreateBankingDetailsDto = Omit<BankingDetails, "id" | "user">;

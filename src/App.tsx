@@ -2,7 +2,7 @@ import "./App.css";
 import AppSidebar from "./components/app-sidebar";
 import {Routes, Route} from "react-router-dom";
 import Landing from "./views/Landing";
-import Profile from "./views/Profile";
+import {Profile} from "./views/profile/Profile";
 
 function App() {
   return (
@@ -12,7 +12,7 @@ function App() {
         <div className="flex-1">
           <Routes>
             <Route path="/" element={<Landing />} />
-            <Route path="/profile/:userId" element={<Profile />} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
         </div>
       </div>
