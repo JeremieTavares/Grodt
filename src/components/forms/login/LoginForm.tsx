@@ -6,6 +6,7 @@ import { User, UserPlus, AtSign, KeyRound, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { cn } from "@/lib/utils"
 
 export default function LoginForm() {
   const [activeTab, setActiveTab] = useState("login")
@@ -40,20 +41,107 @@ export default function LoginForm() {
     }
   }, [])
 
-  const handleLogin = async () => {
-    // TODO: Appel API ici
-    console.log("Login avec", loginEmail, loginPassword)
-    // TODO: stocker l'ID utilisateur dans Zustand ici
+  const isValidEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   }
 
-  const handleRegister = async () => {
-    // TODO: Appel API ici
+  const isValidPassword = (password: string) => {
+    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/.test(password)
+  }
+
+  const [loginErrors, setLoginErrors] = useState<{ email?: string; password?: string }>({})
+  const [registerErrors, setRegisterErrors] = useState<{
+    name?: string
+    email?: string
+    password?: string
+    confirmPassword?: string
+  }>({})
+
+  const handleLogin = () => {
+    const errors: typeof loginErrors = {}
+
+    if (!isValidEmail(loginEmail)) {
+      errors.email = "Invalid email format"
+    }
+
+    if (!isValidPassword(loginPassword)) {
+      errors.password = "Password must be at least 8 characters, with upper, lower, number, and special char"
+    }
+
+    setLoginErrors(errors)
+
+    if (Object.keys(errors).length > 0) return
+
+    // TODO✅ VALID — call API
+    console.log("Login avec", loginEmail, loginPassword)
+  }
+
+  const handleRegister = () => {
+    const errors: typeof registerErrors = {}
+
+    if (!registerName.trim()) {
+      errors.name = "Name is required"
+    }
+
+    if (!isValidEmail(registerEmail)) {
+      errors.email = "Invalid email format"
+    }
+
+    if (!isValidPassword(registerPassword)) {
+      errors.password = "Password must meet complexity rules"
+    }
+
+    if (registerPassword !== registerConfirmPassword) {
+      errors.confirmPassword = "Passwords do not match"
+    }
+
+    setRegisterErrors(errors)
+
+    if (Object.keys(errors).length > 0) return
+
+    // TODO✅ VALID — call API
     console.log("Register avec", registerName, registerEmail, registerPassword)
-    // TODO: stocker l'ID utilisateur dans Zustand ici
   }
 
   return (
-    <div className="p-6 w-full">
+    <div className="p-6 w-full h-fit">
+      <style scoped>{`
+        @keyframes pulse-error-border {
+          0% {
+            border-color: rgba(239, 68, 68, 0.8); /* red-500 with opacity */
+            box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.2);
+          }
+          50% {
+            border-color: rgba(239, 68, 68, 1); /* full opacity red-500 */
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.4);
+          }
+          100% {
+            border-color: rgba(239, 68, 68, 0.8); /* red-500 with opacity */
+            box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.2);
+          }
+        }
+        
+        @keyframes pulse-error-text {
+          0% {
+            opacity: 0.7;
+          }
+          50% {
+            opacity: 1;
+          }
+          100% {
+            opacity: 0.7;
+          }
+        }
+        
+        .animate-pulse-error-border {
+          animation: pulse-error-border 2s ease-in-out infinite;
+        }
+        
+        .animate-pulse-error-text {
+          animation: pulse-error-text 2s ease-in-out infinite;
+        }
+      `}</style>
+
       <h2 className="text-xl font-semibold mb-1">{activeTab === "login" ? "Connexion" : "Inscription"}</h2>
       <p className="text-sm mb-4 text-muted-foreground">
         {activeTab === "login"
@@ -107,10 +195,18 @@ export default function LoginForm() {
                 id="email"
                 type="email"
                 placeholder="nom@exemple.com"
-                className="pl-10 w-full"
+                className={cn("pl-10 w-full", loginErrors.email && "border-destructive animate-pulse-error-border")}
                 value={loginEmail}
-                onChange={(e) => setLoginEmail(e.target.value)}
+                onChange={(e) => {
+                  setLoginEmail(e.target.value)
+                  if (loginErrors.email) {
+                    setLoginErrors({ ...loginErrors, email: undefined })
+                  }
+                }}
               />
+              {loginErrors.email && (
+                <p className="text-xs text-destructive mt-1 animate-pulse-error-text">{loginErrors.email}</p>
+              )}
             </div>
           </div>
 
@@ -127,10 +223,18 @@ export default function LoginForm() {
                 id="password"
                 type="password"
                 placeholder="••••••••"
-                className="pl-10 w-full"
+                className={cn("pl-10 w-full", loginErrors.password && "border-destructive animate-pulse-error-border")}
                 value={loginPassword}
-                onChange={(e) => setLoginPassword(e.target.value)}
+                onChange={(e) => {
+                  setLoginPassword(e.target.value)
+                  if (loginErrors.password) {
+                    setLoginErrors({ ...loginErrors, password: undefined })
+                  }
+                }}
               />
+              {loginErrors.password && (
+                <p className="text-xs text-destructive mt-1 animate-pulse-error-text">{loginErrors.password}</p>
+              )}
             </div>
           </div>
 
@@ -159,10 +263,18 @@ export default function LoginForm() {
               <Input
                 id="name"
                 placeholder="Jean Dupont"
-                className="pl-10 w-full"
+                className={cn("pl-10 w-full", registerErrors.name && "border-destructive animate-pulse-error-border")}
                 value={registerName}
-                onChange={(e) => setRegisterName(e.target.value)}
+                onChange={(e) => {
+                  setRegisterName(e.target.value)
+                  if (registerErrors.name) {
+                    setRegisterErrors({ ...registerErrors, name: undefined })
+                  }
+                }}
               />
+              {registerErrors.name && (
+                <p className="text-xs text-destructive mt-1 animate-pulse-error-text">{registerErrors.name}</p>
+              )}
             </div>
           </div>
 
@@ -174,10 +286,18 @@ export default function LoginForm() {
                 id="register-email"
                 type="email"
                 placeholder="nom@exemple.com"
-                className="pl-10 w-full"
+                className={cn("pl-10 w-full", registerErrors.email && "border-destructive animate-pulse-error-border")}
                 value={registerEmail}
-                onChange={(e) => setRegisterEmail(e.target.value)}
+                onChange={(e) => {
+                  setRegisterEmail(e.target.value)
+                  if (registerErrors.email) {
+                    setRegisterErrors({ ...registerErrors, email: undefined })
+                  }
+                }}
               />
+              {registerErrors.email && (
+                <p className="text-xs text-destructive mt-1 animate-pulse-error-text">{registerErrors.email}</p>
+              )}
             </div>
           </div>
 
@@ -189,10 +309,21 @@ export default function LoginForm() {
                 id="register-password"
                 type="password"
                 placeholder="••••••••"
-                className="pl-10 w-full"
+                className={cn(
+                  "pl-10 w-full",
+                  registerErrors.password && "border-destructive animate-pulse-error-border",
+                )}
                 value={registerPassword}
-                onChange={(e) => setRegisterPassword(e.target.value)}
+                onChange={(e) => {
+                  setRegisterPassword(e.target.value)
+                  if (registerErrors.password) {
+                    setRegisterErrors({ ...registerErrors, password: undefined })
+                  }
+                }}
               />
+              {registerErrors.password && (
+                <p className="text-xs text-destructive mt-1 animate-pulse-error-text">{registerErrors.password}</p>
+              )}
             </div>
           </div>
 
@@ -204,10 +335,23 @@ export default function LoginForm() {
                 id="register-confirm-password"
                 type="password"
                 placeholder="••••••••"
-                className="pl-10 w-full"
+                className={cn(
+                  "pl-10 w-full",
+                  registerErrors.confirmPassword && "border-destructive animate-pulse-error-border",
+                )}
                 value={registerConfirmPassword}
-                onChange={(e) => setRegisterConfirmPassword(e.target.value)}
+                onChange={(e) => {
+                  setRegisterConfirmPassword(e.target.value)
+                  if (registerErrors.confirmPassword) {
+                    setRegisterErrors({ ...registerErrors, confirmPassword: undefined })
+                  }
+                }}
               />
+              {registerErrors.confirmPassword && (
+                <p className="text-xs text-destructive mt-1 animate-pulse-error-text">
+                  {registerErrors.confirmPassword}
+                </p>
+              )}
             </div>
           </div>
 
