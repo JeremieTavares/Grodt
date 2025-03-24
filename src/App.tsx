@@ -3,6 +3,7 @@ import AppSidebar from "./components/AppSidebar";
 import {Routes, Route} from "react-router-dom";
 import Landing from "./views/Landing";
 import {Profile} from "./views/profile/Profile";
+import BudgetTracking from "./views/budget/BudgetTracking";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/budget" element={<BudgetTracking />} />
           </Routes>
         </div>
       </div>
