@@ -1,23 +1,42 @@
-import {Card, CardContent} from "@/components/ui/card";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {IconType} from "react-icons";
 
 interface FormCardProps {
-  title: string;
+  title?: string;
   icon?: IconType;
   children: React.ReactNode;
   className?: string;
+  headerAction?: React.ReactNode;
+  noPadding?: boolean;
 }
 
-export const FormCard = ({title, icon: Icon, children, className}: FormCardProps) => {
+export const FormCard = ({title, icon: Icon, children, className, headerAction, noPadding}: FormCardProps) => {
+  const showHeader = title || headerAction;
+
   return (
-    <Card className={className}>
-      <CardContent className="p-4 space-y-4">
-        <div className="flex items-center gap-3">
-          {Icon && <Icon className="w-4 h-4 text-[#433BFF]" />}
-          <h4 className="font-semibold text-slate-700">{title}</h4>
-        </div>
-        {children}
-      </CardContent>
+    <Card
+      className={`overflow-hidden bg-white dark:bg-slate-800 shadow-xl pt-1 hover:shadow-2xl transition-all duration-300 border-0 ${
+        className || ""
+      }`}
+    >
+      {showHeader && (
+        <CardHeader className="border-b border-slate-100 dark:border-slate-700">
+          <div className="flex items-center justify-between">
+            {title && (
+              <div className="flex items-center gap-2">
+                {Icon && (
+                  <div className="w-8 h-8 rounded-lg bg-[#433BFF]/10 flex items-center justify-center">
+                    <Icon className="w-4 h-4 text-[#433BFF]" />
+                  </div>
+                )}
+                <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">{title}</CardTitle>
+              </div>
+            )}
+            {headerAction}
+          </div>
+        </CardHeader>
+      )}
+      <CardContent className={`${noPadding ? "!p-0" : "p-6"} [&>*:first-child]:!mt-0`}>{children}</CardContent>
     </Card>
   );
 };
