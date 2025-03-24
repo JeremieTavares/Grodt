@@ -1,5 +1,5 @@
 import "./App.css";
-import AppSidebar from "./components/app-sidebar";
+import AppSidebar from "./components/AppSidebar";
 import {Routes, Route} from "react-router-dom";
 import Landing from "./views/Landing";
 import {Profile} from "./views/profile/Profile";
