@@ -3,25 +3,35 @@ import {useAddresses} from "./hooks/useAddresses";
 import {useSchoolDetails} from "./hooks/useSchoolDetails";
 import {useBankingDetails} from "./hooks/useBankingDetails";
 import {useProfileUpdates} from "./hooks/useProfileUpdates";
-import {AddressSection} from "./AddressSection";
-import {SchoolSection} from "./SchoolSection";
-import {BankingSection} from "./BankingSection";
+import {AddressSection} from "./components/AddressSection";
+import {SchoolSection} from "./components/SchoolSection";
+import {BankingSection} from "./components/BankingSection";
 import {LuUser} from "react-icons/lu";
 import {FormCard} from "@/components/forms/FormCard";
 import {PersonalInfoForm} from "@/components/forms/personal/PersonalInfoForm";
-import {ProfileHeader} from "./ProfileHeader";
-import {ProfileCard} from "./ProfileCard";
+import {PersonalInfoFormRef} from "@/types/form/personal";
+import {ProfileHeader} from "./components/ProfileHeader";
+import {ProfileCard} from "./components/ProfileCard";
 import {useAuth} from "@/hooks/useAuth";
 import {Toaster} from "sonner";
+import {useRef} from "react";
 
 export const Profile = () => {
   const {user: authUser} = useAuth();
+  const personalInfoFormRef = useRef<PersonalInfoFormRef>(null);
 
   const {user, setUser} = useUserProfile(authUser?.id!);
   const {addresses, setAddresses, deleteWorkAddress} = useAddresses(authUser?.id!);
   const {schoolDetails, setSchoolDetails, deleteSchoolDetails} = useSchoolDetails(authUser?.id!);
   const {bankingDetails, setBankingDetails, deleteBankingDetails} = useBankingDetails(authUser?.id!);
   const {isEditing, setIsEditing, handleSave} = useProfileUpdates(authUser?.id!);
+
+  const handleSaveClick = async () => {
+    const isValid = await personalInfoFormRef.current?.validateForm();
+    if (isValid) {
+      handleSave(user!, addresses, schoolDetails, bankingDetails);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 py-12 px-4 sm:px-6 lg:px-8">
@@ -30,7 +40,7 @@ export const Profile = () => {
       <ProfileHeader
         isEditing={isEditing}
         onEdit={() => setIsEditing(true)}
-        onSave={() => handleSave(user!, addresses, schoolDetails, bankingDetails)}
+        onSave={handleSaveClick}
         onCancel={() => setIsEditing(false)}
       />
 
@@ -41,7 +51,7 @@ export const Profile = () => {
 
         <div className="lg:col-span-2 space-y-8">
           <FormCard title="Informations personnelles" icon={LuUser}>
-            <PersonalInfoForm profile={user} isEditing={isEditing} onUpdate={setUser} />
+            <PersonalInfoForm ref={personalInfoFormRef} profile={user} isEditing={isEditing} onUpdate={setUser} />
           </FormCard>
 
           <AddressSection
