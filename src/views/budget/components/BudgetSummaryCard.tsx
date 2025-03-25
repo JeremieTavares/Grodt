@@ -2,13 +2,13 @@ import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {cn} from "@/lib/utils";
 import {memo} from "react";
 
-export interface TotalCardProps {
+export interface BudgetSummaryCardProps {
   title: string;
   amount: number;
   variant: "revenue" | "expense" | "balance";
 }
 
-export const TotalCard = memo(({title, amount, variant}: TotalCardProps) => {
+export const BudgetSummaryCard = memo(({title, amount, variant}: BudgetSummaryCardProps) => {
   const isPositive = amount >= 0;
 
   const getVariantStyles = () => {
@@ -46,5 +46,3 @@ export const TotalCard = memo(({title, amount, variant}: TotalCardProps) => {
     </Card>
   );
 });
-
-TotalCard.displayName = "TotalCard";

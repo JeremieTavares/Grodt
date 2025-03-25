@@ -1,7 +1,7 @@
 import {Toaster} from "@/components/ui/sonner";
 import {TransactionTable} from "./components/TransactionTable";
 import {useTransactions} from "./hooks/useTransactions";
-import {TotalCard} from "./components/TotalCard";
+import {BudgetSummaryCard} from "./components/BudgetSummaryCard";
 import {useTransactionCalculations} from "./hooks/useTransactionCalculations";
 import {useAuth} from "@/hooks/useAuth";
 
@@ -31,9 +31,9 @@ export default function BudgetTracking() {
       <Toaster position="top-right" richColors />
       <div className="mx-2 py-6 space-y-6">
         <section className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <TotalCard title="Revenus totaux" amount={totalRevenues} variant="revenue" />
-          <TotalCard title="Dépenses totales" amount={totalExpenses} variant="expense" />
-          <TotalCard title="Solde" amount={balance} variant="balance" />
+          <BudgetSummaryCard title="Revenus totaux" amount={totalRevenues} variant="revenue" />
+          <BudgetSummaryCard title="Dépenses totales" amount={totalExpenses} variant="expense" />
+          <BudgetSummaryCard title="Solde" amount={balance} variant="balance" />
         </section>
 
         <section className="space-y-6">
