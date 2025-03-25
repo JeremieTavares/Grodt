@@ -109,8 +109,10 @@ export const AddressForm = forwardRef<AddressFormRef, AddressFormProps>(
         </div>
 
         <div className="space-y-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Numéro civique</label>
+          <div>
+            <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
+              Numéro civique <span className="text-red-500">*</span>
+            </label>
             <div className="relative">
               <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
                 <LuMapPin className="w-4 h-4 text-[#433BFF]" />
@@ -131,8 +133,10 @@ export const AddressForm = forwardRef<AddressFormRef, AddressFormProps>(
             </div>
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Nom de la rue</label>
+          <div>
+            <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
+              Nom de la rue <span className="text-red-500">*</span>
+            </label>
             <div className="relative">
               <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
                 <LuMapPin className="w-4 h-4 text-[#433BFF]" />
@@ -153,8 +157,10 @@ export const AddressForm = forwardRef<AddressFormRef, AddressFormProps>(
             </div>
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Ville</label>
+          <div>
+            <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
+              Ville <span className="text-red-500">*</span>
+            </label>
             <div className="relative">
               <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
                 <LuMapPin className="w-4 h-4 text-[#433BFF]" />
@@ -175,8 +181,10 @@ export const AddressForm = forwardRef<AddressFormRef, AddressFormProps>(
             </div>
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Province</label>
+          <div>
+            <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
+              Province <span className="text-red-500">*</span>
+            </label>
             <div className="relative">
               <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
                 <LuGlobe className="w-4 h-4 text-[#433BFF]" />
@@ -188,8 +196,10 @@ export const AddressForm = forwardRef<AddressFormRef, AddressFormProps>(
             </div>
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Pays</label>
+          <div>
+            <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
+              Pays <span className="text-red-500">*</span>
+            </label>
             <div className="relative">
               <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
                 <LuGlobe className="w-4 h-4 text-[#433BFF]" />

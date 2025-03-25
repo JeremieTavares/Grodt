@@ -7,7 +7,6 @@ export const personalFormValidation: ValidationRules<PersonalFormFields> = {
     minLength: {value: 2, message: "Le prénom doit contenir au moins 2 caractères"},
   },
   lastName: {
-    required: "Le nom est requis",
     minLength: {value: 2, message: "Le nom doit contenir au moins 2 caractères"},
   },
   email: {
@@ -18,7 +17,6 @@ export const personalFormValidation: ValidationRules<PersonalFormFields> = {
     },
   },
   phone: {
-    required: "Le numéro de téléphone est requis",
     pattern: {
       value: /^(\+?\d{1,3}[-.]?)?\(?\d{3}\)?[-.]?\d{3}[-.]?\d{4}$/,
       message: "Format invalide. Exemple: 438-333-3506",
@@ -33,7 +31,5 @@ export const personalFormValidation: ValidationRules<PersonalFormFields> = {
         "Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial",
     },
   },
-  birthDate: {
-    required: "La date de naissance est requise",
-  },
+  birthDate: {},
 };

@@ -68,7 +68,9 @@ export const PersonalInfoForm = forwardRef<PersonalInfoFormRef, PersonalInfoForm
     return (
       <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={(e) => e.preventDefault()}>
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Prénom</label>
+          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
+            Prénom <span className="text-red-500">*</span>
+          </label>
           <Input
             {...register("firstName", {
               ...personalFormValidation.firstName,
@@ -100,7 +102,9 @@ export const PersonalInfoForm = forwardRef<PersonalInfoFormRef, PersonalInfoForm
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Email</label>
+          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
+            Email <span className="text-red-500">*</span>
+          </label>
           <Input
             {...register("email", {
               ...personalFormValidation.email,
@@ -133,7 +137,9 @@ export const PersonalInfoForm = forwardRef<PersonalInfoFormRef, PersonalInfoForm
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Mot de passe</label>
+          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
+            Mot de passe <span className="text-red-500">*</span>
+          </label>
           <Input
             {...register("password", {
               ...personalFormValidation.password,
