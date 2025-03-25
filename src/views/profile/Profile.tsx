@@ -3,7 +3,7 @@ import {useAddresses} from "./hooks/useAddresses";
 import {useSchoolDetails} from "./hooks/useSchoolDetails";
 import {useBankingDetails} from "./hooks/useBankingDetails";
 import {useProfileUpdates} from "./hooks/useProfileUpdates";
-import {AddressSection} from "./components/AddressSection";
+import {AddressSection, AddressSectionRef} from "./components/AddressSection";
 import {SchoolSection} from "./components/SchoolSection";
 import {BankingSection} from "./components/BankingSection";
 import {LuUser} from "react-icons/lu";
@@ -13,12 +13,13 @@ import {PersonalInfoFormRef} from "@/types/form/personal";
 import {ProfileHeader} from "./components/ProfileHeader";
 import {ProfileCard} from "./components/ProfileCard";
 import {useAuth} from "@/hooks/useAuth";
-import {Toaster} from "sonner";
+import {Toaster, toast} from "sonner";
 import {useRef} from "react";
 
 export const Profile = () => {
   const {user: authUser} = useAuth();
   const personalInfoFormRef = useRef<PersonalInfoFormRef>(null);
+  const addressSectionRef = useRef<AddressSectionRef>(null);
 
   const {user, setUser} = useUserProfile(authUser?.id!);
   const {addresses, setAddresses, deleteWorkAddress} = useAddresses(authUser?.id!);
@@ -27,10 +28,17 @@ export const Profile = () => {
   const {isEditing, setIsEditing, handleSave} = useProfileUpdates(authUser?.id!);
 
   const handleSaveClick = async () => {
-    const isValid = await personalInfoFormRef.current?.validateForm();
-    if (isValid) {
-      handleSave(user!, addresses, schoolDetails, bankingDetails);
+    const personalInfoValid = await personalInfoFormRef.current?.validateForm();
+    const addressesValid = await addressSectionRef.current?.validateForms();
+
+    if (!personalInfoValid || !addressesValid) {
+      toast.error("Veuillez remplir tous les champs obligatoires avant de sauvegarder", {
+        description: "Certains champs sont manquants ou invalides dans vos informations personnelles ou vos adresses.",
+      });
+      return;
     }
+
+    handleSave(user!, addresses, schoolDetails, bankingDetails);
   };
 
   return (
@@ -55,6 +63,7 @@ export const Profile = () => {
           </FormCard>
 
           <AddressSection
+            ref={addressSectionRef}
             addresses={addresses}
             setAddresses={setAddresses}
             isEditing={isEditing}
