@@ -4,7 +4,7 @@ import {useSchoolDetails} from "./hooks/useSchoolDetails";
 import {useBankingDetails} from "./hooks/useBankingDetails";
 import {useProfileUpdates} from "./hooks/useProfileUpdates";
 import {AddressSection, AddressSectionRef} from "./components/AddressSection";
-import {SchoolSection} from "./components/SchoolSection";
+import {SchoolSection, SchoolSectionRef} from "./components/SchoolSection";
 import {BankingSection} from "./components/BankingSection";
 import {LuUser} from "react-icons/lu";
 import {FormCard} from "@/components/forms/FormCard";
@@ -20,6 +20,7 @@ export const Profile = () => {
   const {user: authUser} = useAuth();
   const personalInfoFormRef = useRef<PersonalInfoFormRef>(null);
   const addressSectionRef = useRef<AddressSectionRef>(null);
+  const schoolSectionRef = useRef<SchoolSectionRef>(null);
 
   const {user, setUser} = useUserProfile(authUser?.id!);
   const {addresses, setAddresses, deleteWorkAddress} = useAddresses(authUser?.id!);
@@ -30,10 +31,12 @@ export const Profile = () => {
   const handleSaveClick = async () => {
     const personalInfoValid = await personalInfoFormRef.current?.validateForm();
     const addressesValid = await addressSectionRef.current?.validateForms();
+    const schoolValid = await schoolSectionRef.current?.validateForm();
 
-    if (!personalInfoValid || !addressesValid) {
+    if (!personalInfoValid || !addressesValid || !schoolValid) {
       toast.error("Veuillez remplir tous les champs obligatoires avant de sauvegarder", {
-        description: "Certains champs sont manquants ou invalides dans vos informations personnelles ou vos adresses.",
+        description:
+          "Certains champs sont manquants ou invalides dans vos informations personnelles, vos adresses ou vos informations scolaires.",
       });
       return;
     }
@@ -72,6 +75,7 @@ export const Profile = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <SchoolSection
+              ref={schoolSectionRef}
               schoolDetails={schoolDetails}
               setSchoolDetails={setSchoolDetails}
               isEditing={isEditing}
