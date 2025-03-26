@@ -5,7 +5,7 @@ import {useBankingDetails} from "./hooks/useBankingDetails";
 import {useProfileUpdates} from "./hooks/useProfileUpdates";
 import {AddressSection, AddressSectionRef} from "./components/AddressSection";
 import {SchoolSection, SchoolSectionRef} from "./components/SchoolSection";
-import {BankingSection} from "./components/BankingSection";
+import {BankingSection, BankingSectionRef} from "./components/BankingSection";
 import {LuUser} from "react-icons/lu";
 import {FormCard} from "@/components/forms/FormCard";
 import {PersonalInfoForm} from "@/components/forms/personal/PersonalInfoForm";
@@ -21,6 +21,7 @@ export const Profile = () => {
   const personalInfoFormRef = useRef<PersonalInfoFormRef>(null);
   const addressSectionRef = useRef<AddressSectionRef>(null);
   const schoolSectionRef = useRef<SchoolSectionRef>(null);
+  const bankingSectionRef = useRef<BankingSectionRef>(null);
 
   const {user, setUser} = useUserProfile(authUser?.id!);
   const {addresses, setAddresses, deleteWorkAddress} = useAddresses(authUser?.id!);
@@ -32,11 +33,12 @@ export const Profile = () => {
     const personalInfoValid = await personalInfoFormRef.current?.validateForm();
     const addressesValid = await addressSectionRef.current?.validateForms();
     const schoolValid = await schoolSectionRef.current?.validateForm();
+    const bankingValid = await bankingSectionRef.current?.validateForm();
 
-    if (!personalInfoValid || !addressesValid || !schoolValid) {
+    if (!personalInfoValid || !addressesValid || !schoolValid || !bankingValid) {
       toast.error("Veuillez remplir tous les champs obligatoires avant de sauvegarder", {
         description:
-          "Certains champs sont manquants ou invalides dans vos informations personnelles, vos adresses ou vos informations scolaires.",
+          "Certains champs sont manquants ou invalides dans vos informations personnelles, vos adresses, vos informations scolaires ou vos informations bancaires.",
       });
       return;
     }
@@ -82,6 +84,7 @@ export const Profile = () => {
               onDelete={deleteSchoolDetails}
             />
             <BankingSection
+              ref={bankingSectionRef}
               bankingDetails={bankingDetails}
               setBankingDetails={setBankingDetails}
               isEditing={isEditing}
