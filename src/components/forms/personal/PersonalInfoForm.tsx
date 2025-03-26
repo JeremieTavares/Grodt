@@ -1,7 +1,7 @@
 import {Input} from "@/components/ui/input";
 import {useForm} from "react-hook-form";
 import {useEffect, useImperativeHandle, forwardRef} from "react";
-import {personalFormValidation} from "../validation/personalFormValidation";
+import {personalFormValidation} from "@/views/profile/components/validation/personalFormValidation";
 import {PersonalInfoFormProps, PersonalInfoFormRef, PersonalFormFields} from "@/types/form/personal";
 
 export const PersonalInfoForm = forwardRef<PersonalInfoFormRef, PersonalInfoFormProps>(

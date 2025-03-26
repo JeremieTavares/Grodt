@@ -1,6 +1,5 @@
 import {Input} from "@/components/ui/input";
 import {LuMapPin, LuGlobe} from "react-icons/lu";
-import {Address} from "@/types/user/address";
 import {ProvinceSelect} from "./ProvinceSelect";
 import {CountrySelect} from "./CountrySelect";
 import {AddressType, ADDRESS_TYPE_LABELS} from "@/enums/address/address";
@@ -8,7 +7,7 @@ import {Province} from "@/enums/address/province";
 import {Country} from "@/enums/address/country";
 import {useForm} from "react-hook-form";
 import {AddressFormFields, AddressFormProps, AddressFormRef} from "@/types/form/address";
-import {addressFormValidation} from "@/components/forms/validation/addressFormValidation";
+import {addressFormValidation} from "@/views/profile/components/validation/addressFormValidation";
 import {forwardRef, useEffect, useImperativeHandle} from "react";
 
 export const AddressForm = forwardRef<AddressFormRef, AddressFormProps>(
