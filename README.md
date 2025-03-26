@@ -1,4 +1,4 @@
- # GRODT - Plateforme de Planification Financière
+# GRODT - Plateforme de Planification Financière
 
 GRODT est une application web moderne conçue pour aider les utilisateurs à planifier et gérer leurs finances de manière efficace.
 
@@ -8,6 +8,7 @@ GRODT est une application web moderne conçue pour aider les utilisateurs à pla
 - **TypeScript** - Pour un code plus robuste et typé
 - **Vite** - Outil de build rapide et moderne
 - **Tailwind CSS** - Framework CSS pour le style
+- **shadcn/ui** - Composants UI réutilisables et accessibles
 - **React Router** - Gestion de la navigation
 - **Zustand** - Gestion d'état
 - **React Hook Form** - Gestion des formulaires
