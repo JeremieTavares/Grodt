@@ -125,6 +125,12 @@ export const BankingDetailsForm = forwardRef<BankingFormRef, BankingDetailsFormP
             </div>
           </div>
         </form>
+
+        <div className="mt-6 flex justify-center items-center">
+          <div className="w-64 h-24">
+            <img src="/images/black-grodt-logo.svg" alt="Grodt Logo" className="w-full h-full object-contain" />
+          </div>
+        </div>
       </div>
     );
   },
