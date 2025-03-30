@@ -168,7 +168,7 @@ export default function Landing() {
       </section>
 
       <footer className="bg-gradient-to-r from-[#433BFF] to-[#222222] text-white py-4 text-center font-light">
-    <p>&copy; 2025 GRODT Finances. Tous droits réservés</p>
+    <p>&copy; 2025 GRODT. Tous droits réservés</p>
     </footer> 
     </div>
   );
