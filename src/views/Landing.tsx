@@ -1,11 +1,12 @@
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, PieChart, Wallet, BellRing } from "lucide-react";
-import GrodtBlackLogo from "../../public/images/black-grodt-logo.svg";
-import GrodtWhiteLogo from "../../public/images/white-grodt-logo.svg";
-import Grodt from "../../public/images/grodt.svg";
-import BgVideo from "../../public/images/bg-video.mp4"
+import { ArrowRight, PieChart, Wallet, BellRing, Check } from "lucide-react";
+import GrodtBlackLogo from "../../public/medias/black-grodt-logo.svg";
+import GrodtWhiteLogo from "../../public/medias/white-grodt-logo.svg";
+import Grodt from "../../public/medias/grodt.svg";
+import BgVideo from "../../public/medias/bg-video.mp4"
+import TwoPhones from "../../public/medias/2phones.svg";
 
 export default function Landing() {
   const { theme } = useTheme();
@@ -14,7 +15,6 @@ export default function Landing() {
     <div className="min-h-screen">
       <section>
         <div className="relative">
-          {/* Background video */}
           <video
             className="absolute w-full h-full object-cover opacity-70"
             src={BgVideo}
@@ -23,12 +23,10 @@ export default function Landing() {
             muted
           ></video>
 
-          <div className="absolute inset-0 w-full h-full gradient-overlay"></div>
+          <div className="absolute inset-0 gradient-overlay"></div>
 
-          {/* Overlay content */}
           <div className="relative z-10">
             <div className="flex items-center justify-between container mx-auto px-4 sm:px-6 lg:px-8 py-6">
-              {/* Render logo based on theme */}
               {theme === "dark" ? (
                 <img
                   src={GrodtWhiteLogo}
@@ -56,7 +54,7 @@ export default function Landing() {
                 </Button>
               </div>
             </div>
-            <div className="text-center space-y-8 py-12 px-4 md:px-6 lg:px-8 max-w-7xl mx-auto">
+            <div className="text-center space-y-8 pb-12 px-4 md:px-6 lg:px-8 max-w-7xl mx-auto">
               <h2 className="text-4xl md:text-6xl font-bold tracking-tighter ">
                 Gérez vos dépenses avec{" "}
                 <span className="bg-gradient-to-r from-primary to-primary/65 bg-clip-text text-transparent">
@@ -71,15 +69,15 @@ export default function Landing() {
                   size="lg"
                   className="px-6 py-3 text-white bg-[#433BFF] hover:bg-[#3530CC] transition-all duration-200 font-medium inline-flex items-center gap-2 shadow-lg hover:shadow-[#433BFF]/25 group"
                 >
-                 Inscription
+                  Inscription
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:rotate-360" />
                 </Button>
-             
+
               </div>
             </div>
           </div>
         </div>
-        <div className="flex items-center justify-center flex-col lg:flex-row bg-muted/50 w-full py-12  md:px-6 lg:px-8">
+        <div className="flex items-center justify-center flex-col lg:flex-row w-full py-12  md:px-6 lg:px-8">
           <div className="text-center py-6 md:py-12 max-w-7xl mx-auto">
             <h2 className="text-4xl font-bold tracking-tighter pb-4 md:pb-8">
               Suivez vos dépenses <br />
@@ -95,8 +93,20 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="py-20 px-4 md:px-6 lg:px-8 container mx-auto">
-        <div className="max-w-7xl mx-auto">
+      <section>
+        <div className="bg-[#433bff] text-white p-6 text-center">
+          <h2 className="text-2xl mb-4">
+            Rejoignez notre communauté de plus de{' '}
+            <span className="font-extrabold">10 M</span> de budgétiseurs
+          </h2>
+          <span className="text-yellow-400 text-xl mb-4">★★★★★</span>
+          <h3 className="text-xl mb-2">59 000+ avis cinq étoiles</h3>
+        </div>
+      </section>
+
+
+      <section className="pt-32 px-4 md:px-6 lg:px-8 container mx-auto">
+        <div>
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
             Fonctionnalités Principales
           </h2>
@@ -148,6 +158,47 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+      <section>
+        <div className="flex flex-col items-center justify-center px-4 md:px-10">
+          <div className="px-4 py-8 md:py-30 sm:py-8 xl:pb-0 md:pb-0 w-full text-center">
+            <h2 className="text-4xl font-bold tracking-tighter pb-4 md:pb-8">
+              Gérez vos dépenses mensuelles tout <br /> en explorant d'autres aspects de votre budget
+            </h2>
+            <ul className="mt-4 space-y-2 text-lg">
+              <li className="flex items-center justify-center">
+                <Check className="mr-2 text-green-400" /> Identifiez vos habitudes pour une gestion budgétaire optimale.
+              </li>
+              <li className="flex items-center justify-center">
+                <Check className="mr-2 text-green-400" /> Simplifiez le suivi de vos dépenses et revenus.
+              </li>
+              <li className="flex items-center justify-center">
+                <Check className="mr-2 text-green-400" /> Recevez des rapports clairs et des analyses utiles.
+              </li>
+              <li className="flex items-center justify-center">
+                <Check className="mr-2 text-green-400" /> Atteignez vos objectifs financiers avec des outils personnalisés.
+              </li>
+            </ul>
+          </div>
+
+          <div className="pt-10 text-center">
+            <Button
+              size="lg"
+              className="px-6 py-3 text-white bg-[#433BFF] hover:bg-[#3530CC] transition-all duration-200 font-medium inline-flex items-center gap-2 shadow-lg hover:shadow-[#433BFF]/25 group"
+            >
+              Démarrer maintenant
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:rotate-360" />
+            </Button>
+          </div>
+        </div>
+        <img
+          src={TwoPhones}
+          className="w-full"
+          alt="Image Grodt"
+        />
+      </section>
+
+
       <section className="relative overflow-hidden py-20 px-4 md:px-6 lg:px-8 bg-gradient-to-r from-[#433BFF] to-[#222222]">
         <div className="max-w-7xl mx-auto text-center relative z-10">
           <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-white"> Plongez dans l'expérience GRODT </h2>
@@ -168,8 +219,8 @@ export default function Landing() {
       </section>
 
       <footer className="bg-gradient-to-r from-[#433BFF] to-[#222222] text-white py-4 text-center font-light">
-    <p>&copy; 2025 GRODT. Tous droits réservés</p>
-    </footer> 
+        <p>&copy; 2025 GRODT. Tous droits réservés</p>
+      </footer>
     </div>
   );
 }
