@@ -8,6 +8,7 @@ import {SlLogout} from "react-icons/sl";
 import {LuSettings} from "react-icons/lu";
 import {cn} from "@/lib/utils";
 import {useTheme} from "next-themes";
+import LoginForm from "@/components/forms/login/LoginForm"; // adjust path if needed
 import {
   Dialog,
   DialogContent,
@@ -81,6 +82,28 @@ const AppSidebar = () => {
               </div>
             </DialogContent>
           </Dialog>
+          <Dialog>
+                    <DialogTrigger asChild>
+                      <button
+                        className={cn(
+                          "flex gap-2 p-2 rounded hover:bg-[#372fbf] cursor-pointer transition-all duration-300 w-full",
+                          !isExpanded ? "justify-center" : "items-center",
+                        )}
+                      >
+                        <FaUser className="w-6 h-6" />
+                        {isExpanded && <span>Connexion</span>}
+                      </button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Connexion</DialogTitle>
+                        <DialogDescription>Connecte-toi à ton compte ou inscris-toi</DialogDescription>
+                      </DialogHeader>
+          
+                      <LoginForm />
+          
+                    </DialogContent>
+                  </Dialog>
           <SidebarItem
             to="/logout"
             icon={<SlLogout className="relative md:left-0" />}
