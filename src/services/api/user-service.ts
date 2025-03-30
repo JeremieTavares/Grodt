@@ -1,7 +1,7 @@
-import { AxiosInstance } from "axios";
-import { BaseApiService } from "./core/base-api-service";
-import { ApiResponse } from "./core/http-client";
-import { User, CreateUserDto, UpdateUserDto } from "@/types/user/user";
+import {AxiosInstance} from "axios";
+import {BaseApiService} from "./core/base-api-service";
+import {ApiResponse} from "./core/http-client";
+import {User, CreateUserDto, UpdateUserDto} from "@/types/user/user";
 
 export class UserService extends BaseApiService<User, CreateUserDto, UpdateUserDto> {
   constructor(axios: AxiosInstance) {
@@ -20,7 +20,7 @@ export class UserService extends BaseApiService<User, CreateUserDto, UpdateUserD
     return super.create(user);
   }
 
-  async update(user: UpdateUserDto): Promise<ApiResponse<User>> {
+  async update(_user: UpdateUserDto): Promise<ApiResponse<User>> {
     throw new Error("Method not implemented.");
   }
 
