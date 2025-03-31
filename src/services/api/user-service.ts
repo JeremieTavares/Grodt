@@ -1,7 +1,7 @@
 import {AxiosInstance} from "axios";
 import {BaseApiService} from "./core/base-api-service";
 import {ApiResponse} from "./core/http-client";
-import {User, CreateUserDto, UpdateUserDto} from "@/types/user/user";
+import {User, CreateUserDto, UpdateUserDto, LoginDto, LoggedInUser} from "@/types/user/user";
 
 export class UserService extends BaseApiService<User, CreateUserDto, UpdateUserDto> {
   constructor(axios: AxiosInstance) {
@@ -35,4 +35,9 @@ export class UserService extends BaseApiService<User, CreateUserDto, UpdateUserD
   async deleteById(id: number | string): Promise<ApiResponse<void>> {
     return super.deleteById(id);
   }
+
+  async login(data: LoginDto): Promise<ApiResponse<LoggedInUser>> {
+    return this.post<LoggedInUser, LoginDto>('/api/v1/auth/login', data);
+  }
+
 }

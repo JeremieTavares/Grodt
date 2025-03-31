@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useRef, useEffect } from "react"
 import { User, UserPlus, AtSign, KeyRound, Check } from "lucide-react"
 
@@ -7,21 +5,29 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
+import { useApi } from "@/hooks/useApi";
+import { CreateUserDto } from "@/types/user/user"
+import { useAuth } from "@/hooks/useAuth"
+import { create } from "domain"
 
-export default function LoginForm() {
+export default function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
   const [activeTab, setActiveTab] = useState("login")
   const [loginEmail, setLoginEmail] = useState("")
   const [loginPassword, setLoginPassword] = useState("")
   const [registerEmail, setRegisterEmail] = useState("")
   const [registerPassword, setRegisterPassword] = useState("")
   const [registerConfirmPassword, setRegisterConfirmPassword] = useState("")
-  const [registerName, setRegisterName] = useState("")
+  const [registerFirstName, setRegisterFirstName] = useState("")
+  const [registerLastName, setRegisterLastName] = useState("")
   const [sliderPosition, setSliderPosition] = useState(0)
   const [contentHeight, setContentHeight] = useState("auto")
+  const {setUser} = useAuth()
 
   const loginContentRef = useRef<HTMLDivElement>(null)
   const registerContentRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+
+  const api = useApi();
 
   // Update slider position based on active tab
   useEffect(() => {
@@ -51,13 +57,14 @@ export default function LoginForm() {
 
   const [loginErrors, setLoginErrors] = useState<{ email?: string; password?: string }>({})
   const [registerErrors, setRegisterErrors] = useState<{
-    name?: string
+    firstName?: string
+    lastName?: string
     email?: string
     password?: string
     confirmPassword?: string
   }>({})
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     const errors: typeof loginErrors = {}
 
     if (!isValidEmail(loginEmail)) {
@@ -74,13 +81,50 @@ export default function LoginForm() {
 
     // TODO✅ VALID — call API
     console.log("Login avec", loginEmail, loginPassword)
+
+    try {
+      const response = await api.users.getByEmail(loginEmail)
+  
+      if (!response.data) {
+        alert("User not found")
+        return
+      }
+  
+      const user = response.data
+  
+      if (user.password !== loginPassword) {
+        alert("Incorrect password")
+        return
+      }
+  
+      // Convert to LoggedInUser shape
+      const loggedInUser = {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        birthDate: user.birthDate,
+        phone: user.phone,
+        addresses: user.addresses,
+      }
+  
+      setUser(loggedInUser)
+      onSuccess?.()
+  
+    } catch (err: any) {
+      console.error(err.message)
+      alert("Login failed: " + err.message)
+    }
   }
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     const errors: typeof registerErrors = {}
 
-    if (!registerName.trim()) {
-      errors.name = "Name is required"
+    if (!registerFirstName.trim()) {
+      errors.firstName = "Prénom requis"
+    }
+    if (!registerLastName.trim()) {
+      errors.lastName = "Nom de famille requis"
     }
 
     if (!isValidEmail(registerEmail)) {
@@ -100,7 +144,28 @@ export default function LoginForm() {
     if (Object.keys(errors).length > 0) return
 
     // TODO✅ VALID — call API
-    console.log("Register avec", registerName, registerEmail, registerPassword)
+    console.log("Register avec", registerFirstName, registerLastName, registerEmail, registerPassword)
+    const newUser: CreateUserDto = {
+      isActive : true,
+      firstName : registerFirstName,
+      lastName : registerLastName,
+      password : registerPassword,
+      email : registerEmail
+    }
+    try{
+      const response = await api.users.create(newUser)
+      const user = response.data
+      setUser(user)
+      onSuccess?.()
+
+
+    }catch(e:any){
+      console.error(e.message)
+      alert(e.message)
+    }
+
+
+
   }
 
   return (
@@ -256,26 +321,52 @@ export default function LoginForm() {
           className={`space-y-4 transition-all duration-300 ease-in-out absolute w-full left-0 right-0 ${activeTab === "register" ? "opacity-100 translate-x-0" : "opacity-0 translate-x-full"}`}
           style={{ visibility: activeTab === "register" ? "visible" : "hidden" }}
         >
-          <div className="space-y-2">
-            <Label htmlFor="name">Nom complet</Label>
-            <div className="relative">
-              <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground z-10" />
-              <Input
-                id="name"
-                placeholder="Jean Dupont"
-                className={cn("pl-10 w-full", registerErrors.name && "border-destructive animate-pulse-error-border")}
-                value={registerName}
-                onChange={(e) => {
-                  setRegisterName(e.target.value)
-                  if (registerErrors.name) {
-                    setRegisterErrors({ ...registerErrors, name: undefined })
-                  }
-                }}
-              />
-              {registerErrors.name && (
-                <p className="text-xs text-destructive mt-1 animate-pulse-error-text">{registerErrors.name}</p>
-              )}
+          <div className=" flex flex-row gap-3">
+            <div className="space-y-2">
+              <Label htmlFor="firstName">Prénom</Label>
+              <div className="relative">
+                <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground z-10" />
+                <Input
+                  id="firstName"
+                  placeholder="Jean"
+                  className={cn("pl-10 w-full", registerErrors.firstName && "border-destructive animate-pulse-error-border")}
+                  value={registerFirstName}
+                  onChange={(e) => {
+                    setRegisterFirstName(e.target.value)
+                    if (registerErrors.firstName) {
+                      setRegisterErrors({ ...registerErrors, firstName: undefined })
+                    }
+                  }}
+                />
+                {registerErrors.firstName && (
+                  <p className="text-xs text-destructive mt-1 animate-pulse-error-text">{registerErrors.firstName}</p>
+                )}
+              </div>
+
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="lastName">Nom de famille</Label>
+              <div className="relative">
+                <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground z-10" />
+                <Input
+                  id="lastName"
+                  placeholder="Dupont"
+                  className={cn("pl-10 w-full", registerErrors.lastName && "border-destructive animate-pulse-error-border")}
+                  value={registerLastName}
+                  onChange={(e) => {
+                    setRegisterLastName(e.target.value)
+                    if (registerErrors.lastName) {
+                      setRegisterErrors({ ...registerErrors, lastName: undefined })
+                    }
+                  }}
+                />
+                {registerErrors.lastName && (
+                  <p className="text-xs text-destructive mt-1 animate-pulse-error-text">{registerErrors.lastName}</p>
+                )}
+              </div>
+
+            </div>
+
           </div>
 
           <div className="space-y-2">
