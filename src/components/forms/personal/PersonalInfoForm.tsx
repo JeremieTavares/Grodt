@@ -1,8 +1,9 @@
 import {Input} from "@/components/ui/input";
 import {useForm} from "react-hook-form";
 import {useEffect, useImperativeHandle, forwardRef} from "react";
-import {personalFormValidation} from "../validation/personalFormValidation";
+import {personalFormValidation} from "@/views/profile/components/validation/personalFormValidation";
 import {PersonalInfoFormProps, PersonalInfoFormRef, PersonalFormFields} from "@/types/form/personal";
+import {LuUser, LuMail, LuPhone, LuLock, LuCalendar} from "react-icons/lu";
 
 export const PersonalInfoForm = forwardRef<PersonalInfoFormRef, PersonalInfoFormProps>(
   ({profile, isEditing, onUpdate}, ref) => {
@@ -68,100 +69,148 @@ export const PersonalInfoForm = forwardRef<PersonalInfoFormRef, PersonalInfoForm
     return (
       <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={(e) => e.preventDefault()}>
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Prénom</label>
-          <Input
-            {...register("firstName", {
-              ...personalFormValidation.firstName,
-              onChange: handleInputChange,
-            })}
-            type="text"
-            disabled={!isEditing}
-            className={`w-full bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600 rounded-xl focus:ring-[#433BFF] focus:border-[#433BFF] ${
-              errors.firstName ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
-            }`}
-          />
-          {errors.firstName && <p className="text-sm text-red-500 mt-1">{errors.firstName.message}</p>}
+          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
+            Prénom <span className="text-red-500">*</span>
+          </label>
+          <div className="space-y-1">
+            <div className="relative flex items-center">
+              <div className="absolute left-0 top-0 bottom-0 w-10 z-10 bg-gradient-to-r from-[#433BFF]/5 to-transparent flex items-center justify-center pointer-events-none">
+                <LuUser className="w-4 h-4 text-[#433BFF]" />
+              </div>
+              <Input
+                {...register("firstName", {
+                  ...personalFormValidation.firstName,
+                  onChange: handleInputChange,
+                })}
+                type="text"
+                disabled={!isEditing}
+                className={`w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white ${
+                  errors.firstName ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                }`}
+              />
+            </div>
+            {errors.firstName && <p className="text-sm text-red-500">{errors.firstName.message}</p>}
+          </div>
         </div>
 
         <div className="space-y-2">
           <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Nom</label>
-          <Input
-            {...register("lastName", {
-              ...personalFormValidation.lastName,
-              onChange: handleInputChange,
-            })}
-            type="text"
-            disabled={!isEditing}
-            className={`w-full bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600 rounded-xl focus:ring-[#433BFF] focus:border-[#433BFF] ${
-              errors.lastName ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
-            }`}
-          />
-          {errors.lastName && <p className="text-sm text-red-500 mt-1">{errors.lastName.message}</p>}
+          <div className="space-y-1">
+            <div className="relative flex items-center">
+              <div className="absolute left-0 top-0 bottom-0 w-10 z-10 bg-gradient-to-r from-[#433BFF]/5 to-transparent flex items-center justify-center pointer-events-none">
+                <LuUser className="w-4 h-4 text-[#433BFF]" />
+              </div>
+              <Input
+                {...register("lastName", {
+                  ...personalFormValidation.lastName,
+                  onChange: handleInputChange,
+                })}
+                type="text"
+                disabled={!isEditing}
+                className={`w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white ${
+                  errors.lastName ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                }`}
+              />
+            </div>
+            {errors.lastName && <p className="text-sm text-red-500">{errors.lastName.message}</p>}
+          </div>
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Email</label>
-          <Input
-            {...register("email", {
-              ...personalFormValidation.email,
-              onChange: handleInputChange,
-            })}
-            type="email"
-            disabled={!isEditing}
-            className={`w-full bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600 rounded-xl focus:ring-[#433BFF] focus:border-[#433BFF] ${
-              errors.email ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
-            }`}
-          />
-          {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>}
+          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
+            Email <span className="text-red-500">*</span>
+          </label>
+          <div className="space-y-1">
+            <div className="relative flex items-center">
+              <div className="absolute left-0 top-0 bottom-0 w-10 z-10 bg-gradient-to-r from-[#433BFF]/5 to-transparent flex items-center justify-center pointer-events-none">
+                <LuMail className="w-4 h-4 text-[#433BFF]" />
+              </div>
+              <Input
+                {...register("email", {
+                  ...personalFormValidation.email,
+                  onChange: handleInputChange,
+                })}
+                type="email"
+                disabled={!isEditing}
+                className={`w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white ${
+                  errors.email ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                }`}
+              />
+            </div>
+            {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
+          </div>
         </div>
 
         <div className="space-y-2">
           <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Téléphone</label>
-          <Input
-            {...register("phone", {
-              ...personalFormValidation.phone,
-              onChange: handleInputChange,
-            })}
-            type="tel"
-            placeholder="438-333-3506"
-            disabled={!isEditing}
-            className={`w-full bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600 rounded-xl focus:ring-[#433BFF] focus:border-[#433BFF] ${
-              errors.phone ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
-            }`}
-          />
-          {errors.phone && <p className="text-sm text-red-500 mt-1">{errors.phone.message}</p>}
+          <div className="space-y-1">
+            <div className="relative flex items-center">
+              <div className="absolute left-0 top-0 bottom-0 w-10 z-10 bg-gradient-to-r from-[#433BFF]/5 to-transparent flex items-center justify-center pointer-events-none">
+                <LuPhone className="w-4 h-4 text-[#433BFF]" />
+              </div>
+              <Input
+                {...register("phone", {
+                  ...personalFormValidation.phone,
+                  onChange: handleInputChange,
+                })}
+                type="tel"
+                placeholder="438-333-3506"
+                disabled={!isEditing}
+                className={`w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white ${
+                  errors.phone ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                }`}
+              />
+            </div>
+            {errors.phone && <p className="text-sm text-red-500">{errors.phone.message}</p>}
+          </div>
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Mot de passe</label>
-          <Input
-            {...register("password", {
-              ...personalFormValidation.password,
-              onChange: handleInputChange,
-            })}
-            type="password"
-            disabled={!isEditing}
-            className={`w-full bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600 rounded-xl focus:ring-[#433BFF] focus:border-[#433BFF] ${
-              errors.password ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
-            }`}
-          />
-          {errors.password && <p className="text-sm text-red-500 mt-1">{errors.password.message}</p>}
+          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
+            Mot de passe <span className="text-red-500">*</span>
+          </label>
+          <div className="space-y-1">
+            <div className="relative flex items-center">
+              <div className="absolute left-0 top-0 bottom-0 w-10 z-10 bg-gradient-to-r from-[#433BFF]/5 to-transparent flex items-center justify-center pointer-events-none">
+                <LuLock className="w-4 h-4 text-[#433BFF]" />
+              </div>
+              <Input
+                {...register("password", {
+                  ...personalFormValidation.password,
+                  onChange: handleInputChange,
+                })}
+                type="password"
+                disabled={!isEditing}
+                className={`w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white ${
+                  errors.password ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                }`}
+              />
+            </div>
+            {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
+          </div>
         </div>
 
         <div className="space-y-2">
           <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Date de naissance</label>
-          <Input
-            {...register("birthDate", {
-              ...personalFormValidation.birthDate,
-              onChange: handleInputChange,
-            })}
-            type="date"
-            disabled={!isEditing}
-            className={`w-full bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600 rounded-xl focus:ring-[#433BFF] focus:border-[#433BFF] ${
-              errors.birthDate ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
-            }`}
-          />
-          {errors.birthDate && <p className="text-sm text-red-500 mt-1">{errors.birthDate.message}</p>}
+          <div className="space-y-1">
+            <div className="relative flex items-center">
+              <div className="absolute left-0 top-0 bottom-0 w-10 z-10 bg-gradient-to-r from-[#433BFF]/5 to-transparent flex items-center justify-center pointer-events-none">
+                <LuCalendar className="w-4 h-4 text-[#433BFF]" />
+              </div>
+              <Input
+                {...register("birthDate", {
+                  ...personalFormValidation.birthDate,
+                  onChange: handleInputChange,
+                })}
+                type="date"
+                disabled={!isEditing}
+                className={`w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white ${
+                  errors.birthDate ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                }`}
+              />
+            </div>
+            {errors.birthDate && <p className="text-sm text-red-500">{errors.birthDate.message}</p>}
+          </div>
         </div>
       </form>
     );
