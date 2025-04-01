@@ -1,19 +1,20 @@
 import {ValidationRules} from "@/types/form/validation";
 import {SchoolFormFields} from "@/types/form/school";
+import {REGEX_SCHOOL_NAME, REGEX_FIELD_OF_STUDY} from "@/utils/regex";
 
 export const schoolFormValidation: ValidationRules<SchoolFormFields> = {
   schoolName: {
     required: "Le nom de l'établissement est requis",
-    minLength: {
-      value: 2,
-      message: "Le nom de l'établissement doit contenir au moins 2 caractères",
+    pattern: {
+      value: REGEX_SCHOOL_NAME,
+      message: "Le nom de l'établissement ne doit contenir que des lettres",
     },
   },
   fieldOfStudy: {
     required: "Le programme d'études est requis",
-    minLength: {
-      value: 2,
-      message: "Le programme d'études doit contenir au moins 2 caractères",
+    pattern: {
+      value: REGEX_FIELD_OF_STUDY,
+      message: "Le programme d'études ne doit contenir que des lettres",
     },
   },
   startDate: {
@@ -33,6 +34,7 @@ export const schoolFormValidation: ValidationRules<SchoolFormFields> = {
     },
   },
   projectedEndDate: {
+    required: "La date de fin prévue des études est requise",
     validate: (value, formValues) => {
       if (!value) return true;
       const date = new Date(value);

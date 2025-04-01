@@ -108,105 +108,115 @@ export const AddressForm = forwardRef<AddressFormRef, AddressFormProps>(
         </div>
 
         <div className="space-y-4">
-          <div>
+          <div className="space-y-2">
             <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
               Numéro civique <span className="text-red-500">*</span>
             </label>
-            <div className="relative">
-              <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
-                <LuMapPin className="w-4 h-4 text-[#433BFF]" />
+            <div className="space-y-1">
+              <div className="relative flex items-center">
+                <div className="absolute left-0 top-0 bottom-0 w-10 z-10 bg-gradient-to-r from-[#433BFF]/5 to-transparent flex items-center justify-center pointer-events-none">
+                  <LuMapPin className="w-4 h-4 text-[#433BFF]" />
+                </div>
+                <Input
+                  {...register("streetNumber", {
+                    ...addressFormValidation.streetNumber,
+                    onChange: handleChange("streetNumber"),
+                  })}
+                  type="text"
+                  placeholder="Numéro civique"
+                  disabled={!isEditing}
+                  className={`w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white ${
+                    errors.streetNumber ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                  }`}
+                />
               </div>
-              <Input
-                {...register("streetNumber", {
-                  ...addressFormValidation.streetNumber,
-                  onChange: handleChange("streetNumber"),
-                })}
-                type="text"
-                placeholder="Numéro civique"
-                disabled={!isEditing}
-                className={`w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white ${
-                  errors.streetNumber ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
-                }`}
-              />
-              {errors.streetNumber && <p className="text-sm text-red-500 mt-1">{errors.streetNumber.message}</p>}
+              {errors.streetNumber && <p className="text-sm text-red-500">{errors.streetNumber.message}</p>}
             </div>
           </div>
 
-          <div>
+          <div className="space-y-2">
             <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
               Nom de la rue <span className="text-red-500">*</span>
             </label>
-            <div className="relative">
-              <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
-                <LuMapPin className="w-4 h-4 text-[#433BFF]" />
+            <div className="space-y-1">
+              <div className="relative flex items-center">
+                <div className="absolute left-0 top-0 bottom-0 w-10 z-10 bg-gradient-to-r from-[#433BFF]/5 to-transparent flex items-center justify-center pointer-events-none">
+                  <LuMapPin className="w-4 h-4 text-[#433BFF]" />
+                </div>
+                <Input
+                  {...register("streetName", {
+                    ...addressFormValidation.streetName,
+                    onChange: handleChange("streetName"),
+                  })}
+                  type="text"
+                  placeholder="Nom de rue"
+                  disabled={!isEditing}
+                  className={`w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white ${
+                    errors.streetName ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                  }`}
+                />
               </div>
-              <Input
-                {...register("streetName", {
-                  ...addressFormValidation.streetName,
-                  onChange: handleChange("streetName"),
-                })}
-                type="text"
-                placeholder="Nom de rue"
-                disabled={!isEditing}
-                className={`w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white ${
-                  errors.streetName ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
-                }`}
-              />
-              {errors.streetName && <p className="text-sm text-red-500 mt-1">{errors.streetName.message}</p>}
+              {errors.streetName && <p className="text-sm text-red-500">{errors.streetName.message}</p>}
             </div>
           </div>
 
-          <div>
+          <div className="space-y-2">
             <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
               Ville <span className="text-red-500">*</span>
             </label>
-            <div className="relative">
-              <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
-                <LuMapPin className="w-4 h-4 text-[#433BFF]" />
+            <div className="space-y-1">
+              <div className="relative flex items-center">
+                <div className="absolute left-0 top-0 bottom-0 w-10 z-10 bg-gradient-to-r from-[#433BFF]/5 to-transparent flex items-center justify-center pointer-events-none">
+                  <LuMapPin className="w-4 h-4 text-[#433BFF]" />
+                </div>
+                <Input
+                  {...register("city", {
+                    ...addressFormValidation.city,
+                    onChange: handleChange("city"),
+                  })}
+                  type="text"
+                  placeholder="Ville"
+                  disabled={!isEditing}
+                  className={`w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white ${
+                    errors.city ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                  }`}
+                />
               </div>
-              <Input
-                {...register("city", {
-                  ...addressFormValidation.city,
-                  onChange: handleChange("city"),
-                })}
-                type="text"
-                placeholder="Ville"
-                disabled={!isEditing}
-                className={`w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white ${
-                  errors.city ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
-                }`}
-              />
-              {errors.city && <p className="text-sm text-red-500 mt-1">{errors.city.message}</p>}
+              {errors.city && <p className="text-sm text-red-500">{errors.city.message}</p>}
             </div>
           </div>
 
-          <div>
+          <div className="space-y-2">
             <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
               Province <span className="text-red-500">*</span>
             </label>
-            <div className="relative">
-              <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
-                <LuGlobe className="w-4 h-4 text-[#433BFF]" />
+            <div className="space-y-1">
+              <div className="relative flex items-center">
+                <div className="absolute left-0 top-0 bottom-0 w-10 z-10 bg-gradient-to-r from-[#433BFF]/5 to-transparent flex items-center justify-center pointer-events-none">
+                  <LuGlobe className="w-4 h-4 text-[#433BFF]" />
+                </div>
+                <div className="w-full pl-10">
+                  <ProvinceSelect value={address.province} onValueChange={handleProvinceChange} disabled={!isEditing} />
+                </div>
               </div>
-              <div className="pl-10">
-                <ProvinceSelect value={address.province} onValueChange={handleProvinceChange} disabled={!isEditing} />
-              </div>
-              {errors.province && <p className="text-sm text-red-500 mt-1">{errors.province.message}</p>}
+              {errors.province && <p className="text-sm text-red-500">{errors.province.message}</p>}
             </div>
           </div>
 
-          <div>
+          <div className="space-y-2">
             <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
               Pays <span className="text-red-500">*</span>
             </label>
-            <div className="relative">
-              <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
-                <LuGlobe className="w-4 h-4 text-[#433BFF]" />
+            <div className="space-y-1">
+              <div className="relative flex items-center">
+                <div className="absolute left-0 top-0 bottom-0 w-10 z-10 bg-gradient-to-r from-[#433BFF]/5 to-transparent flex items-center justify-center pointer-events-none">
+                  <LuGlobe className="w-4 h-4 text-[#433BFF]" />
+                </div>
+                <div className="w-full pl-10">
+                  <CountrySelect value={address.country} onValueChange={handleCountryChange} disabled={!isEditing} />
+                </div>
               </div>
-              <div className="pl-10">
-                <CountrySelect value={address.country} onValueChange={handleCountryChange} disabled={!isEditing} />
-              </div>
-              {errors.country && <p className="text-sm text-red-500 mt-1">{errors.country.message}</p>}
+              {errors.country && <p className="text-sm text-red-500">{errors.country.message}</p>}
             </div>
           </div>
         </div>

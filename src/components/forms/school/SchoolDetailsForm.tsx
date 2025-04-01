@@ -85,23 +85,25 @@ export const SchoolDetailsForm = forwardRef<SchoolFormRef, SchoolDetailsFormProp
             <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
               Nom de l'établissement scolaire <span className="text-red-500">*</span>
             </label>
-            <div className="relative">
-              <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
-                <LuGraduationCap className="w-4 h-4 text-[#433BFF]" />
+            <div className="space-y-1">
+              <div className="relative flex items-center">
+                <div className="absolute left-0 top-0 bottom-0 w-10 z-10 bg-gradient-to-r from-[#433BFF]/5 to-transparent flex items-center justify-center pointer-events-none">
+                  <LuGraduationCap className="w-4 h-4 text-[#433BFF]" />
+                </div>
+                <Input
+                  {...register("schoolName", {
+                    ...schoolFormValidation.schoolName,
+                    onChange: handleChange("schoolName"),
+                  })}
+                  type="text"
+                  placeholder="Nom de l'école"
+                  disabled={!isEditing}
+                  className={`w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white ${
+                    errors.schoolName ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                  }`}
+                />
               </div>
-              <Input
-                {...register("schoolName", {
-                  ...schoolFormValidation.schoolName,
-                  onChange: handleChange("schoolName"),
-                })}
-                type="text"
-                placeholder="Nom de l'école"
-                disabled={!isEditing}
-                className={`w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white ${
-                  errors.schoolName ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
-                }`}
-              />
-              {errors.schoolName && <p className="text-sm text-red-500 mt-1">{errors.schoolName.message}</p>}
+              {errors.schoolName && <p className="text-sm text-red-500">{errors.schoolName.message}</p>}
             </div>
           </div>
 
@@ -109,23 +111,25 @@ export const SchoolDetailsForm = forwardRef<SchoolFormRef, SchoolDetailsFormProp
             <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
               Programme d'études <span className="text-red-500">*</span>
             </label>
-            <div className="relative">
-              <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
-                <LuGraduationCap className="w-4 h-4 text-[#433BFF]" />
+            <div className="space-y-1">
+              <div className="relative flex items-center">
+                <div className="absolute left-0 top-0 bottom-0 w-10 z-10 bg-gradient-to-r from-[#433BFF]/5 to-transparent flex items-center justify-center pointer-events-none">
+                  <LuGraduationCap className="w-4 h-4 text-[#433BFF]" />
+                </div>
+                <Input
+                  {...register("fieldOfStudy", {
+                    ...schoolFormValidation.fieldOfStudy,
+                    onChange: handleChange("fieldOfStudy"),
+                  })}
+                  type="text"
+                  placeholder="Domaine d'études"
+                  disabled={!isEditing}
+                  className={`w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white ${
+                    errors.fieldOfStudy ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                  }`}
+                />
               </div>
-              <Input
-                {...register("fieldOfStudy", {
-                  ...schoolFormValidation.fieldOfStudy,
-                  onChange: handleChange("fieldOfStudy"),
-                })}
-                type="text"
-                placeholder="Domaine d'études"
-                disabled={!isEditing}
-                className={`w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white ${
-                  errors.fieldOfStudy ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
-                }`}
-              />
-              {errors.fieldOfStudy && <p className="text-sm text-red-500 mt-1">{errors.fieldOfStudy.message}</p>}
+              {errors.fieldOfStudy && <p className="text-sm text-red-500">{errors.fieldOfStudy.message}</p>}
             </div>
           </div>
 
@@ -133,23 +137,25 @@ export const SchoolDetailsForm = forwardRef<SchoolFormRef, SchoolDetailsFormProp
             <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
               Date de début des études <span className="text-red-500">*</span>
             </label>
-            <div className="relative">
-              <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
-                <LuCalendar className="w-4 h-4 text-[#433BFF]" />
+            <div className="space-y-1">
+              <div className="relative flex items-center">
+                <div className="absolute left-0 top-0 bottom-0 w-10 z-10 bg-gradient-to-r from-[#433BFF]/5 to-transparent flex items-center justify-center pointer-events-none">
+                  <LuCalendar className="w-4 h-4 text-[#433BFF]" />
+                </div>
+                <Input
+                  {...register("startDate", {
+                    ...schoolFormValidation.startDate,
+                    onChange: handleChange("startDate"),
+                  })}
+                  type="date"
+                  placeholder="Date de début"
+                  disabled={!isEditing}
+                  className={`w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white ${
+                    errors.startDate ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                  }`}
+                />
               </div>
-              <Input
-                {...register("startDate", {
-                  ...schoolFormValidation.startDate,
-                  onChange: handleChange("startDate"),
-                })}
-                type="date"
-                placeholder="Date de début"
-                disabled={!isEditing}
-                className={`w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white ${
-                  errors.startDate ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
-                }`}
-              />
-              {errors.startDate && <p className="text-sm text-red-500 mt-1">{errors.startDate.message}</p>}
+              {errors.startDate && <p className="text-sm text-red-500">{errors.startDate.message}</p>}
             </div>
           </div>
 
@@ -157,25 +163,25 @@ export const SchoolDetailsForm = forwardRef<SchoolFormRef, SchoolDetailsFormProp
             <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
               Date de fin prévue des études
             </label>
-            <div className="relative">
-              <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
-                <LuCalendar className="w-4 h-4 text-[#433BFF]" />
+            <div className="space-y-1">
+              <div className="relative flex items-center">
+                <div className="absolute left-0 top-0 bottom-0 w-10 z-10 bg-gradient-to-r from-[#433BFF]/5 to-transparent flex items-center justify-center pointer-events-none">
+                  <LuCalendar className="w-4 h-4 text-[#433BFF]" />
+                </div>
+                <Input
+                  {...register("projectedEndDate", {
+                    ...schoolFormValidation.projectedEndDate,
+                    onChange: handleChange("projectedEndDate"),
+                  })}
+                  type="date"
+                  placeholder="Date de fin prévue"
+                  disabled={!isEditing}
+                  className={`w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white ${
+                    errors.projectedEndDate ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                  }`}
+                />
               </div>
-              <Input
-                {...register("projectedEndDate", {
-                  ...schoolFormValidation.projectedEndDate,
-                  onChange: handleChange("projectedEndDate"),
-                })}
-                type="date"
-                placeholder="Date de fin prévue"
-                disabled={!isEditing}
-                className={`w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white ${
-                  errors.projectedEndDate ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
-                }`}
-              />
-              {errors.projectedEndDate && (
-                <p className="text-sm text-red-500 mt-1">{errors.projectedEndDate.message}</p>
-              )}
+              {errors.projectedEndDate && <p className="text-sm text-red-500">{errors.projectedEndDate.message}</p>}
             </div>
           </div>
         </form>

@@ -81,23 +81,25 @@ export const BankingDetailsForm = forwardRef<BankingFormRef, BankingDetailsFormP
             <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
               Nom de l'institution <span className="text-red-500">*</span>
             </label>
-            <div className="relative">
-              <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
-                <LuWallet className="w-4 h-4 text-[#433BFF]" />
+            <div className="space-y-1">
+              <div className="relative flex items-center">
+                <div className="absolute left-0 top-0 bottom-0 w-10 z-10 bg-gradient-to-r from-[#433BFF]/5 to-transparent flex items-center justify-center pointer-events-none">
+                  <LuWallet className="w-4 h-4 text-[#433BFF]" />
+                </div>
+                <Input
+                  {...register("institutionName", {
+                    ...bankingFormValidation.institutionName,
+                    onChange: handleChange("institutionName"),
+                  })}
+                  type="text"
+                  placeholder="Ex: Desjardins, RBC, BMO..."
+                  disabled={!isEditing}
+                  className={`w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white ${
+                    errors.institutionName ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                  }`}
+                />
               </div>
-              <Input
-                {...register("institutionName", {
-                  ...bankingFormValidation.institutionName,
-                  onChange: handleChange("institutionName"),
-                })}
-                type="text"
-                placeholder="Ex: Desjardins, RBC, BMO..."
-                disabled={!isEditing}
-                className={`w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white ${
-                  errors.institutionName ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
-                }`}
-              />
-              {errors.institutionName && <p className="text-sm text-red-500 mt-1">{errors.institutionName.message}</p>}
+              {errors.institutionName && <p className="text-sm text-red-500">{errors.institutionName.message}</p>}
             </div>
           </div>
 
@@ -105,23 +107,25 @@ export const BankingDetailsForm = forwardRef<BankingFormRef, BankingDetailsFormP
             <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
               Informations du compte <span className="text-red-500">*</span>
             </label>
-            <div className="relative">
-              <div className="absolute left-0 top-0 w-10 h-full bg-gradient-to-r from-[#433BFF]/5 to-transparent rounded-l-lg flex items-center justify-center">
-                <LuWallet className="w-4 h-4 text-[#433BFF]" />
+            <div className="space-y-1">
+              <div className="relative flex items-center">
+                <div className="absolute left-0 top-0 bottom-0 w-10 z-10 bg-gradient-to-r from-[#433BFF]/5 to-transparent flex items-center justify-center pointer-events-none">
+                  <LuWallet className="w-4 h-4 text-[#433BFF]" />
+                </div>
+                <Input
+                  {...register("accountInfo", {
+                    ...bankingFormValidation.accountInfo,
+                    onChange: handleChange("accountInfo"),
+                  })}
+                  type="text"
+                  placeholder="Numéro de compte, transit..."
+                  disabled={!isEditing}
+                  className={`w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white ${
+                    errors.accountInfo ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                  }`}
+                />
               </div>
-              <Input
-                {...register("accountInfo", {
-                  ...bankingFormValidation.accountInfo,
-                  onChange: handleChange("accountInfo"),
-                })}
-                type="text"
-                placeholder="Numéro de compte, transit..."
-                disabled={!isEditing}
-                className={`w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 disabled:opacity-70 disabled:cursor-not-allowed font-medium pl-10 rounded-lg focus:ring-[#433BFF] focus:border-[#433BFF] transition-shadow group-hover:shadow-md dark:text-white ${
-                  errors.accountInfo ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
-                }`}
-              />
-              {errors.accountInfo && <p className="text-sm text-red-500 mt-1">{errors.accountInfo.message}</p>}
+              {errors.accountInfo && <p className="text-sm text-red-500">{errors.accountInfo.message}</p>}
             </div>
           </div>
         </form>
