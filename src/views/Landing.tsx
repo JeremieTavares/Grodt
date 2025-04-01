@@ -27,22 +27,24 @@ export default function Landing() {
 
           <div className="relative z-10">
             <div className="flex items-center justify-between container mx-auto px-4 sm:px-6 lg:px-8 py-6">
-              {theme === "dark" ? (
-                <img
-                  src={GrodtWhiteLogo}
-                  height={210}
-                  width={210}
-                  alt="Grodt logo"
-                />
-              ) : (
-                <img
-                  src={GrodtBlackLogo}
-                  height={210}
-                  width={210}
-                  alt="Grodt logo"
-                />
-              )}
-              <div className="flex gap-4 justify-center">
+              <div className="min-[450px]:block hidden">
+                {theme === "dark" ? (
+                  <img
+                    src={GrodtWhiteLogo}
+                    height={210}
+                    width={210}
+                    alt="Grodt logo"
+                  />
+                ) : (
+                  <img
+                    src={GrodtBlackLogo}
+                    height={210}
+                    width={210}
+                    alt="Grodt logo"
+                  />
+                )}
+              </div>
+              <div className="flex gap-4 justify-end max-[450px]:justify-between w-full max-[450px]:px-4">
                 <Button
                   size="lg"
                   className="px-6 py-3 text-white bg-[#433BFF] hover:bg-[#3530CC] transition-all duration-200 font-medium inline-flex items-center gap-2 shadow-lg hover:shadow-[#433BFF]/25"
@@ -53,8 +55,10 @@ export default function Landing() {
                   Connexion
                 </Button>
               </div>
+
+
             </div>
-            <div className="text-center space-y-8 pb-12 px-4 md:px-6 lg:px-8 max-w-7xl mx-auto">
+            <div className="text-center space-y-8 py-12 px-4 md:px-6 lg:px-8 max-w-7xl mx-auto max-[450px]:p-4">
               <h2 className="text-4xl md:text-6xl font-bold tracking-tighter ">
                 Gérez vos dépenses avec{" "}
                 <span className="bg-gradient-to-r from-primary to-primary/65 bg-clip-text text-transparent">
@@ -64,7 +68,7 @@ export default function Landing() {
               <p className="text-xl max-w-2xl font-medium mx-auto">
                 Prenez le contrôle de vos finances personnelles. Suivez, analysez et optimisez vos dépenses efficacement.
               </p>
-              <div className="flex gap-4 justify-center">
+              <div className="flex gap-4 pb-12 justify-center">
                 <Button
                   size="lg"
                   className="px-6 py-3 text-white bg-[#433BFF] hover:bg-[#3530CC] transition-all duration-200 font-medium inline-flex items-center gap-2 shadow-lg hover:shadow-[#433BFF]/25 group"
@@ -81,7 +85,7 @@ export default function Landing() {
           <div className="text-center py-6 md:py-12 max-w-7xl mx-auto">
             <h2 className="text-4xl font-bold tracking-tighter pb-4 md:pb-8">
               Suivez vos dépenses <br />
-              mensuelles et bien plus encore.
+              mensuelles et bien plus encore
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Optimisez la gestion de votre budget en suivant vos dépenses mensuelles et en analysant vos transactions pour mieux comprendre vos habitudes financières.
@@ -97,7 +101,7 @@ export default function Landing() {
         <div className="bg-[#433bff] text-white p-6 text-center">
           <h2 className="text-2xl mb-4">
             Rejoignez notre communauté de plus de{' '}
-            <span className="font-extrabold">10 M</span> de budgétiseurs
+            <span className="font-extrabold">10 M</span> d'utilisateurs
           </h2>
           <span className="text-yellow-400 text-xl mb-4">★★★★★</span>
           <h3 className="text-xl mb-2">59 000+ avis cinq étoiles</h3>
