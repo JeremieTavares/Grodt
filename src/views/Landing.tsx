@@ -81,7 +81,7 @@ export default function Landing() {
             </div>
           </div>
         </div>
-        <div className="flex items-center justify-center flex-col lg:flex-row w-full py-12  md:px-6 lg:px-8">
+        <div className="flex items-center justify-center flex-col lg:flex-row w-full py-8  md:px-6 lg:px-8">
           <div className="text-center py-6 md:py-12 max-w-7xl mx-auto">
             <h2 className="text-4xl font-bold tracking-tighter pb-4 md:pb-8">
               Suivez vos dépenses <br />
