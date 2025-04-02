@@ -1,8 +1,8 @@
-import { AxiosInstance } from "axios";
-import { BaseApiService } from "./core/base-api-service";
-import { ApiResponse } from "./core/http-client";
-import { Address, CreateAddressDto, UpdateAddressDto } from "@/types/user/address";
-import { AddressType } from "@/enums/address/address";
+import {AxiosInstance} from "axios";
+import {BaseApiService} from "./core/base-api-service";
+import {ApiResponse} from "./core/http-client";
+import {Address, CreateAddressDto, UpdateAddressDto} from "@/types/user/address";
+import {AddressType} from "@/enums/address/address";
 
 export class AddressService extends BaseApiService<Address, CreateAddressDto, UpdateAddressDto> {
   constructor(axios: AxiosInstance, userId: number) {

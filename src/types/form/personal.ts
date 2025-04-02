@@ -1,6 +1,6 @@
 import {User} from "../user/user";
 
-// Omit birthDate from User and add it back as string for form handling
+// Utilise Pick pour sélectionner les champs nécessaires et Omit pour exclure le champ birthDate
 export type PersonalFormFields = Omit<
   Pick<User, "firstName" | "lastName" | "email" | "phone" | "password" | "birthDate">,
   "birthDate"

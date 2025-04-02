@@ -1,7 +1,7 @@
-import { AxiosInstance } from "axios";
-import { BaseApiService } from "./core/base-api-service";
-import { ApiResponse } from "./core/http-client";
-import { SchoolDetails, CreateSchoolDetailsDto, UpdateSchoolDetailsDto } from "@/types/user/school-details";
+import {AxiosInstance} from "axios";
+import {BaseApiService} from "./core/base-api-service";
+import {ApiResponse} from "./core/http-client";
+import {SchoolDetails, CreateSchoolDetailsDto, UpdateSchoolDetailsDto} from "@/types/user/school-details";
 
 export class SchoolService extends BaseApiService<SchoolDetails, CreateSchoolDetailsDto, UpdateSchoolDetailsDto> {
   constructor(axios: AxiosInstance, userId: number) {
