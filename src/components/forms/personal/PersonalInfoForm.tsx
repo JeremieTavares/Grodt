@@ -44,6 +44,10 @@ export const PersonalInfoForm = forwardRef<PersonalInfoFormRef, PersonalInfoForm
     const handleInputChange = () => {
       if (profile && isEditing) {
         const values = getValues();
+        // Ne pas mettre à jour si la valeur est "true"
+        if (values.phone === "true") {
+          values.phone = "";
+        }
         onUpdate({
           ...profile,
           ...values,
@@ -59,7 +63,7 @@ export const PersonalInfoForm = forwardRef<PersonalInfoFormRef, PersonalInfoForm
           firstName: profile.firstName || "",
           lastName: profile.lastName || "",
           email: profile.email || "",
-          phone: profile.phone || "",
+          phone: profile.phone === "true" ? "" : profile.phone || "",
           password: profile.password || "",
           birthDate: profile.birthDate ? new Date(profile.birthDate).toISOString().split("T")[0] : "",
         });
