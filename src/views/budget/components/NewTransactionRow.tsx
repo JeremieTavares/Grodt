@@ -53,7 +53,6 @@ export const NewTransactionRow = memo(
       }
     }, [onCreate, type]);
 
-    // Callbacks memoized for each field to avoid re-renders
     const handleDescriptionUpdate = useCallback((value: string | number) => {
       descriptionRef.current = value as string;
     }, []);

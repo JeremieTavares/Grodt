@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useApi } from "@/hooks/useApi";
-import { Transaction, CreateTransactionDto } from "@/types/transaction/transaction";
+import { Transaction, CreateTransactionDto, UpdateTransactionDto } from "@/types/transaction/transaction";
 import { useTransactionToast } from "@/hooks/useTransactionToast";
 
 export const useTransactions = (userId: number) => {
@@ -66,7 +66,7 @@ export const useTransactions = (userId: number) => {
     };
 
 
-    const handleUpdate = async (transaction: Transaction): Promise<Transaction | false> => {
+    const handleUpdate = async (transactionId: number, transaction: UpdateTransactionDto): Promise<Transaction | false> => {
         if (!api.transactions || !userId) return false;
 
         try {
@@ -76,8 +76,12 @@ export const useTransactions = (userId: number) => {
                 amount: Number(transaction.amount),
             });
 
-            await api.transactions.updateById(transaction.id, transaction);
-            setTransactions((prev) => prev.map((t) => (t.id === transaction.id ? transaction : t)));
+            await api.transactions.updateById(transactionId, transaction);
+            const updatedTransaction = {
+                ...transaction,
+                id: transactionId
+            };
+            setTransactions((prev) => prev.map((t) => (t.id === transactionId ? updatedTransaction : t)));
 
             transactionToast.updateToast(toastId, {
                 type: transaction.type,
@@ -85,7 +89,7 @@ export const useTransactions = (userId: number) => {
                 amount: Number(transaction.amount),
             });
 
-            return transaction;
+            return updatedTransaction;
         } catch (err) {
             console.error("Erreur lors de la mise à jour:", err);
             transactionToast.errorToast("", err, {

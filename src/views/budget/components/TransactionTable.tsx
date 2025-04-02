@@ -10,7 +10,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {Transaction, TransactionType, CreateTransactionDto} from "@/types/transaction/transaction";
+import {
+  Transaction,
+  TransactionType,
+  CreateTransactionDto,
+  UpdateTransactionDto,
+} from "@/types/transaction/transaction";
 import {EXPENSE_CATEGORIES, REVENUE_CATEGORIES} from "@/types/transaction/categories";
 import {cn} from "@/lib/utils";
 import {TransactionRow} from "./TransactionRow";
@@ -19,7 +24,7 @@ import {NewTransactionRow} from "./NewTransactionRow";
 interface TransactionTableProps {
   type: TransactionType;
   transactions: Transaction[];
-  onUpdate: (transaction: Transaction) => Promise<Transaction | false>;
+  onUpdate: (transactionId: number, transaction: UpdateTransactionDto) => Promise<Transaction | false>;
   onDelete: (transaction: Transaction) => Promise<boolean>;
   onCreate: (data: CreateTransactionDto) => Promise<Transaction | false>;
 }
@@ -30,7 +35,11 @@ export function TransactionTable({type, transactions, onUpdate, onDelete, onCrea
   const categories = type === "Expense" ? EXPENSE_CATEGORIES : REVENUE_CATEGORIES;
 
   const handleTransactionUpdate = (transaction: Transaction, field: keyof Transaction, value: string | number) => {
-    onUpdate({...transaction, [field]: value});
+    const {id, user, ...updateData} = {
+      ...transaction,
+      [field]: value,
+    };
+    onUpdate(transaction.id, updateData);
   };
 
   const tableClasses = {
