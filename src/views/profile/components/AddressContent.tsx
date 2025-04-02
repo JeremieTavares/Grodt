@@ -36,9 +36,9 @@ export const AddressContent = forwardRef<AddressContentRef, AddressContentProps>
 
     const emptyPersonalAddress = {
       id: 0,
-      streetNumber: "",
-      streetName: "",
-      city: "",
+      streetNumber: "1234",
+      streetName: "Rue des Érables",
+      city: "Montréal",
       province: Province.QC,
       country: Country.CA,
       type: AddressType.PERSONAL,
