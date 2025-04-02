@@ -35,6 +35,7 @@ export function TransactionTable({type, transactions, onUpdate, onDelete, onCrea
   const categories = type === "Expense" ? EXPENSE_CATEGORIES : REVENUE_CATEGORIES;
 
   const handleTransactionUpdate = (transaction: Transaction, field: keyof Transaction, value: string | number) => {
+    // Remove the user and id from the transaction body to avoid sending them to the server
     const {id, user, ...updateData} = {
       ...transaction,
       [field]: value,
@@ -66,6 +67,7 @@ export function TransactionTable({type, transactions, onUpdate, onDelete, onCrea
             <TableRow className="hover:bg-muted/50">
               <TableHead className={tableClasses.header}>Description</TableHead>
               <TableHead className={tableClasses.header}>Catégorie</TableHead>
+              <TableHead className={tableClasses.header}>Fréquence</TableHead>
               <TableHead className={cn(tableClasses.header, "text-right")}>Montant</TableHead>
               <TableHead className={tableClasses.header}>Date</TableHead>
               <TableHead className={tableClasses.header}></TableHead>

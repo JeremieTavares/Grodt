@@ -32,6 +32,7 @@ export const TransactionRow = memo(
     selectTriggerStyles,
   }: TransactionRowProps) => (
     <TableRow className="hover:bg-muted/50">
+      {/* Description */}
       <TableCell className={tableClasses.cell}>
         <EditableCell
           value={transaction.description || ""}
@@ -39,15 +40,36 @@ export const TransactionRow = memo(
           className={inputStyles}
         />
       </TableCell>
+
+      {/* Category */}
       <TableCell className={tableClasses.cell}>
         <EditableCell
           value={transaction.category || ""}
           onUpdate={(value) => onUpdate("category", value)}
           className={selectTriggerStyles}
-          type="category"
-          categories={categories}
+          type="select"
+          options={categories.map((category) => ({value: category, label: category}))}
         />
       </TableCell>
+
+      {/* Frequency */}
+      <TableCell className={tableClasses.cell}>
+        <EditableCell
+          value={transaction.frequency.toString()}
+          onUpdate={(value) => onUpdate("frequency", value)}
+          className={selectTriggerStyles}
+          type="select"
+          options={[
+            {value: "1", label: "Jour"},
+            {value: "7", label: "Semaine"},
+            {value: "14", label: "Deux semaines"},
+            {value: "30", label: "Mois"},
+            {value: "-1", label: "Aucune récurrence"},
+          ]}
+        />
+      </TableCell>
+
+      {/* Amount */}
       <TableCell className={cn(tableClasses.cell, tableClasses.amount)}>
         <EditableCell
           value={transaction.amount}
@@ -56,9 +78,13 @@ export const TransactionRow = memo(
           type="number"
         />
       </TableCell>
+
+      {/* Start Date */}
       <TableCell className={tableClasses.cell}>
         {format(new Date(transaction.startDate), "d MMM yyyy", {locale: fr})}
       </TableCell>
+
+      {/* Delete Button */}
       <TableCell className={tableClasses.cell}>
         <Button
           variant="ghost"

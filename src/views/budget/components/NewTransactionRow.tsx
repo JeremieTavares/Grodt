@@ -1,6 +1,11 @@
 import {memo, useRef, useCallback, useState} from "react";
 import {TableCell, TableRow} from "@/components/ui/table";
-import {TransactionType, CreateTransactionDto, Transaction} from "@/types/transaction/transaction";
+import {
+  TransactionType,
+  CreateTransactionDto,
+  Transaction,
+  TransactionFrequency,
+} from "@/types/transaction/transaction";
 import {cn} from "@/lib/utils";
 import {EditableCell} from "./EditableCell";
 
@@ -21,35 +26,34 @@ export const NewTransactionRow = memo(
     const descriptionRef = useRef("");
     const amountRef = useRef<number | null>(null);
     const categoryRef = useRef("");
-
+    const frequencyRef = useRef<number | null>(null);
     // Reset key to force re-render of the EditableCell when creation or updating a transaction
     const [resetKey, setResetKey] = useState(0);
 
     // Try to create a transaction if all fields are filled
-    const attemptCreate = useCallback(() => {
+    const attemptCreate = useCallback(async () => {
       if (descriptionRef.current && categoryRef.current && amountRef.current) {
-        onCreate({
-          type,
-          isDone: false,
-          frequency: -1,
-          description: descriptionRef.current,
-          category: categoryRef.current,
-          amount: amountRef.current,
-          startDate: new Date(),
-        } as CreateTransactionDto)
-          .then((transaction) => {
-            if (transaction) {
-              // Reset values
-              setResetKey((prev) => prev + 1); // force re-render of the EditableCell
-              descriptionRef.current = "";
-              categoryRef.current = "";
-              amountRef.current = null;
-            }
-          })
-          .catch((error) => {
-            // In case of error, do not reset values, to avoid losing the user's input
-            console.error("Erreur lors de la création:", error);
-          });
+        try {
+          const transaction = await onCreate({
+            type,
+            isDone: false,
+            frequency: -1,
+            description: descriptionRef.current,
+            category: categoryRef.current,
+            amount: amountRef.current,
+            startDate: new Date(),
+          } as CreateTransactionDto);
+
+          if (transaction) {
+            // Reset values
+            setResetKey((prev) => prev + 1); // force re-render of the EditableCell
+            descriptionRef.current = "";
+            categoryRef.current = "";
+            amountRef.current = null;
+          }
+        } catch (error) {
+          console.error("Erreur lors de la création:", error);
+        }
       }
     }, [onCreate, type]);
 
@@ -61,6 +65,15 @@ export const NewTransactionRow = memo(
       (value: string | number) => {
         categoryRef.current = value as string;
         // Attempt to create after category change
+        setTimeout(attemptCreate, 0);
+      },
+      [attemptCreate],
+    );
+
+    const handleFrequencyUpdate = useCallback(
+      (value: string | number) => {
+        frequencyRef.current = parseInt(value as string) as TransactionFrequency;
+        // Attempt to create after frequency change
         setTimeout(attemptCreate, 0);
       },
       [attemptCreate],
@@ -88,11 +101,30 @@ export const NewTransactionRow = memo(
             value={categoryRef.current}
             onUpdate={handleCategoryUpdate}
             className={selectTriggerStyles}
-            type="category"
-            categories={categories}
+            type="select"
+            options={categories.map((category) => ({value: category, label: category}))}
             placeholder="Choisir une catégorie"
           />
         </TableCell>
+
+        <TableCell className={tableClasses.cell}>
+          <EditableCell
+            key={`freq-${resetKey}`}
+            value={frequencyRef.current || ""}
+            onUpdate={handleFrequencyUpdate}
+            className={selectTriggerStyles}
+            type="select"
+            options={[
+              {value: "1", label: "Jour"},
+              {value: "7", label: "Semaine"},
+              {value: "14", label: "Deux semaines"},
+              {value: "30", label: "Mois"},
+              {value: "-1", label: "Aucune récurrence"},
+            ]}
+            placeholder="Choisir une fréquence"
+          />
+        </TableCell>
+
         <TableCell className={tableClasses.cell}>
           <EditableCell
             key={`amount-${resetKey}`}

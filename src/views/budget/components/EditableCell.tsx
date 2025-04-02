@@ -4,18 +4,23 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {cn} from "@/lib/utils";
 import debounce from "lodash/debounce";
 
+export type SelectOption = {
+  value: string;
+  label: string;
+};
+
 interface EditableCellProps {
   value: string | number;
   onUpdate: (value: string | number) => void;
   className?: string;
-  type?: "text" | "number" | "category";
-  categories?: readonly string[];
+  type?: "text" | "number" | "select";
+  options?: readonly SelectOption[];
   placeholder?: string;
   onBlur?: () => void;
 }
 
 export const EditableCell = memo(
-  ({value, onUpdate, className, type = "text", categories, placeholder, onBlur}: EditableCellProps) => {
+  ({value, onUpdate, className, type = "text", options, placeholder, onBlur}: EditableCellProps) => {
     const [localValue, setLocalValue] = useState(value);
     const debouncedUpdate = useMemo(() => debounce((newValue: string | number) => onUpdate(newValue), 500), [onUpdate]);
 
@@ -39,7 +44,7 @@ export const EditableCell = memo(
       if (onBlur) onBlur();
     };
 
-    if (type === "category") {
+    if (type === "select") {
       return (
         <Select
           value={localValue as string}
@@ -50,12 +55,12 @@ export const EditableCell = memo(
           }}
         >
           <SelectTrigger className={cn("h-9 w-full", className)}>
-            <SelectValue placeholder={placeholder || "Choisir une catégorie"} />
+            <SelectValue placeholder={placeholder || "Choisir une option"} />
           </SelectTrigger>
           <SelectContent>
-            {categories?.map((category) => (
-              <SelectItem key={category} value={category}>
-                {category}
+            {options?.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
               </SelectItem>
             ))}
           </SelectContent>
