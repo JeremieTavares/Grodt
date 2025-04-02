@@ -28,28 +28,32 @@ export const AddressSection = forwardRef<AddressSectionRef, AddressSectionProps>
       },
     }));
 
+    const hasWorkAddress = addresses.some((addr) => addr.type === AddressType.WORK);
+
+    const addWorkAddress = () => {
+      setAddresses([
+        ...addresses,
+        {
+          id: 0,
+          streetNumber: "",
+          streetName: "",
+          city: "",
+          province: Province.QC,
+          country: Country.CA,
+          type: AddressType.WORK,
+        },
+      ]);
+    };
+
     return (
       <FormCard
         title="Adresses"
         icon={LuMapPin}
         headerAction={
           isEditing &&
-          !addresses.some((addr) => addr.type === AddressType.WORK) && (
+          !hasWorkAddress && (
             <button
-              onClick={() => {
-                setAddresses([
-                  ...addresses,
-                  {
-                    id: 0,
-                    streetNumber: "",
-                    streetName: "",
-                    city: "",
-                    province: Province.QC,
-                    country: Country.CA,
-                    type: AddressType.WORK,
-                  },
-                ]);
-              }}
+              onClick={addWorkAddress}
               className="px-4 py-2 text-[#433BFF] dark:text-[#7A75FF] border border-[#433BFF] dark:border-[#7A75FF] rounded-full hover:bg-[#433BFF]/5 dark:hover:bg-[#7A75FF]/10 transition-all duration-200 text-sm font-medium inline-flex items-center gap-2"
             >
               + Ajouter une adresse de travail
@@ -57,7 +61,7 @@ export const AddressSection = forwardRef<AddressSectionRef, AddressSectionProps>
           )
         }
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className={`grid gap-6 ${hasWorkAddress ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"}`}>
           <AddressContent
             ref={addressContentRef}
             addresses={addresses}

@@ -1,7 +1,7 @@
-import { AxiosInstance } from "axios";
-import { BaseApiService } from "./core/base-api-service";
-import { ApiResponse } from "./core/http-client";
-import { BankingDetails, CreateBankingDetailsDto, UpdateBankingDetailsDto } from "@/types/user/banking-details";
+import {AxiosInstance} from "axios";
+import {BaseApiService} from "./core/base-api-service";
+import {ApiResponse} from "./core/http-client";
+import {BankingDetails, CreateBankingDetailsDto, UpdateBankingDetailsDto} from "@/types/user/banking-details";
 
 export class BankingService extends BaseApiService<BankingDetails, CreateBankingDetailsDto, UpdateBankingDetailsDto> {
   constructor(axios: AxiosInstance, userId: number) {
