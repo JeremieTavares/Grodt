@@ -2,7 +2,7 @@ import {Input} from "@/components/ui/input";
 import {LuMapPin, LuGlobe} from "react-icons/lu";
 import {ProvinceSelect} from "./ProvinceSelect";
 import {CountrySelect} from "./CountrySelect";
-import {AddressType, ADDRESS_TYPE_LABELS} from "@/enums/address/address";
+import {AddressType} from "@/enums/address/address";
 import {Province} from "@/enums/address/province";
 import {Country} from "@/enums/address/country";
 import {useForm} from "react-hook-form";
@@ -94,19 +94,6 @@ export const AddressForm = forwardRef<AddressFormRef, AddressFormProps>(
         className="p-4 border border-slate-200 dark:border-slate-700 rounded-lg space-y-4 bg-white/50 dark:bg-slate-800/50"
         onSubmit={(e) => e.preventDefault()}
       >
-        <div className="flex justify-between items-center">
-          <h4 className="font-semibold text-slate-700 dark:text-slate-200">{ADDRESS_TYPE_LABELS[type]}</h4>
-          {showDeleteButton && (
-            <button
-              type="button"
-              onClick={onDelete}
-              className="px-3 py-1 text-red-600 dark:text-red-400 text-sm border border-red-200 dark:border-red-900 rounded hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-            >
-              Supprimer
-            </button>
-          )}
-        </div>
-
         <div className="space-y-4">
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
