@@ -119,7 +119,7 @@ const AppSidebar = () => {
                     {isExpanded && <span>Connexion</span>}
                   </button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="max-h-none h-fit overflow-visible">
                   <DialogHeader>
                     <DialogTitle>Connexion</DialogTitle>
                     <DialogDescription>Connecte-toi à ton compte ou inscris-toi</DialogDescription>
