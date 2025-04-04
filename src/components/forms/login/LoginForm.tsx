@@ -9,6 +9,7 @@ import { useApi } from "@/hooks/useApi";
 import { CreateUserDto } from "@/types/user/user"
 import { useAuth } from "@/hooks/useAuth"
 import { create } from "domain"
+import { REGEX_PASSWORD,REGEX_EMAIL,REGEX_NAME } from "@/utils/regex"
 
 export default function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
   const [activeTab, setActiveTab] = useState("login")
@@ -36,9 +37,18 @@ export default function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
     // Update content height with animation
     const targetRef = activeTab === "login" ? loginContentRef : registerContentRef
     if (targetRef.current) {
-      setContentHeight(`${targetRef.current.scrollHeight}px`)
+      updateContentHeight()
     }
   }, [activeTab])
+
+  const updateContentHeight = () => {
+    requestAnimationFrame(() => {
+      const targetRef = activeTab === "login" ? loginContentRef : registerContentRef
+      if (targetRef.current) {
+        setContentHeight(`${targetRef.current.scrollHeight}px`)
+      }
+    })
+  }
 
   // Initial height setup
   useEffect(() => {
@@ -47,13 +57,11 @@ export default function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
     }
   }, [])
 
-  const isValidEmail = (email: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-  }
+  const isValidEmail = (email: string) => REGEX_EMAIL.test(email)
 
-  const isValidPassword = (password: string) => {
-    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/.test(password)
-  }
+  const isValidPassword = (password: string) => REGEX_PASSWORD.test(password)
+
+  const isValidName = (name: string) => REGEX_NAME.test(name)
 
   const [loginErrors, setLoginErrors] = useState<{ email?: string; password?: string }>({})
   const [registerErrors, setRegisterErrors] = useState<{
@@ -76,24 +84,24 @@ export default function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
     }
 
     setLoginErrors(errors)
+    updateContentHeight()
 
     if (Object.keys(errors).length > 0) return
 
-    // TODO✅ VALID — call API
     console.log("Login avec", loginEmail, loginPassword)
 
     try {
       const response = await api.users.getByEmail(loginEmail)
   
       if (!response.data) {
-        alert("User not found")
+        alert("Aucun utilisateur trouvé!")
         return
       }
   
       const user = response.data
   
       if (user.password !== loginPassword) {
-        alert("Incorrect password")
+        alert("Mot de passe incorrect!")
         return
       }
   
@@ -113,38 +121,41 @@ export default function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
   
     } catch (err: any) {
       console.error(err.message)
-      alert("Login failed: " + err.message)
+      alert("Impossible de se connecter: " + err.message)
     }
   }
 
   const handleRegister = async () => {
     const errors: typeof registerErrors = {}
 
-    if (!registerFirstName.trim()) {
-      errors.firstName = "Prénom requis"
+    if (!registerFirstName.trim() || !isValidName(registerFirstName)) {
+      errors.firstName = "Prénom invalide"
     }
-    if (!registerLastName.trim()) {
-      errors.lastName = "Nom de famille requis"
+    if (!registerLastName.trim() || !isValidName(registerLastName)) {
+      errors.lastName = "Nom de famille invalide"
     }
 
     if (!isValidEmail(registerEmail)) {
-      errors.email = "Invalid email format"
+      errors.email = "L'email doit être au format : exemple@domaine.com"
     }
+    
 
     if (!isValidPassword(registerPassword)) {
-      errors.password = "Password must meet complexity rules"
+      errors.password =
+        "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial (@$!%*?&)"
     }
+    
 
     if (registerPassword !== registerConfirmPassword) {
-      errors.confirmPassword = "Passwords do not match"
+      errors.confirmPassword = "Les mots de passe ne correspondent pas."
     }
 
+
     setRegisterErrors(errors)
+    updateContentHeight()
 
     if (Object.keys(errors).length > 0) return
 
-    // TODO✅ VALID — call API
-    console.log("Register avec", registerFirstName, registerLastName, registerEmail, registerPassword)
     const newUser: CreateUserDto = {
       isActive : true,
       firstName : registerFirstName,
@@ -270,7 +281,7 @@ export default function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
                 }}
               />
               {loginErrors.email && (
-                <p className="text-xs text-destructive mt-1 animate-pulse-error-text">{loginErrors.email}</p>
+                <p className=" text-destructive mt-1 animate-pulse-error-text">{loginErrors.email}</p>
               )}
             </div>
           </div>
@@ -298,7 +309,7 @@ export default function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
                 }}
               />
               {loginErrors.password && (
-                <p className="text-xs text-destructive mt-1 animate-pulse-error-text">{loginErrors.password}</p>
+                <p className=" text-destructive mt-1 animate-pulse-error-text">{loginErrors.password}</p>
               )}
             </div>
           </div>
@@ -339,7 +350,7 @@ export default function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
                   }}
                 />
                 {registerErrors.firstName && (
-                  <p className="text-xs text-destructive mt-1 animate-pulse-error-text">{registerErrors.firstName}</p>
+                  <p className="text-destructive mt-1 animate-pulse-error-text">{registerErrors.firstName}</p>
                 )}
               </div>
 
@@ -361,7 +372,7 @@ export default function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
                   }}
                 />
                 {registerErrors.lastName && (
-                  <p className="text-xs text-destructive mt-1 animate-pulse-error-text">{registerErrors.lastName}</p>
+                  <p className="text-destructive mt-1 animate-pulse-error-text">{registerErrors.lastName}</p>
                 )}
               </div>
 
@@ -387,7 +398,7 @@ export default function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
                 }}
               />
               {registerErrors.email && (
-                <p className="text-xs text-destructive mt-1 animate-pulse-error-text">{registerErrors.email}</p>
+                <p className="text-destructive mt-1 animate-pulse-error-text">{registerErrors.email}</p>
               )}
             </div>
           </div>
@@ -413,7 +424,7 @@ export default function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
                 }}
               />
               {registerErrors.password && (
-                <p className="text-xs text-destructive mt-1 animate-pulse-error-text">{registerErrors.password}</p>
+                <p className="text-destructive mt-1 animate-pulse-error-text">{registerErrors.password}</p>
               )}
             </div>
           </div>
@@ -439,7 +450,7 @@ export default function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
                 }}
               />
               {registerErrors.confirmPassword && (
-                <p className="text-xs text-destructive mt-1 animate-pulse-error-text">
+                <p className="text-destructive mt-1 animate-pulse-error-text">
                   {registerErrors.confirmPassword}
                 </p>
               )}
