@@ -60,6 +60,10 @@ export const AddressContent = forwardRef<AddressContentRef, AddressContentProps>
               type={AddressType.PERSONAL}
               isEditing={isEditing}
               onUpdate={(updatedAddress) => {
+                if (updatedAddress.streetNumber && !/^\d+$/.test(updatedAddress.streetNumber)) {
+                  return;
+                }
+
                 if (personalAddress) {
                   setAddresses(addresses.map((addr) => (addr.type === AddressType.PERSONAL ? updatedAddress : addr)));
                 } else {
@@ -93,6 +97,10 @@ export const AddressContent = forwardRef<AddressContentRef, AddressContentProps>
                 isEditing={isEditing}
                 onDelete={onDeleteWork}
                 onUpdate={(updatedAddress) => {
+                  if (updatedAddress.streetNumber && !/^\d+$/.test(updatedAddress.streetNumber)) {
+                    return;
+                  }
+
                   setAddresses(addresses.map((addr) => (addr.type === AddressType.WORK ? updatedAddress : addr)));
                 }}
               />

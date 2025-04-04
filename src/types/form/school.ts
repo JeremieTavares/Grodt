@@ -4,7 +4,7 @@ export type SchoolFormFields = {
   schoolName: string;
   fieldOfStudy: string;
   startDate: string;
-  projectedEndDate?: string;
+  projectedEndDate: string;
 };
 
 export interface SchoolFormProps {

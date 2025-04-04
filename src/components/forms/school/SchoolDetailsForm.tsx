@@ -21,6 +21,7 @@ export const SchoolDetailsForm = forwardRef<SchoolFormRef, SchoolDetailsFormProp
       reset,
       getValues,
       trigger,
+      setValue,
     } = useForm<SchoolFormFields>({
       defaultValues: {
         schoolName: "",
@@ -47,10 +48,16 @@ export const SchoolDetailsForm = forwardRef<SchoolFormRef, SchoolDetailsFormProp
 
     const handleChange = (field: keyof SchoolFormFields) => async (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
-      if (schoolDetails) {
+      setValue(field, value, {shouldValidate: true});
+      const isFieldValid = await trigger(field);
+      if (isFieldValid) {
         onUpdate({
-          ...schoolDetails,
-          [field]: value,
+          id: schoolDetails?.id || 0,
+          schoolName: field === "schoolName" ? value : schoolDetails?.schoolName || "",
+          fieldOfStudy: field === "fieldOfStudy" ? value : schoolDetails?.fieldOfStudy || "",
+          startDate: field === "startDate" ? value : schoolDetails?.startDate || "",
+          projectedEndDate: field === "projectedEndDate" ? value : schoolDetails?.projectedEndDate || "",
+          user: schoolDetails?.user,
         });
       }
     };
@@ -80,7 +87,13 @@ export const SchoolDetailsForm = forwardRef<SchoolFormRef, SchoolDetailsFormProp
           )}
         </div>
 
-        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+        <form
+          className="space-y-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            return false;
+          }}
+        >
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
               Nom de l'établissement scolaire <span className="text-red-500">*</span>
@@ -161,7 +174,7 @@ export const SchoolDetailsForm = forwardRef<SchoolFormRef, SchoolDetailsFormProp
 
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
-              Date de fin prévue des études
+              Date de fin prévue des études <span className="text-red-500">*</span>
             </label>
             <div className="space-y-1">
               <div className="relative flex items-center">
