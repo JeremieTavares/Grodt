@@ -47,12 +47,14 @@ export const SchoolDetailsForm = forwardRef<SchoolFormRef, SchoolDetailsFormProp
 
     const handleChange = (field: keyof SchoolFormFields) => async (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
-      if (schoolDetails) {
-        onUpdate({
-          ...schoolDetails,
-          [field]: value,
-        });
-      }
+      onUpdate({
+        id: schoolDetails?.id || 0,
+        schoolName: field === "schoolName" ? value : schoolDetails?.schoolName || "",
+        fieldOfStudy: field === "fieldOfStudy" ? value : schoolDetails?.fieldOfStudy || "",
+        startDate: field === "startDate" ? value : schoolDetails?.startDate || "",
+        projectedEndDate: field === "projectedEndDate" ? value : schoolDetails?.projectedEndDate || "",
+        user: schoolDetails?.user,
+      });
     };
 
     useEffect(() => {

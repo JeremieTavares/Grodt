@@ -45,12 +45,14 @@ export const BankingDetailsForm = forwardRef<BankingFormRef, BankingDetailsFormP
 
     const handleChange = (field: keyof BankingFormFields) => async (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
-      if (bankingDetails) {
-        onUpdate({
-          ...bankingDetails,
-          [field]: value,
-        });
-      }
+      onUpdate({
+        id: bankingDetails?.id || 0,
+        institutionName: field === "institutionName" ? value : bankingDetails?.institutionName || "",
+        accountInfo: field === "accountInfo" ? value : bankingDetails?.accountInfo || "",
+        loanInfo: bankingDetails?.loanInfo || "",
+        other: bankingDetails?.other || "",
+        user: bankingDetails?.user,
+      });
     };
 
     useEffect(() => {
