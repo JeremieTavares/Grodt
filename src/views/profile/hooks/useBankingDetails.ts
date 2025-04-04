@@ -14,8 +14,6 @@ export const useBankingDetails = (userId: number) => {
         if (response?.data) {
           const bankingData = Array.isArray(response.data) ? response.data[0] : response.data;
 
-          // Remove the user property from the school data because it's not soppused to be in the response
-          // Its causing errors on the backend when updating the school details if it's not removed
           delete bankingData.user;
           setBankingDetails(bankingData as unknown as BankingDetails);
         }
