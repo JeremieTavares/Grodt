@@ -77,21 +77,22 @@ export const schoolFormValidation: ValidationRules<SchoolFormFields> = {
         return true;
       }
 
-      // Si la date de fin est vide mais que d'autres champs sont remplis, c'est OK
-      if (!value && formValues.schoolName && formValues.fieldOfStudy && formValues.startDate) {
-        return true;
+      // Si au moins un champ est rempli, tous les champs sont requis
+      if (!value) {
+        return "La date de fin prévue des études est requise";
       }
 
-      // Si la date de fin est fournie, elle doit être valide
-      if (value) {
-        const date = new Date(value);
-        if (isNaN(date.getTime())) {
-          return "La date de fin prévue des études est invalide";
-        }
+      // Validation de la date
+      const date = new Date(value);
+      if (isNaN(date.getTime())) {
+        return "La date de fin prévue des études n'est pas valide";
+      }
 
+      // Vérifier que la date de fin est après la date de début
+      if (formValues.startDate) {
         const startDate = new Date(formValues.startDate);
         if (date < startDate) {
-          return "La date de fin prévue doit être après la date de début";
+          return "La date de fin prévue des études doit être après la date de début";
         }
       }
 

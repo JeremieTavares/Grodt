@@ -174,7 +174,7 @@ export const SchoolDetailsForm = forwardRef<SchoolFormRef, SchoolDetailsFormProp
 
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
-              Date de fin prévue des études
+              Date de fin prévue des études <span className="text-red-500">*</span>
             </label>
             <div className="space-y-1">
               <div className="relative flex items-center">
