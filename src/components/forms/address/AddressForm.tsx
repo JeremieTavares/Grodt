@@ -88,7 +88,10 @@ export const AddressForm = forwardRef<AddressFormRef, AddressFormProps>(({addres
   return (
     <form
       className="p-4 border border-slate-200 dark:border-slate-700 rounded-lg space-y-4 bg-white/50 dark:bg-slate-800/50"
-      onSubmit={(e) => e.preventDefault()}
+      onSubmit={(e) => {
+        e.preventDefault();
+        return false;
+      }}
     >
       <div className="space-y-4">
         <div className="space-y-2">

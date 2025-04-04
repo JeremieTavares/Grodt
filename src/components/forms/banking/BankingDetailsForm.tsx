@@ -21,6 +21,7 @@ export const BankingDetailsForm = forwardRef<BankingFormRef, BankingDetailsFormP
       reset,
       getValues,
       trigger,
+      setValue,
     } = useForm<BankingFormFields>({
       defaultValues: {
         institutionName: "",
@@ -45,14 +46,18 @@ export const BankingDetailsForm = forwardRef<BankingFormRef, BankingDetailsFormP
 
     const handleChange = (field: keyof BankingFormFields) => async (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
-      onUpdate({
-        id: bankingDetails?.id || 0,
-        institutionName: field === "institutionName" ? value : bankingDetails?.institutionName || "",
-        accountInfo: field === "accountInfo" ? value : bankingDetails?.accountInfo || "",
-        loanInfo: bankingDetails?.loanInfo || "",
-        other: bankingDetails?.other || "",
-        user: bankingDetails?.user,
-      });
+      setValue(field, value, {shouldValidate: true});
+      const isFieldValid = await trigger(field);
+      if (isFieldValid) {
+        onUpdate({
+          id: bankingDetails?.id || 0,
+          institutionName: field === "institutionName" ? value : bankingDetails?.institutionName || "",
+          accountInfo: field === "accountInfo" ? value : bankingDetails?.accountInfo || "",
+          loanInfo: bankingDetails?.loanInfo || "",
+          other: bankingDetails?.other || "",
+          user: bankingDetails?.user,
+        });
+      }
     };
 
     useEffect(() => {
@@ -78,7 +83,13 @@ export const BankingDetailsForm = forwardRef<BankingFormRef, BankingDetailsFormP
           )}
         </div>
 
-        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+        <form
+          className="space-y-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            return false;
+          }}
+        >
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
               Nom de l'institution <span className="text-red-500">*</span>

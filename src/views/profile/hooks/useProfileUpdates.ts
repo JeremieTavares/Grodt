@@ -17,6 +17,11 @@ export const useProfileUpdates = (userId: number) => {
     bankingDetails: BankingDetails | null,
   ) => {
     try {
+      if (!user) {
+        toast.error("Les informations personnelles sont invalides");
+        return;
+      }
+
       await users.updateById(userId, user);
 
       const personalAddress = addresses.find((addr) => addr.type === "PERSONAL");

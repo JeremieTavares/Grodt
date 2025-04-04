@@ -21,6 +21,7 @@ export const SchoolDetailsForm = forwardRef<SchoolFormRef, SchoolDetailsFormProp
       reset,
       getValues,
       trigger,
+      setValue,
     } = useForm<SchoolFormFields>({
       defaultValues: {
         schoolName: "",
@@ -47,14 +48,18 @@ export const SchoolDetailsForm = forwardRef<SchoolFormRef, SchoolDetailsFormProp
 
     const handleChange = (field: keyof SchoolFormFields) => async (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
-      onUpdate({
-        id: schoolDetails?.id || 0,
-        schoolName: field === "schoolName" ? value : schoolDetails?.schoolName || "",
-        fieldOfStudy: field === "fieldOfStudy" ? value : schoolDetails?.fieldOfStudy || "",
-        startDate: field === "startDate" ? value : schoolDetails?.startDate || "",
-        projectedEndDate: field === "projectedEndDate" ? value : schoolDetails?.projectedEndDate || "",
-        user: schoolDetails?.user,
-      });
+      setValue(field, value, {shouldValidate: true});
+      const isFieldValid = await trigger(field);
+      if (isFieldValid) {
+        onUpdate({
+          id: schoolDetails?.id || 0,
+          schoolName: field === "schoolName" ? value : schoolDetails?.schoolName || "",
+          fieldOfStudy: field === "fieldOfStudy" ? value : schoolDetails?.fieldOfStudy || "",
+          startDate: field === "startDate" ? value : schoolDetails?.startDate || "",
+          projectedEndDate: field === "projectedEndDate" ? value : schoolDetails?.projectedEndDate || "",
+          user: schoolDetails?.user,
+        });
+      }
     };
 
     useEffect(() => {
@@ -82,7 +87,13 @@ export const SchoolDetailsForm = forwardRef<SchoolFormRef, SchoolDetailsFormProp
           )}
         </div>
 
-        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+        <form
+          className="space-y-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            return false;
+          }}
+        >
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
               Nom de l'établissement scolaire <span className="text-red-500">*</span>
