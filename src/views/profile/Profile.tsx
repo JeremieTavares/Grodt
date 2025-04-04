@@ -31,9 +31,20 @@ export const Profile = () => {
 
   const handleSaveClick = async () => {
     const personalInfoValid = await personalInfoFormRef.current?.validateForm();
-    const addressesValid = await addressSectionRef.current?.validateForms();
-    const schoolValid = await schoolSectionRef.current?.validateForm();
-    const bankingValid = await bankingSectionRef.current?.validateForm();
+
+    const hasAddressChanges = addresses.some((addr) => addr.streetNumber || addr.streetName || addr.city);
+    const addressesValid = hasAddressChanges ? await addressSectionRef.current?.validateForms() : true;
+
+    const hasSchoolChanges =
+      schoolDetails &&
+      (schoolDetails.schoolName ||
+        schoolDetails.fieldOfStudy ||
+        schoolDetails.startDate ||
+        schoolDetails.projectedEndDate);
+    const schoolValid = hasSchoolChanges ? await schoolSectionRef.current?.validateForm() : true;
+
+    const hasBankingChanges = bankingDetails && (bankingDetails.institutionName || bankingDetails.accountInfo);
+    const bankingValid = hasBankingChanges ? await bankingSectionRef.current?.validateForm() : true;
 
     if (!personalInfoValid || !addressesValid || !schoolValid || !bankingValid) {
       toast.error("Veuillez remplir tous les champs obligatoires avant de sauvegarder", {
