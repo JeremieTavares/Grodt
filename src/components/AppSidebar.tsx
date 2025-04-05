@@ -1,5 +1,5 @@
 import React, {cloneElement, useState} from "react";
-import {NavLink} from "react-router-dom";
+import {Navigate, NavLink, useNavigate} from "react-router-dom";
 import {FaHome} from "react-icons/fa";
 import {FaRightToBracket, FaUser} from "react-icons/fa6";
 import {IoMenu} from "react-icons/io5";
@@ -27,6 +27,7 @@ const AppSidebar = () => {
   const {theme, setTheme} = useTheme();
   const [isLoginDialogOpen, setLoginDialogOpen] = useState(false);
   const {user, setUser} = useAuth();
+  const navigateTo = useNavigate();
 
   return (
     <aside
@@ -51,10 +52,15 @@ const AppSidebar = () => {
           </button>
 
           <SidebarItem to="/" icon={<FaHome />} label="Accueil" isExpanded={isExpanded} />
-          {user && (
-            <SidebarItem to="/budget" icon={<MdOutlineCurrencyExchange />} label="Budget" isExpanded={isExpanded} />
+
+          {user ? (
+            <>
+              <SidebarItem to="/budget" icon={<MdOutlineCurrencyExchange />} label="Budget" isExpanded={isExpanded} />
+              <SidebarItem to="/profile" icon={<FaUser />} label="Profile" isExpanded={isExpanded} />
+            </>
+          ) : (
+            <></>
           )}
-          {user ? <SidebarItem to="/profile" icon={<FaUser />} label="Profile" isExpanded={isExpanded} /> : <></>}
           <Dialog>
             <DialogTrigger asChild>
               <button
@@ -94,6 +100,7 @@ const AppSidebar = () => {
                 onClick={() => {
                   setUser(null);
                   toast.success("Vous avez été déconnecté");
+                  navigateTo("/");
                 }}
                 className={cn(
                   "flex justify-center md:justify-start md:items-center w-full p-2 rounded hover:bg-[#372fbf] cursor-pointer transition-all duration-300",
@@ -118,7 +125,7 @@ const AppSidebar = () => {
                     <SidebarItemLabel show={isExpanded}>Connexion</SidebarItemLabel>
                   </button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="max-h-none h-fit overflow-visible">
                   <DialogHeader>
                     <DialogTitle>Connexion</DialogTitle>
                     <DialogDescription>Connecte-toi à ton compte ou inscris-toi</DialogDescription>

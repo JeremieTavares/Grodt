@@ -31,7 +31,11 @@ export const useAddresses = (userId: number) => {
     try {
       const workAddress = addresses.find((addr) => addr.type === "WORK");
       if (workAddress) {
-        await address?.deleteByType(AddressType.WORK);
+        // Si l'adresse a un ID, elle existe dans la base de données
+        if (workAddress.id) {
+          await address?.deleteByType(AddressType.WORK);
+        }
+        // Mettre à jour l'état local dans tous les cas
         setAddresses(addresses.filter((addr) => addr.type !== AddressType.WORK));
         toast.success("L'adresse de travail a été supprimée avec succès");
       }
