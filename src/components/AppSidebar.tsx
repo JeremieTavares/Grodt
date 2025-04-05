@@ -1,13 +1,13 @@
-import React, { cloneElement, useState } from "react";
-import { Navigate, NavLink , useNavigate } from "react-router-dom";
-import { FaHome } from "react-icons/fa";
-import { FaRightToBracket, FaUser } from "react-icons/fa6";
-import { IoMenu } from "react-icons/io5";
-import { MdOutlineCurrencyExchange } from "react-icons/md";
-import { SlLogout } from "react-icons/sl";
-import { LuSettings } from "react-icons/lu";
-import { cn } from "@/lib/utils";
-import { useTheme } from "next-themes";
+import React, {cloneElement, useState} from "react";
+import {Navigate, NavLink, useNavigate} from "react-router-dom";
+import {FaHome} from "react-icons/fa";
+import {FaRightToBracket, FaUser} from "react-icons/fa6";
+import {IoMenu} from "react-icons/io5";
+import {MdOutlineCurrencyExchange} from "react-icons/md";
+import {SlLogout} from "react-icons/sl";
+import {LuSettings} from "react-icons/lu";
+import {cn} from "@/lib/utils";
+import {useTheme} from "next-themes";
 import LoginForm from "@/components/forms/login/LoginForm"; // adjust path if needed
 import {
   Dialog,
@@ -17,22 +17,22 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Switch } from "@/components/ui/switch";
-import type { SVGProps } from "react";
-import { useAuth } from "@/hooks/useAuth";
-import { toast, useSonner } from "sonner";
+import {Switch} from "@/components/ui/switch";
+import type {SVGProps} from "react";
+import {useAuth} from "@/hooks/useAuth";
+import {toast} from "sonner";
 
 const AppSidebar = () => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { theme, setTheme } = useTheme();
-  const [isLoginDialogOpen, setLoginDialogOpen] = useState(false)
-  const { user, setUser } = useAuth()
+  const {theme, setTheme} = useTheme();
+  const [isLoginDialogOpen, setLoginDialogOpen] = useState(false);
+  const {user, setUser} = useAuth();
   const navigateTo = useNavigate();
 
   return (
     <aside
       className={cn(
-        "bg-[#433bff] w-full p-2 md:min-h-screen fixed bottom-0 md:sticky md:top-0 text-white transition-all duration-300 flex md:flex-col z-50",
+        "bg-[#433bff] w-full p-2 md:min-h-screen fixed bottom-0 md:top-0 text-white transition-all duration-300 flex md:flex-col z-50",
         isExpanded ? "md:w-64" : "md:w-16",
       )}
     >
@@ -52,14 +52,15 @@ const AppSidebar = () => {
           </button>
 
           <SidebarItem to="/" icon={<FaHome />} label="Accueil" isExpanded={isExpanded} />
-          
-          
+
           {user ? (
-          <>
-            <SidebarItem to="/budget" icon={<MdOutlineCurrencyExchange />} label="Budget" isExpanded={isExpanded} />
-            <SidebarItem to="/profile" icon={<FaUser />} label="Profile" isExpanded={isExpanded} />
-          </>
-          ):(<></>)}
+            <>
+              <SidebarItem to="/budget" icon={<MdOutlineCurrencyExchange />} label="Budget" isExpanded={isExpanded} />
+              <SidebarItem to="/profile" icon={<FaUser />} label="Profile" isExpanded={isExpanded} />
+            </>
+          ) : (
+            <></>
+          )}
           <Dialog>
             <DialogTrigger asChild>
               <button
@@ -97,13 +98,12 @@ const AppSidebar = () => {
               {/* Authenticated: Show Logout */}
               <button
                 onClick={() => {
-                  setUser(null)
-                  toast.success("Vous avez été déconnecté")
-                  navigateTo("/")
-                }
-                }
+                  setUser(null);
+                  toast.success("Vous avez été déconnecté");
+                  navigateTo("/");
+                }}
                 className={cn(
-                  "flex justify-center md:justify-start md:items-center w-full p-2 rounded hover:bg-[#372fbf] cursor-pointer transition-all duration-300"
+                  "flex justify-center md:justify-start md:items-center w-full p-2 rounded hover:bg-[#372fbf] cursor-pointer transition-all duration-300",
                 )}
               >
                 <SlLogout className="w-6 h-6 md:relative md:left-0" />
@@ -117,12 +117,12 @@ const AppSidebar = () => {
                 <DialogTrigger asChild>
                   <button
                     className={cn(
-                      "flex gap-2 p-2 rounded hover:bg-[#372fbf] cursor-pointer transition-all duration-300 w-full",
+                      "flex justify-center md:justify-start md:items-center w-full p-2 rounded hover:bg-[#372fbf] cursor-pointer transition-all duration-300",
                       !isExpanded ? "justify-center" : "items-center",
                     )}
                   >
-                    <FaRightToBracket className="w-6 h-6" />
-                    {isExpanded && <span>Connexion</span>}
+                    <FaRightToBracket className="w-6 h-6 relative left-1" />
+                    <SidebarItemLabel show={isExpanded}>Connexion</SidebarItemLabel>
                   </button>
                 </DialogTrigger>
                 <DialogContent className="max-h-none h-fit overflow-visible">
@@ -131,10 +131,12 @@ const AppSidebar = () => {
                     <DialogDescription>Connecte-toi à ton compte ou inscris-toi</DialogDescription>
                   </DialogHeader>
 
-                  <LoginForm onSuccess={() => {
-                    setLoginDialogOpen(false)
-                    toast.success("Vous êtes maintenant connecté")
-                  }} />
+                  <LoginForm
+                    onSuccess={() => {
+                      setLoginDialogOpen(false);
+                      toast.success("Vous êtes maintenant connecté");
+                    }}
+                  />
                 </DialogContent>
               </Dialog>
             </>
@@ -145,7 +147,7 @@ const AppSidebar = () => {
   );
 };
 
-const SidebarItemLabel = ({ show, children }: { show: boolean; children: React.ReactNode }) => {
+const SidebarItemLabel = ({show, children}: {show: boolean; children: React.ReactNode}) => {
   return (
     <div
       className={cn(
@@ -165,7 +167,7 @@ type SidebarItemProps = {
   isExpanded: boolean;
 };
 
-const SidebarItem = ({ to, icon, label, isExpanded }: SidebarItemProps) => {
+const SidebarItem = ({to, icon, label, isExpanded}: SidebarItemProps) => {
   const Icon = cloneElement(icon, {
     className: cn("w-6 h-6 md:relative md:left-1", icon.props.className),
   });
@@ -173,7 +175,7 @@ const SidebarItem = ({ to, icon, label, isExpanded }: SidebarItemProps) => {
   return (
     <NavLink
       to={to}
-      className={({ isActive }) =>
+      className={({isActive}) =>
         cn(
           "flex justify-center md:justify-start md:items-center w-full p-2 rounded hover:bg-[#372fbf] cursor-pointer transition-all duration-300",
           isActive && "bg-[#372fbf]",
