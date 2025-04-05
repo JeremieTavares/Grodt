@@ -142,5 +142,3 @@ export const NewTransactionRow = memo(
     );
   },
 );
-
-NewTransactionRow.displayName = "NewTransactionRow";

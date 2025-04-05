@@ -4,11 +4,22 @@ import {useTransactions} from "./hooks/useTransactions";
 import {BudgetSummaryCard} from "./components/BudgetSummaryCard";
 import {useTransactionCalculations} from "./hooks/useTransactionCalculations";
 import {useAuth} from "@/hooks/useAuth";
+import DialogNewMonth from "./components/DialogNewMonth";
+import {toast} from "sonner";
 
 export default function BudgetTracking() {
   const {user} = useAuth();
   const {transactions, isLoading, error, handleCreate, handleUpdate, handleDelete} = useTransactions(user?.id!);
   const {totalRevenues, totalExpenses, balance} = useTransactionCalculations(transactions);
+
+  const handleNewMonth = async () => {
+    try {
+      await Promise.all(transactions.filter((t) => t.frequency === -1).map((transaction) => handleDelete(transaction)));
+      toast.success("Nouveau mois commencé avec succès!");
+    } catch (error) {
+      toast.error("Une erreur est survenue lors de la création du nouveau mois.");
+    }
+  };
 
   if (isLoading) {
     return (
@@ -27,7 +38,7 @@ export default function BudgetTracking() {
   }
 
   return (
-    <section className="container mx-auto">
+    <section className="container mx-auto mb-14">
       <Toaster position="top-right" richColors />
       <div className="mx-2 py-6 space-y-6">
         <section className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -35,6 +46,8 @@ export default function BudgetTracking() {
           <BudgetSummaryCard title="Dépenses totales" amount={totalExpenses} variant="expense" />
           <BudgetSummaryCard title="Solde" amount={balance} variant="balance" />
         </section>
+
+        <DialogNewMonth onConfirm={handleNewMonth} transactions={transactions} />
 
         <section className="space-y-6">
           <section>
