@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react"
 import { User, UserPlus, AtSign, KeyRound, Check } from "lucide-react"
-
+import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -23,6 +23,7 @@ export default function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
   const [sliderPosition, setSliderPosition] = useState(0)
   const [contentHeight, setContentHeight] = useState("auto")
   const {setUser} = useAuth()
+  const navigateTo = useNavigate()
 
   const loginContentRef = useRef<HTMLDivElement>(null)
   const registerContentRef = useRef<HTMLDivElement>(null)
@@ -175,7 +176,7 @@ export default function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
       alert(e.message)
     }
 
-
+    navigateTo("/profile")
 
   }
 

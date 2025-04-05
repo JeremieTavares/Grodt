@@ -1,5 +1,5 @@
 import React, { cloneElement, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { Navigate, NavLink , useNavigate } from "react-router-dom";
 import { FaHome } from "react-icons/fa";
 import { FaRightToBracket, FaUser } from "react-icons/fa6";
 import { IoMenu } from "react-icons/io5";
@@ -27,6 +27,7 @@ const AppSidebar = () => {
   const { theme, setTheme } = useTheme();
   const [isLoginDialogOpen, setLoginDialogOpen] = useState(false)
   const { user, setUser } = useAuth()
+  const navigateTo = useNavigate();
 
   return (
     <aside
@@ -51,9 +52,13 @@ const AppSidebar = () => {
           </button>
 
           <SidebarItem to="/" icon={<FaHome />} label="Accueil" isExpanded={isExpanded} />
-          <SidebarItem to="/budget" icon={<MdOutlineCurrencyExchange />} label="Budget" isExpanded={isExpanded} />
+          
+          
           {user ? (
-          <SidebarItem to="/profile" icon={<FaUser />} label="Profile" isExpanded={isExpanded} />
+          <>
+            <SidebarItem to="/budget" icon={<MdOutlineCurrencyExchange />} label="Budget" isExpanded={isExpanded} />
+            <SidebarItem to="/profile" icon={<FaUser />} label="Profile" isExpanded={isExpanded} />
+          </>
           ):(<></>)}
           <Dialog>
             <DialogTrigger asChild>
@@ -94,6 +99,7 @@ const AppSidebar = () => {
                 onClick={() => {
                   setUser(null)
                   toast.success("Vous avez été déconnecté")
+                  navigateTo("/")
                 }
                 }
                 className={cn(
