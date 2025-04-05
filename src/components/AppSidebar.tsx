@@ -99,6 +99,7 @@ const AppSidebar = () => {
                 onClick={() => {
                   setUser(null)
                   toast.success("Vous avez été déconnecté")
+                  navigateTo("/")
                 }
                 }
                 className={cn(
@@ -133,7 +134,6 @@ const AppSidebar = () => {
                   <LoginForm onSuccess={() => {
                     setLoginDialogOpen(false)
                     toast.success("Vous êtes maintenant connecté")
-                    navigateTo("/profile")
                   }} />
                 </DialogContent>
               </Dialog>
