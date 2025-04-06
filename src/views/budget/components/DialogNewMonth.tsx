@@ -20,9 +20,7 @@ interface DialogNewMonthProps {
 }
 
 const DialogNewMonth = ({onConfirm, transactions}: DialogNewMonthProps) => {
-  console.dir(transactions);
   const nonRecurringTransactions = transactions.filter((t) => t.frequency === -1);
-  console.dir(nonRecurringTransactions);
   const hasTransactions = nonRecurringTransactions.length > 0;
   const {totalRevenues, totalExpenses} = useTransactionCalculations(nonRecurringTransactions);
 
