@@ -36,7 +36,7 @@ src/
 1. Clonez le repository
 
 ```bash
-git clone [URL_DU_REPO]
+git clone https://github.com/JeremieTavares/Grodt.git
 ```
 
 2. Installez les dépendances
