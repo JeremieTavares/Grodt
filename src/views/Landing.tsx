@@ -5,13 +5,13 @@ import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {PiStudentFill} from "react-icons/pi";
 import {ArrowRight, PieChart, Wallet, BellRing, Check} from "lucide-react";
-import GrodtBlackLogo from "../../public/medias/black-grodt-logo.svg";
-import GrodtWhiteLogo from "../../public/medias/white-grodt-logo.svg";
-import BlackLogo from "../../public/medias/black-logo.svg";
-import WhiteLogo from "../../public/medias/white-logo.svg";
-import Grodt from "../../public/medias/grodt.svg";
-import BgVideo from "../../public/medias/bg-video.mp4";
-import TwoPhones from "../../public/medias/2phones.svg";
+import GrodtBlackLogo from "/medias/black-grodt-logo.svg";
+import GrodtWhiteLogo from "/medias/white-grodt-logo.svg";
+import BlackLogo from "/medias/black-logo.svg";
+import WhiteLogo from "/medias/white-logo.svg";
+import Grodt from "/medias/grodt.svg";
+import BgVideo from "/medias/bg-video.mp4";
+import TwoPhones from "/medias/2phones.svg";
 import {
   Dialog,
   DialogContent,

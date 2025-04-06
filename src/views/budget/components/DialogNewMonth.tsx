@@ -20,7 +20,9 @@ interface DialogNewMonthProps {
 }
 
 const DialogNewMonth = ({onConfirm, transactions}: DialogNewMonthProps) => {
+  console.dir(transactions);
   const nonRecurringTransactions = transactions.filter((t) => t.frequency === -1);
+  console.dir(nonRecurringTransactions);
   const hasTransactions = nonRecurringTransactions.length > 0;
   const {totalRevenues, totalExpenses} = useTransactionCalculations(nonRecurringTransactions);
 
@@ -29,7 +31,7 @@ const DialogNewMonth = ({onConfirm, transactions}: DialogNewMonthProps) => {
       <DialogTrigger asChild>
         <button
           className={cn(
-            "ml-auto flex justify-center md:justify-start items-center p-2 rounded hover:bg-[#372fbf] cursor-pointer text-white bg-[#433BFF] transition-all",
+            "ml-auto mb-0 flex justify-center md:justify-start items-center p-2 rounded hover:bg-[#372fbf] cursor-pointer text-white bg-[#433BFF] transition-all",
           )}
         >
           <CalendarPlus className="w-4 h-4 mr-1" /> Nouveau mois

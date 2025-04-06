@@ -7,7 +7,9 @@ import {
   TransactionFrequency,
 } from "@/types/transaction/transaction";
 import {cn} from "@/lib/utils";
-import {EditableCell} from "./EditableCell";
+import {format} from "date-fns";
+import {frCA} from "date-fns/locale";
+import EditableCell from "./EditableCell";
 
 interface NewTransactionRowProps {
   type: TransactionType;
@@ -20,28 +22,36 @@ interface NewTransactionRowProps {
   selectTriggerStyles: string;
 }
 
-export const NewTransactionRow = memo(
+const NewTransactionRow = memo(
   ({type, categories, onCreate, tableClasses, inputStyles, selectTriggerStyles}: NewTransactionRowProps) => {
     // Refs to avoid re-render if all fields are not filled
     const descriptionRef = useRef("");
     const amountRef = useRef<number | null>(null);
     const categoryRef = useRef("");
     const frequencyRef = useRef<number | null>(null);
+    const startDateRef = useRef<string | null>(null);
     // Reset key to force re-render of the EditableCell when creation or updating a transaction
     const [resetKey, setResetKey] = useState(0);
 
     // Try to create a transaction if all fields are filled
     const attemptCreate = useCallback(async () => {
-      if (descriptionRef.current && categoryRef.current && amountRef.current) {
+      if (
+        descriptionRef.current &&
+        categoryRef.current &&
+        amountRef.current &&
+        frequencyRef.current &&
+        startDateRef.current
+      ) {
         try {
+          const isDone = Date.now() > new Date(startDateRef.current).getTime();
           const transaction = await onCreate({
             type,
-            isDone: false,
-            frequency: -1,
+            isDone,
+            frequency: frequencyRef.current,
             description: descriptionRef.current,
             category: categoryRef.current,
             amount: amountRef.current,
-            startDate: new Date(),
+            startDate: new Date(startDateRef.current),
           } as CreateTransactionDto);
 
           if (transaction) {
@@ -49,7 +59,9 @@ export const NewTransactionRow = memo(
             setResetKey((prev) => prev + 1); // force re-render of the EditableCell
             descriptionRef.current = "";
             categoryRef.current = "";
+            frequencyRef.current = null;
             amountRef.current = null;
+            startDateRef.current = null;
           }
         } catch (error) {
           console.error("Erreur lors de la création:", error);
@@ -57,9 +69,15 @@ export const NewTransactionRow = memo(
       }
     }, [onCreate, type]);
 
-    const handleDescriptionUpdate = useCallback((value: string | number) => {
-      descriptionRef.current = value as string;
-    }, []);
+    const handleDescriptionUpdate = useCallback(
+      (value: string | number) => {
+        descriptionRef.current = value as string;
+
+        // Attempt to create after description change
+        setTimeout(attemptCreate, 0);
+      },
+      [attemptCreate],
+    );
 
     const handleCategoryUpdate = useCallback(
       (value: string | number) => {
@@ -79,9 +97,23 @@ export const NewTransactionRow = memo(
       [attemptCreate],
     );
 
-    const handleAmountUpdate = useCallback((value: string | number) => {
-      amountRef.current = value as number;
-    }, []);
+    const handleAmountUpdate = useCallback(
+      (value: string | number) => {
+        amountRef.current = value as number;
+        // Attempt to create after amount change
+        setTimeout(attemptCreate, 0);
+      },
+      [attemptCreate],
+    );
+
+    const handleStartDateUpdate = useCallback(
+      (value: string | number) => {
+        startDateRef.current = value as string;
+        // Attempt to create after start date change
+        setTimeout(attemptCreate, 0);
+      },
+      [attemptCreate],
+    );
 
     return (
       <TableRow className="hover:bg-muted/50">
@@ -106,11 +138,10 @@ export const NewTransactionRow = memo(
             placeholder="Choisir une catégorie"
           />
         </TableCell>
-
         <TableCell className={tableClasses.cell}>
           <EditableCell
             key={`freq-${resetKey}`}
-            value={frequencyRef.current || ""}
+            value={frequencyRef.current?.toString() || ""}
             onUpdate={handleFrequencyUpdate}
             className={selectTriggerStyles}
             type="select"
@@ -136,9 +167,27 @@ export const NewTransactionRow = memo(
             onBlur={attemptCreate}
           />
         </TableCell>
-        <TableCell className={tableClasses.cell}></TableCell>
-        <TableCell className={tableClasses.cell}></TableCell>
+
+        <TableCell className={tableClasses.cell}>
+          <EditableCell
+            key={`start-${resetKey}`}
+            value={startDateRef.current}
+            onUpdate={handleStartDateUpdate}
+            onBlur={attemptCreate}
+            className={selectTriggerStyles}
+            type="date"
+            placeholder={
+              startDateRef.current
+                ? format(new Date(startDateRef.current), "d MMM yyyy", {locale: frCA})
+                : "Choisir une date"
+            }
+          />
+        </TableCell>
+
+        <TableCell className={cn(tableClasses.cell, "w-12")}></TableCell>
       </TableRow>
     );
   },
 );
+
+export default NewTransactionRow;

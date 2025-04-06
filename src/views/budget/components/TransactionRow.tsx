@@ -2,11 +2,9 @@ import {memo} from "react";
 import {TableCell, TableRow} from "@/components/ui/table";
 import {Button} from "@/components/ui/button";
 import {LuMinus} from "react-icons/lu";
-import {format} from "date-fns";
-import {fr} from "date-fns/locale";
 import {cn} from "@/lib/utils";
 import {Transaction} from "@/types/transaction/transaction";
-import {EditableCell} from "./EditableCell";
+import EditableCell from "./EditableCell";
 
 interface TransactionRowProps {
   transaction: Transaction;
@@ -21,7 +19,7 @@ interface TransactionRowProps {
   selectTriggerStyles: string;
 }
 
-export const TransactionRow = memo(
+const TransactionRow = memo(
   ({
     transaction,
     onUpdate,
@@ -33,7 +31,7 @@ export const TransactionRow = memo(
   }: TransactionRowProps) => (
     <TableRow className="hover:bg-muted/50">
       {/* Description */}
-      <TableCell className={tableClasses.cell}>
+      <TableCell className={cn(tableClasses.cell, "min-w-52")}>
         <EditableCell
           value={transaction.description || ""}
           onUpdate={(value) => onUpdate("description", value)}
@@ -70,18 +68,25 @@ export const TransactionRow = memo(
       </TableCell>
 
       {/* Amount */}
-      <TableCell className={cn(tableClasses.cell, tableClasses.amount)}>
+      <TableCell className={cn(tableClasses.cell, tableClasses.amount, "min-w-32")}>
         <EditableCell
           value={transaction.amount}
           onUpdate={(value) => onUpdate("amount", value)}
+          onBlur={(value) => onUpdate("amount", value === "" ? 1 : parseFloat(value?.toString() ?? "1"))}
           className={cn(inputStyles, "text-right")}
           type="number"
+          debounceTime={2000}
         />
       </TableCell>
 
       {/* Start Date */}
       <TableCell className={tableClasses.cell}>
-        {format(new Date(transaction.startDate), "d MMM yyyy", {locale: fr})}
+        <EditableCell
+          value={transaction.startDate.toString()}
+          onUpdate={(value) => onUpdate("startDate", value)}
+          className={selectTriggerStyles}
+          type="date"
+        />
       </TableCell>
 
       {/* Delete Button */}
@@ -99,4 +104,4 @@ export const TransactionRow = memo(
   ),
 );
 
-TransactionRow.displayName = "TransactionRow";
+export default TransactionRow;
