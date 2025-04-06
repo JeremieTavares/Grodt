@@ -42,7 +42,8 @@ git clone https://github.com/JeremieTavares/Grodt.git
 2. Installez les dépendances
 
 ```bash
-npm install
+# Ceci est nécessaire car nous utilisons la dernière version de React (19), qui n'est peut-être pas encore supportée par toutes les librairies
+npm install --force
 ```
 
 3. Lancez le serveur de développement
