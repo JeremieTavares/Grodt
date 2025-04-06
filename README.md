@@ -14,17 +14,19 @@ GRODT est une application web moderne conçue pour aider les utilisateurs à pla
 - **React Hook Form** - Gestion des formulaires
 - **Axios** - Client HTTP pour les requêtes API
 - **Sonner** - Notifications élégantes
+- **lucide/react-icons** - Icônes
 
 ## 📁 Structure du Projet
 
 ```
 src/
-├── assets/        # Ressources statiques
-├── components/    # Composants réutilisables
-├── hooks/         # Hooks React personnalisés
-├── lib/          # Utilitaires et configurations
+├── assets/       # Ressources statiques
+├── components/   # Composants réutilisables
+├── hooks/        # Hooks React personnalisés
+├── lib/          # Utilitaires pour les librairies et configurations
 ├── services/     # Services API et logique métier
 ├── types/        # Définitions TypeScript
+├── utils/        # Utilitaires
 ├── views/        # Pages et vues principales
 └── enums/        # Énumérations
 ```
