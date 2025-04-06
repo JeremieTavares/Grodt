@@ -39,7 +39,6 @@ export const useTransactions = (userId: number) => {
             const toastId = transactionToast.createLoadingToast({
                 type: data.type,
                 description: data.description,
-                amount: Number(data.amount),
             });
 
             const response = await api.transactions.create(data);
@@ -50,7 +49,6 @@ export const useTransactions = (userId: number) => {
                 transactionToast.createToast(toastId, {
                     type: newTransaction.type,
                     description: newTransaction.description,
-                    amount: Number(newTransaction.amount),
                 });
 
                 return newTransaction;
@@ -74,7 +72,6 @@ export const useTransactions = (userId: number) => {
             const toastId = transactionToast.updateLoadingToast({
                 type: transaction.type,
                 description: transaction.description,
-                amount: Number(transaction.amount),
             });
 
             const response = await api.transactions.updateById(transactionId, transaction);
@@ -88,7 +85,6 @@ export const useTransactions = (userId: number) => {
             transactionToast.updateToast(toastId, {
                 type: updatedTransaction.type,
                 description: updatedTransaction.description,
-                amount: Number(updatedTransaction.amount),
             });
 
             return response.data;
@@ -109,7 +105,6 @@ export const useTransactions = (userId: number) => {
             const toastId = transactionToast.deleteLoadingToast({
                 type: transaction.type,
                 description: transaction.description,
-                amount: Number(transaction.amount),
             });
 
             await api.transactions.deleteById(transaction.id);
@@ -118,7 +113,6 @@ export const useTransactions = (userId: number) => {
             transactionToast.deleteToast(toastId, {
                 type: transaction.type,
                 description: transaction.description,
-                amount: Number(transaction.amount),
             });
 
             return true;

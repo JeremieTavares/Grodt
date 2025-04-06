@@ -15,12 +15,14 @@ import {
   TransactionType,
   CreateTransactionDto,
   UpdateTransactionDto,
+  TRANSACTION_FREQUENCIES,
 } from "@/types/transaction/transaction";
-import {EXPENSE_CATEGORIES, REVENUE_CATEGORIES} from "@/types/transaction/categories";
+import {EXPENSE_CATEGORIES, ExpenseCategory, REVENUE_CATEGORIES, RevenueCategory} from "@/types/transaction/categories";
 import {cn} from "@/lib/utils";
 import TransactionRow from "./TransactionRow";
 import NewTransactionRow from "./NewTransactionRow";
-
+import {toast} from "sonner";
+import {TransactionFrequency} from "../../../types/transaction/transaction";
 interface TransactionTableProps {
   type: TransactionType;
   transactions: Transaction[];
@@ -35,6 +37,53 @@ const TransactionTable = ({type, transactions, onUpdate, onDelete, onCreate}: Tr
   const categories = type === "Expense" ? EXPENSE_CATEGORIES : REVENUE_CATEGORIES;
 
   const handleTransactionUpdate = (transaction: Transaction, field: keyof Transaction, value: string | number) => {
+    // Amount validation
+    if (
+      field === "amount" &&
+      (value === "" || value === null || value === undefined || parseFloat(value.toString()) <= 0)
+    ) {
+      toast.error("Le montant doit être un nombre positif");
+      return;
+    }
+
+    // Start date validation
+    if (field === "startDate" && (value === "" || value === null || value === undefined)) {
+      toast.error("La date de début est obligatoire et doit être une valeur valide");
+      return;
+    }
+
+    // Frequency validation
+    if (
+      field === "frequency" &&
+      (value === "" ||
+        value === null ||
+        value === undefined ||
+        !TRANSACTION_FREQUENCIES.includes(parseInt(value.toString()) as TransactionFrequency))
+    ) {
+      toast.error("La fréquence est obligatoire et doit être un nombre valide");
+      return;
+    }
+
+    // Category validation
+    if (
+      field === "category" &&
+      type === "Expense" &&
+      !EXPENSE_CATEGORIES.includes(value.toString() as ExpenseCategory)
+    ) {
+      toast.error("La catégorie est obligatoire et doit être une valeur valide");
+      return;
+    }
+
+    // Revenue category validation
+    if (
+      field === "category" &&
+      type === "Revenue" &&
+      !REVENUE_CATEGORIES.includes(value.toString() as RevenueCategory)
+    ) {
+      toast.error("La catégorie est obligatoire et doit être une valeur valide");
+      return;
+    }
+
     // Remove the user and id from the transaction body to avoid sending them to the server
     const {id, user, ...updateData} = {
       ...transaction,
