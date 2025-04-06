@@ -47,8 +47,10 @@ export const DatePicker = ({
           variant="ghost"
           className={cn("w-full justify-start text-left font-normal", !date && "text-muted-foreground", className)}
         >
-          <LuCalendar className="h-4 w-4" />
-          {hadAnInitialDate ? format(initialDate, "d MMM yyyy", {locale: frCA}) : placeholder}
+          <div className="flex items-center gap-2">
+            <LuCalendar className="h-4 w-4" />
+            {hadAnInitialDate ? format(initialDate, "d MMM yyyy", {locale: frCA}) : placeholder}
+          </div>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
