@@ -1,6 +1,7 @@
 import {useState, useEffect, memo, useMemo} from "react";
 import {Input} from "@/components/ui/input";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {DatePicker} from "@/components/ui/grodt-date-picker";
 import {cn} from "@/lib/utils";
 import debounce from "lodash/debounce";
 
@@ -10,19 +11,34 @@ export type SelectOption = {
 };
 
 interface EditableCellProps {
-  value: string | number;
+  value: string | number | null;
   onUpdate: (value: string | number) => void;
   className?: string;
-  type?: "text" | "number" | "select";
+  type?: "text" | "number" | "select" | "date";
   options?: readonly SelectOption[];
   placeholder?: string;
-  onBlur?: () => void;
+  onBlur?: (value: string | number | null) => void;
+  autoFocus?: boolean;
+  debounceTime?: number;
 }
 
-export const EditableCell = memo(
-  ({value, onUpdate, className, type = "text", options, placeholder, onBlur}: EditableCellProps) => {
+const EditableCell = memo(
+  ({
+    value,
+    onUpdate,
+    className,
+    type = "text",
+    options,
+    placeholder,
+    onBlur,
+    autoFocus = false,
+    debounceTime = 1000,
+  }: EditableCellProps) => {
     const [localValue, setLocalValue] = useState(value);
-    const debouncedUpdate = useMemo(() => debounce((newValue: string | number) => onUpdate(newValue), 500), [onUpdate]);
+    const debouncedUpdate = useMemo(
+      () => debounce((newValue: string | number) => onUpdate(newValue), debounceTime),
+      [onUpdate, debounceTime],
+    );
 
     useEffect(() => {
       setLocalValue(value);
@@ -41,7 +57,7 @@ export const EditableCell = memo(
 
     const handleInputBlur = () => {
       debouncedUpdate.flush();
-      if (onBlur) onBlur();
+      if (onBlur) onBlur(localValue);
     };
 
     if (type === "select") {
@@ -49,12 +65,10 @@ export const EditableCell = memo(
         <Select
           value={localValue as string}
           onValueChange={(newValue) => {
-            setLocalValue(newValue);
-            onUpdate(newValue);
-            if (onBlur) onBlur();
+            handleChange(newValue);
           }}
         >
-          <SelectTrigger className={cn("h-9 w-full", className)}>
+          <SelectTrigger className={cn("h-9 w-full", className)} autoFocus={autoFocus}>
             <SelectValue placeholder={placeholder || "Choisir une option"} />
           </SelectTrigger>
           <SelectContent>
@@ -68,17 +82,35 @@ export const EditableCell = memo(
       );
     }
 
+    if (type === "date") {
+      return (
+        <DatePicker
+          className={className}
+          date={localValue?.toString() ?? ""}
+          onSelect={(date) => handleChange(date?.toISOString() ?? "")}
+          placeholder={placeholder}
+          autoFocus={autoFocus}
+        />
+      );
+    }
     return (
       <Input
         type={type}
-        value={localValue}
-        onChange={(e) => handleChange(type === "number" ? parseFloat(e.target.value) : e.target.value)}
+        value={type === "number" ? localValue?.toString() ?? "" : (localValue ?? "").toString()}
+        onChange={(e) => {
+          if (type === "number" && e.target.value === "") {
+            setLocalValue("");
+          } else {
+            handleChange(e.target.value);
+          }
+        }}
         onBlur={handleInputBlur}
         className={className}
         placeholder={placeholder}
+        autoFocus={autoFocus}
       />
     );
   },
 );
 
-EditableCell.displayName = "EditableCell";
+export default EditableCell;

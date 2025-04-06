@@ -8,7 +8,7 @@ export interface BudgetSummaryCardProps {
   variant: "revenue" | "expense" | "balance";
 }
 
-export const BudgetSummaryCard = memo(({title, amount, variant}: BudgetSummaryCardProps) => {
+const BudgetSummaryCard = memo(({title, amount, variant}: BudgetSummaryCardProps) => {
   const isPositive = amount >= 0;
 
   const getVariantStyles = () => {
@@ -46,3 +46,5 @@ export const BudgetSummaryCard = memo(({title, amount, variant}: BudgetSummaryCa
     </Card>
   );
 });
+
+export default BudgetSummaryCard;

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useApi } from "@/hooks/useApi";
-import { Transaction, CreateTransactionDto, UpdateTransactionDto } from "@/types/transaction/transaction";
 import { useTransactionToast } from "@/hooks/useTransactionToast";
+import { Transaction, CreateTransactionDto, UpdateTransactionDto } from "@/types/transaction/transaction";
 
 export const useTransactions = (userId: number) => {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -44,15 +44,16 @@ export const useTransactions = (userId: number) => {
 
             const response = await api.transactions.create(data);
             if (response.data) {
-                setTransactions((prev) => [...prev, response.data]);
+                const newTransaction = response.data;
+                setTransactions((prev) => [...prev, newTransaction]);
 
                 transactionToast.createToast(toastId, {
-                    type: data.type,
-                    description: data.description,
-                    amount: Number(data.amount),
+                    type: newTransaction.type,
+                    description: newTransaction.description,
+                    amount: Number(newTransaction.amount),
                 });
 
-                return response.data;
+                return newTransaction;
             }
             throw new Error("Échec de la création");
         } catch (err) {
@@ -76,20 +77,21 @@ export const useTransactions = (userId: number) => {
                 amount: Number(transaction.amount),
             });
 
-            await api.transactions.updateById(transactionId, transaction);
-            const updatedTransaction = {
-                ...transaction,
-                id: transactionId
-            };
+            const response = await api.transactions.updateById(transactionId, transaction);
+            if (!response.data) {
+                throw new Error("Échec de la mise à jour");
+            }
+            const updatedTransaction = response.data;
+
             setTransactions((prev) => prev.map((t) => (t.id === transactionId ? updatedTransaction : t)));
 
             transactionToast.updateToast(toastId, {
-                type: transaction.type,
-                description: transaction.description,
-                amount: Number(transaction.amount),
+                type: updatedTransaction.type,
+                description: updatedTransaction.description,
+                amount: Number(updatedTransaction.amount),
             });
 
-            return updatedTransaction;
+            return response.data;
         } catch (err) {
             console.error("Erreur lors de la mise à jour:", err);
             transactionToast.errorToast("", err, {

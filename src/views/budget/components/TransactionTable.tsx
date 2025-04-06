@@ -18,8 +18,8 @@ import {
 } from "@/types/transaction/transaction";
 import {EXPENSE_CATEGORIES, REVENUE_CATEGORIES} from "@/types/transaction/categories";
 import {cn} from "@/lib/utils";
-import {TransactionRow} from "./TransactionRow";
-import {NewTransactionRow} from "./NewTransactionRow";
+import TransactionRow from "./TransactionRow";
+import NewTransactionRow from "./NewTransactionRow";
 
 interface TransactionTableProps {
   type: TransactionType;
@@ -29,7 +29,7 @@ interface TransactionTableProps {
   onCreate: (data: CreateTransactionDto) => Promise<Transaction | false>;
 }
 
-export function TransactionTable({type, transactions, onUpdate, onDelete, onCreate}: TransactionTableProps) {
+const TransactionTable = ({type, transactions, onUpdate, onDelete, onCreate}: TransactionTableProps) => {
   const [deleteConfirm, setDeleteConfirm] = useState<Transaction | null>(null);
 
   const categories = type === "Expense" ? EXPENSE_CATEGORIES : REVENUE_CATEGORIES;
@@ -125,4 +125,6 @@ export function TransactionTable({type, transactions, onUpdate, onDelete, onCrea
       </AlertDialog>
     </>
   );
-}
+};
+
+export default TransactionTable;
