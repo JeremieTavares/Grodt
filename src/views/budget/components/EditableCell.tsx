@@ -97,13 +97,7 @@ const EditableCell = memo(
       <Input
         type={type}
         value={type === "number" ? localValue?.toString() ?? "" : (localValue ?? "").toString()}
-        onChange={(e) => {
-          if (type === "number" && e.target.value === "") {
-            setLocalValue("");
-          } else {
-            handleChange(e.target.value);
-          }
-        }}
+        onChange={(e) => handleChange(e.target.value)}
         onBlur={handleInputBlur}
         className={className}
         placeholder={placeholder}

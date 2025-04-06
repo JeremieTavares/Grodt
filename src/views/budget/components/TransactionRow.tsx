@@ -72,7 +72,6 @@ const TransactionRow = memo(
         <EditableCell
           value={transaction.amount}
           onUpdate={(value) => onUpdate("amount", value)}
-          onBlur={(value) => onUpdate("amount", !value ? 1 : value?.toString())}
           className={cn(inputStyles, "text-right")}
           type="number"
           debounceTime={2000}
