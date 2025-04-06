@@ -34,7 +34,7 @@ export default function Landing() {
     toast.success("Vous êtes maintenant déconnecté");
   };
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex-1">
       <section>
         <div className="relative">
           <video className="absolute w-full h-full object-cover opacity-70" src={BgVideo} autoPlay loop muted></video>

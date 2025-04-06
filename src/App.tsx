@@ -9,14 +9,16 @@ import {Toaster} from "@/components/ui/sonner";
 function App() {
   return (
     <>
-      <AppSidebar />
       <main>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/budget" element={<BudgetTracking />} />
-        </Routes>
-        <Toaster position="top-right" richColors />
+        <div className="flex min-h-screen">
+          <AppSidebar />
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/budget" element={<BudgetTracking />} />
+          </Routes>
+          <Toaster position="top-right" richColors />
+        </div>
       </main>
     </>
   );

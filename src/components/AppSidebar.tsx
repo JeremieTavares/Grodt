@@ -32,7 +32,7 @@ const AppSidebar = () => {
   return (
     <aside
       className={cn(
-        "bg-[#433bff] w-full p-2 md:min-h-screen fixed bottom-0 md:top-0 text-white transition-all duration-300 flex md:flex-col z-50",
+        "bg-[#433bff] w-full p-2 md:min-h-screen fixed bottom-0 md:sticky  md:top-0 text-white transition-all duration-300 flex md:flex-col z-50",
         isExpanded ? "md:w-64" : "md:w-16",
       )}
     >
